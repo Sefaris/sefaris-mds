@@ -1,6 +1,6 @@
 <template>
   <div>
-    Elo {{ APP_VERSION }}
+    {{ APP_VERSION }}
   </div>
 </template>
 
