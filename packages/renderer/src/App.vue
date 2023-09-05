@@ -1,13 +1,10 @@
 <template>
-  <div>
-    {{ APP_VERSION }}
-  </div>
+  <router-view></router-view>
 </template>
 
 
 
 <script lang="ts" setup>
-  const APP_VERSION = import.meta.env.VITE_APP_VERSION;
 </script>
 
 <style>
