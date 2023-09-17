@@ -1,5 +1,5 @@
 {
-  "name": "vite-electron-builder",
+  "name": "sefaris-mds",
   "description": "Secure boilerplate for Electron app based on Vite",
   "version": "1.0.2",
   "private": true,
@@ -42,6 +42,7 @@
     "happy-dom": "10.9.0",
     "nano-staged": "0.8.0",
     "playwright": "1.37.0",
+    "sass": "^1.66.1",
     "simple-git-hooks": "2.9.0",
     "typescript": "5.1.6",
     "unplugin-auto-expose": "0.0.5",
