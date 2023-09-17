@@ -1,16 +1,21 @@
 $bg-color: #27374D;
 $text-color: #DDE6ED;
 
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 html,body{
-    margin:0;
-    padding:0;
-    box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     background-color: $bg-color;
     color: $text-color;
 }
+
+
+
 
 a{
     text-decoration: none;

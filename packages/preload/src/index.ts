@@ -12,3 +12,5 @@ export {
   saveConfiguration,
   loadConfiguration,
 } from './services/configuration-service';
+
+export {loadMods, loadModDescription, loadImage} from './services/mod-service';

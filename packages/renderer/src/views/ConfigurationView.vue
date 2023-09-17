@@ -2,7 +2,7 @@
   <RouterLink to="/">Home</RouterLink>
   <h2>Config</h2>
   <div class="config-container">
-    {{ path }}
+    {{ configDetails }}
 
     <button @click="selectGameFolder">Select game folder</button>
     <button @click="save">Save</button>
@@ -19,36 +19,37 @@ import {selectGameFolder, isGothicPathValid, loadConfiguration, saveConfiguratio
 export default defineComponent({
   components: {},
   setup() {
-    const path = ref<string>();
+    const configDetails = ref<string>();
     let config: AppConfiguration = {
       gothicPath: '',
+      modsPath: '',
       installedMods: [],
       filesCreated: [],
     };
 
-    //TODO: TS nie widzi Apieriusza
-    window.Apieriusz.onFolderSelected((folderPath: string) => {
+    window.Apieriusz.onFolderSelected(async (folderPath: string) => {
       if (isGothicPathValid(folderPath)) {
-        path.value = folderPath;
+        await load();
         config.gothicPath = folderPath;
       }
     });
 
     const save = async () => {
       await saveConfiguration(config);
+      configDetails.value = JSON.stringify(config);
     };
 
     const load = async () => {
       const conf = await loadConfiguration();
       if (conf) {
         config = conf;
-        path.value = config.gothicPath;
+        configDetails.value = JSON.stringify(config);
       } else {
         console.error('Nie znaleziono pliku konfiguracyjnego');
       }
     };
 
-    return {path, selectGameFolder, config, save, load};
+    return {configDetails, selectGameFolder, config, save, load};
   },
 });
 </script>

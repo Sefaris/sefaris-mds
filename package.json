@@ -30,6 +30,7 @@
     "format": "npx prettier --write \"**/*.{js,mjs,cjs,ts,mts,cts,vue,json}\""
   },
   "devDependencies": {
+    "@types/markdown-it": "^13.0.1",
     "@types/node": "18.17.5",
     "@typescript-eslint/eslint-plugin": "6.3.0",
     "@vitejs/plugin-vue": "4.2.3",
@@ -53,6 +54,7 @@
   },
   "dependencies": {
     "electron-updater": "6.1.1",
+    "markdown-it": "^13.0.1",
     "vue-router": "^4.2.4"
   }
 }

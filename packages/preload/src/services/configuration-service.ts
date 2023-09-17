@@ -10,6 +10,11 @@ export function selectGameFolder(): void {
 }
 
 export async function saveConfiguration(configuration: AppConfiguration): Promise<void> {
+  if (import.meta.env.PROD) {
+    configuration.modsPath = path.join(configuration.gothicPath, 'Mods');
+  } else {
+    configuration.modsPath = 'D:\\Repos\\Sefaris\\Mods';
+  }
   fs.writeFileSync(configurationPath, JSON.stringify(configuration));
 }
 
@@ -17,6 +22,7 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
   if (!fs.existsSync(configurationPath)) {
     return null;
   }
+
   return JSON.parse(fs.readFileSync(configurationPath, 'utf-8'));
 }
 
