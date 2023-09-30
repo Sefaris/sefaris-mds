@@ -1,4 +1,4 @@
-import {dialog, ipcMain} from 'electron';
+import {app, dialog, ipcMain} from 'electron';
 
 export function addEvents() {
   ipcMain.on('open-folder-dialog', event => {
@@ -15,5 +15,8 @@ export function addEvents() {
       .catch(err => {
         console.error(err);
       });
+  });
+  ipcMain.handle('get-app-path', () => {
+    return app.getAppPath();
   });
 }

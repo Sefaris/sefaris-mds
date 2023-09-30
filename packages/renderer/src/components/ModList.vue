@@ -4,6 +4,8 @@
       v-for="(mod, index) in mods"
       :key="index"
       :mod-item="mod"
+      @mod-details="$emit('modDetails', mod)"
+      @mod-selected="$emit('modSelected', $event)"
     />
   </div>
 </template>
@@ -21,6 +23,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['modDetails', 'modSelected'],
   setup(props) {
     return {mods: props.modList};
   },
@@ -32,5 +35,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   flex-basis: 40%;
+  gap: 0.5rem;
 }
 </style>

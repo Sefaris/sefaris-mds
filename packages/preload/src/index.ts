@@ -13,4 +13,12 @@ export {
   loadConfiguration,
 } from './services/configuration-service';
 
-export {loadMods, loadModDescription, loadImage} from './services/mod-service';
+export {
+  loadMods,
+  loadModDescription,
+  loadImage,
+  isModInstalled,
+  loadInstalledMods,
+} from './services/mod-service';
+
+export {installMods} from './services/installation-service';

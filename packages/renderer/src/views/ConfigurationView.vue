@@ -34,6 +34,7 @@ export default defineComponent({
       }
     });
 
+    //TODO: Do poprawy
     const save = async () => {
       await saveConfiguration(config);
       configDetails.value = JSON.stringify(config);

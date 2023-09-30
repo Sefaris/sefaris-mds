@@ -3,6 +3,7 @@ import {loadConfiguration} from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
+import type {AppConfiguration} from '../interfaces/app-configuration';
 
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();
@@ -40,7 +41,11 @@ function validateMod(modPath: string): Mod | null {
 
 export function loadModDescription(mod: Mod): string {
   const md = new MarkdownIt();
-  return md.render(fs.readFileSync(path.join(mod.path, 'readme.md'), 'utf8'));
+  const file = path.join(mod.path, 'readme.md');
+  if (!fs.existsSync(file)) {
+    return 'No description available.';
+  }
+  return md.render(fs.readFileSync(file, 'utf8'));
 }
 
 export function loadImage(mod: Mod): string | null {
@@ -53,4 +58,26 @@ export function loadImage(mod: Mod): string | null {
     return path.join(mod.path, imageFiles[0]);
   }
   return null;
+}
+
+export async function isModInstalled(id: string): Promise<boolean> {
+  const configuration: AppConfiguration | null = await loadConfiguration();
+  if (configuration) {
+    return configuration.installedMods.includes(id);
+  }
+  return false;
+}
+
+export async function loadInstalledMods(): Promise<Mod[]> {
+  const installedMods: Mod[] = [];
+  const modList: Mod[] = await loadMods();
+  const configuration: AppConfiguration | null = await loadConfiguration();
+  if (configuration) {
+    for (const mod of modList) {
+      if (configuration.installedMods.includes(mod.id)) {
+        installedMods.push(mod);
+      }
+    }
+  }
+  return installedMods;
 }

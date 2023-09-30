@@ -1,9 +1,10 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="details">
-    <img
+    <!-- <img
       v-if="img"
       :src="img"
-    />
+    /> -->
     <div v-html="desc"></div>
   </div>
 </template>
@@ -11,7 +12,7 @@
 <script lang="ts">
 import {loadModDescription, loadImage} from '#preload';
 import type {Mod} from '#preload';
-import {defineComponent} from 'vue';
+import {defineComponent, ref, watch} from 'vue';
 
 export default defineComponent({
   components: {},
@@ -23,8 +24,18 @@ export default defineComponent({
   },
   setup(props) {
     const clonedMod: Mod = JSON.parse(JSON.stringify(props.modItem));
-    const desc: string = loadModDescription(clonedMod);
-    const img = loadImage(clonedMod);
+    const desc = ref(loadModDescription(clonedMod));
+    const img = ref(loadImage(clonedMod));
+
+    watch(
+      () => props.modItem,
+      newMod => {
+        const clonedNewMod: Mod = JSON.parse(JSON.stringify(newMod));
+        desc.value = loadModDescription(clonedNewMod);
+        img.value = loadImage(clonedNewMod);
+      },
+    );
+
     return {mod: props.modItem, desc, img};
   },
 });
