@@ -17,6 +17,10 @@ module.exports = async function () {
       buildResources: 'buildResources',
     },
     files: ['packages/**/dist/**'],
+    extraFiles: [      
+      {from:'Static', to:'resources\\app\\Static'},
+      {from:'Tools', to:'resources\\app\\Tools'},
+    ],
     extraMetadata: {
       version: getVersion(),
     },

@@ -76,7 +76,7 @@ export default defineComponent({
 
     async deleteMods() {
       await deleteMods();
-      this.spawnMessageBox(`Usunięto ${this.selectedMods.length} modów`, 'success', 15000);
+      this.spawnMessageBox('Usunięto modyfikacje', 'success', 15000);
     },
 
     handleModDetails(mod: Mod) {
