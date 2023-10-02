@@ -8,6 +8,9 @@ import type {Mod} from '../interfaces/mod';
 import type {AppConfiguration} from '../interfaces/app-configuration';
 import {ipcRenderer} from 'electron';
 import {computed} from 'vue';
+import {buildPackage, extract, findStrings} from './pak-service';
+import {create} from 'domain';
+import {ensureDirectory} from './file-service';
 
 let appPath: string;
 let staticFilesPath: string;
@@ -28,14 +31,19 @@ const SAVEDAT_EXTENSION = 'g3savcpxdat';
 const SPLASH = 'splash.bmp';
 const SHADER = 'Shader.Cache';
 
+const STRINGTABLE_ENCODING = 'utf16le';
+
 const destPath = 'D:\\Repos\\Sefaris\\destMods';
 
 export async function installMods(mods: Mod[]): Promise<string> {
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
   const files: string[] = [];
+  const filesDictionary = prepareFilesDictionary();
+  const createdFiles: string[] = [];
+
   const startTime = performance.now();
   await deleteMods();
-  const filesDictionary = prepareFilesDictionary();
+
   for (const mod of mods) {
     for (const extension of MOD_EXTENSTIONS) {
       const files = findFilesEndsWith(mod.path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
@@ -48,13 +56,13 @@ export async function installMods(mods: Mod[]): Promise<string> {
 
   appendFakeFiles(filesDictionary);
 
-  const createdFiles: string[] = [];
   for (const key in filesDictionary) {
     {
-      await copyFiles(destPath, key, filesDictionary[key], createdFiles);
+      await copyFiles(getDataPath(configuration), key, filesDictionary[key], createdFiles);
     }
   }
 
+  await buildStringTable(getDataPath(configuration), mods, createdFiles);
   const endTime = performance.now();
   const time = ((endTime - startTime) / 1000).toFixed(3);
 
@@ -162,4 +170,69 @@ function getDataPath(configuration: AppConfiguration): string {
     return '';
   }
   return path.join(configuration.gothicPath, 'Data');
+}
+
+async function buildStringTable(
+  gothicDataPath: string,
+  mods: Mod[],
+  createdFiles: string[],
+): Promise<void> {
+  const stringTablePath = await findStrings(gothicDataPath);
+  const destinationPath = gothicDataPath;
+  const tempDir = path.join(gothicDataPath, 'temp');
+  const fileName = path.basename(stringTablePath);
+
+  const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
+
+  const destinationFileName =
+    (await getFreeFileName(destinationPath, nameWithoutExtension, 'mod')) ??
+    (await getFreeFileName(destinationPath, nameWithoutExtension, 'pak'));
+
+  const packageDestPath = path.join(destinationPath, destinationFileName);
+  await mergeStringTables(gothicDataPath, mods, stringTablePath);
+  await buildPackage(tempDir, packageDestPath);
+  createdFiles.push(packageDestPath);
+
+  fs.rmSync(tempDir, {recursive: true, force: true});
+}
+
+async function mergeStringTables(
+  gothicDataPath: string,
+  mods: Mod[],
+  originalStringTable: string,
+): Promise<void> {
+  const tempDir = path.join(gothicDataPath, 'temp');
+  await ensureDirectory(tempDir);
+  await extract(originalStringTable, [STRINGTABLE_FILENAME], tempDir);
+  const stringTable = path.join(tempDir, STRINGTABLE_FILENAME);
+  const locAdminRevision = '[LocAdmin_Revisions]';
+
+  const originalStringTableContent = fs
+    .readFileSync(stringTable, {encoding: STRINGTABLE_ENCODING, flag: 'r'})
+    .replace(locAdminRevision, '');
+  fs.writeFileSync(stringTable, originalStringTableContent, {
+    encoding: STRINGTABLE_ENCODING,
+    flag: 'w',
+  });
+
+  mods.forEach(element => {
+    const modStringTable = path.join(element.path, STRINGTABLEMOD_FILENAME);
+    if (fs.existsSync(modStringTable)) {
+      const modStringTableContent = fs
+        .readFileSync(modStringTable, {
+          encoding: STRINGTABLE_ENCODING,
+          flag: 'r',
+        })
+        .replace('[LocAdmin_Strings]', '');
+      fs.appendFileSync(stringTable, modStringTableContent, {
+        encoding: STRINGTABLE_ENCODING,
+        flag: 'a',
+      });
+    }
+  });
+
+  fs.appendFileSync(stringTable, `\n${locAdminRevision}`, {
+    encoding: STRINGTABLE_ENCODING,
+    flag: 'a',
+  });
 }

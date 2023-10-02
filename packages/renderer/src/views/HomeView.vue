@@ -9,6 +9,7 @@
   ></MessageBox>
   <div>
     <button @click="install">Install</button>
+    <button @click="deleteMods">Delete</button>
   </div>
   <div class="container">
     <ModDetails
@@ -28,7 +29,7 @@
 import {defineComponent, onMounted, ref} from 'vue';
 
 import type {Mod} from '#preload';
-import {loadMods, loadInstalledMods, installMods} from '#preload';
+import {loadMods, loadInstalledMods, installMods, deleteMods} from '#preload';
 
 import ModList from '../components/ModList.vue';
 import ModDetails from '../components/ModDetails.vue';
@@ -71,6 +72,11 @@ export default defineComponent({
         this.messageBoxDetails.type,
         this.messageBoxDetails.lifeTime,
       );
+    },
+
+    async deleteMods() {
+      await deleteMods();
+      this.spawnMessageBox(`Usunięto ${this.selectedMods.length} modów`, 'success', 15000);
     },
 
     handleModDetails(mod: Mod) {

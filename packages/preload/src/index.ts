@@ -21,4 +21,4 @@ export {
   loadInstalledMods,
 } from './services/mod-service';
 
-export {installMods} from './services/installation-service';
+export {installMods, deleteMods} from './services/installation-service';
