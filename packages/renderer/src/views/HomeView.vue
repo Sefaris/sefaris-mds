@@ -1,114 +1,132 @@
 <template>
-  <RouterLink to="/configuration">Configuration</RouterLink>
-  <MessageBox
-    v-if="showMessageBox"
-    :message="messageBoxDetails.message"
-    :type="messageBoxDetails.type"
-    :life-time="messageBoxDetails.lifeTime"
-    @close="handleCloseMessageBox"
-  ></MessageBox>
+  <router-link to="/configuration">Configuration</router-link>
+
   <div>
-    <button @click="install">Install</button>
-    <button @click="deleteMods">Delete</button>
+    <button @click="installModifications">Install</button>
+    <button @click="deleteModifications">Delete</button>
+    <button @click="selectAll">SELECT ALL</button>
   </div>
+
   <div class="container">
-    <ModDetails
-      v-if="modsReady && modDetails"
-      :mod-item="modDetails"
+    <mod-details
+      v-if="modInfo"
+      :mod="modInfo"
     />
-    <ModList
-      v-if="modsReady"
-      :mod-list="modList"
-      @mod-details="handleModDetails"
-      @mod-selected="handleModSelected"
-    />
+
+    <div class="list-container">
+      <mod-item
+        v-for="(mod, index) in modList"
+        :key="index"
+        :mod="mod"
+        :checked="selectedMods.includes(mod)"
+        @mod-details="handleModInfo(mod)"
+        @change="onModChange(mod, $event)"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';
+import {defineComponent, ref, shallowRef} from 'vue';
 
 import type {Mod} from '#preload';
 import {loadMods, loadInstalledMods, installMods, deleteMods} from '#preload';
 
-import ModList from '../components/ModList.vue';
+import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
-import MessageBox from '../components/MessageBox.vue';
+
 export default defineComponent({
-  components: {ModList, ModDetails, MessageBox},
+  components: {ModDetails, ModItem},
+
   setup() {
-    const modsReady = ref<boolean>(false);
-    const modDetails = ref<Mod>();
-    const modList: Mod[] = [];
+    const modInfo = shallowRef<Mod>();
+    const modList = shallowRef<Mod[]>([]);
     const selectedMods = ref<Mod[]>([]);
     const showMessageBox = ref<boolean>(false);
-    const messageBoxDetails = ref({
-      message: '',
-      type: 'info',
-      lifeTime: 1000,
-    });
-    onMounted(async () => {
-      loadMods().then(mods => {
-        modDetails.value = mods[0];
-        modList.push(...mods);
-        modsReady.value = true;
-      });
-      selectedMods.value = await loadInstalledMods();
-    });
 
-    return {modList, modsReady, modDetails, selectedMods, showMessageBox, messageBoxDetails};
-  },
-  methods: {
-    async install() {
-      const clonedMods = JSON.parse(JSON.stringify(this.selectedMods));
-      const time = await installMods(clonedMods);
-      this.messageBoxDetails = {
-        message: `Zainstalowano ${clonedMods.length} modów w ${time}s`,
-        type: 'success',
-        lifeTime: 15000,
-      };
-      this.spawnMessageBox(
-        this.messageBoxDetails.message,
-        this.messageBoxDetails.type,
-        this.messageBoxDetails.lifeTime,
-      );
-    },
-
-    async deleteMods() {
-      await deleteMods();
-      this.spawnMessageBox('Usunięto modyfikacje', 'success', 15000);
-    },
-
-    handleModDetails(mod: Mod) {
-      this.modDetails = mod;
-    },
-
-    handleModSelected({mod, modSelected}: {mod: Mod; modSelected: boolean}) {
-      if (modSelected) {
-        const insertIndex = this.selectedMods.findIndex(
-          selectedMod => selectedMod.directoryName.localeCompare(mod.directoryName) > 0,
-        );
-        if (insertIndex === -1) {
-          this.selectedMods.push(mod);
-        } else {
-          this.selectedMods.splice(insertIndex, 0, mod);
-        }
-      } else {
-        this.selectedMods.splice(this.selectedMods.indexOf(mod), 1);
+    loadMods().then(mods => {
+      modList.value = mods;
+      if (mods.length === 0) {
+        return;
       }
-    },
 
-    spawnMessageBox(message: string, type: string, lifeTime: number) {
-      this.showMessageBox = false;
-      setTimeout(() => {
-        this.messageBoxDetails = {message, type, lifeTime};
-        this.showMessageBox = true;
-      }, 10);
-    },
+      modInfo.value = mods[0];
+    });
 
-    handleCloseMessageBox() {
-      this.showMessageBox = false;
-    },
+    loadInstalledMods().then(mods => (selectedMods.value = mods));
+
+    function selectDependencies(mod: Mod) {
+      for (const dependency of mod.dependencies) {
+        const dependencyMod = modList.value.find(mod => mod.id === dependency);
+        if (!dependencyMod) {
+          throw new Error(`Dependency ${dependency} not found`);
+        }
+
+        selectMod(dependencyMod);
+      }
+    }
+
+    function selectMod(mod: Mod) {
+      if (!selectedMods.value.includes(mod)) {
+        selectedMods.value.push(mod);
+      }
+
+      if (mod.dependencies.length == 0) {
+        return;
+      }
+
+      selectDependencies(mod);
+    }
+
+    function deselectMod(mod: Mod) {
+      if (!selectedMods.value.includes(mod)) {
+        return;
+      }
+
+      selectedMods.value.splice(selectedMods.value.indexOf(mod), 1);
+    }
+
+    function onModChange(mod: Mod, value: boolean) {
+      if (value) {
+        selectMod(mod);
+        return;
+      }
+
+      deselectMod(mod);
+    }
+
+    async function selectAll() {
+      selectedMods.value = modList.value;
+    }
+
+    async function installModifications() {
+      const ids = selectedMods.value.map(mod => mod.id);
+      const time = await installMods(ids);
+      //TODO: Replace with toast
+      alert(`Installed ${ids.length} mods in ${time}ms`);
+    }
+
+    function handleModInfo(mod: Mod) {
+      modInfo.value = mod;
+    }
+
+    function deleteModifications() {
+      deleteMods();
+      //TODO: Replace with toast
+      alert('Deleted all modifications');
+    }
+
+    return {
+      modList,
+      modInfo,
+      selectedMods,
+      showMessageBox,
+      handleModInfo,
+      onModChange,
+      installModifications,
+      deleteModifications,
+      selectAll,
+    };
   },
 });
 </script>
@@ -117,6 +135,13 @@ export default defineComponent({
 .container {
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 40%;
   gap: 0.5rem;
 }
 </style>

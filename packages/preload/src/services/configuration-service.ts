@@ -9,13 +9,21 @@ export function selectGameFolder(): void {
   ipcRenderer.send('open-folder-dialog');
 }
 
-export async function saveConfiguration(configuration: AppConfiguration): Promise<void> {
+export async function saveConfiguration(configuration: AppConfiguration): Promise<boolean> {
   if (import.meta.env.PROD) {
     configuration.modsPath = path.join(configuration.gothicPath, 'Mods');
   } else {
     configuration.modsPath = 'D:\\Repos\\Sefaris\\Mods';
   }
-  fs.writeFileSync(configurationPath, JSON.stringify(configuration));
+  if (!configuration.gothicPath) {
+    return false;
+  }
+  try {
+    fs.writeFileSync(configurationPath, JSON.stringify(configuration));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function loadConfiguration(): Promise<AppConfiguration | null> {
@@ -38,7 +46,7 @@ export function isGothicPathValid(param: AppConfiguration | string): boolean {
 
 contextBridge.exposeInMainWorld('Apieriusz', {
   onFolderSelected: (callback: (folderPath: string) => void) => {
-    ipcRenderer.on('folder-selected', (event, folderPath) => {
+    ipcRenderer.on('folder-selected', (_, folderPath) => {
       callback(folderPath);
     });
   },

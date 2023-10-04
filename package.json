@@ -53,6 +53,7 @@
     "vue-tsc": "1.8.8"
   },
   "dependencies": {
+    "@intlify/unplugin-vue-i18n": "^1.4.0",
     "electron-updater": "6.1.1",
     "markdown-it": "^13.0.1",
     "vue-router": "^4.2.4"

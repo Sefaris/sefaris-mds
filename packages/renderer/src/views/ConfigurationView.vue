@@ -2,11 +2,22 @@
   <RouterLink to="/">Home</RouterLink>
   <h2>Config</h2>
   <div class="config-container">
-    {{ configDetails }}
+    <input
+      :value="config.gothicPath"
+      class="config-input"
+      type="text"
+      @input="handleInputChange"
+    />
+    <span v-if="configDetails">{{ configDetails }}</span>
+    <span v-if="error">{{ error }}</span>
 
     <button @click="selectGameFolder">Select game folder</button>
-    <button @click="save">Save</button>
-    <button @click="load">Load</button>
+    <button
+      :disabled="!config.gothicPath || !!error"
+      @click="saveConfig"
+    >
+      Save
+    </button>
   </div>
 </template>
 
@@ -14,43 +25,59 @@
 import type {AppConfiguration} from '#preload';
 
 import {defineComponent, ref} from 'vue';
-import {selectGameFolder, isGothicPathValid, loadConfiguration, saveConfiguration} from '#preload';
+import {selectGameFolder, isGothicPathValid, saveConfiguration, loadConfiguration} from '#preload';
+import router from '../router';
 
 export default defineComponent({
   components: {},
   setup() {
     const configDetails = ref<string>();
-    let config: AppConfiguration = {
+    const config = ref<AppConfiguration>({
       gothicPath: '',
       modsPath: '',
       installedMods: [],
       filesCreated: [],
-    };
+    });
+    const error = ref<string>();
 
     window.Apieriusz.onFolderSelected(async (folderPath: string) => {
-      if (isGothicPathValid(folderPath)) {
-        await load();
-        config.gothicPath = folderPath;
+      error.value = '';
+      config.value.gothicPath = folderPath;
+      if (!isGothicPathValid(folderPath)) {
+        error.value = 'Invalid Gothic path';
       }
     });
 
-    //TODO: Do poprawy
-    const save = async () => {
-      await saveConfiguration(config);
-      configDetails.value = JSON.stringify(config);
-    };
-
-    const load = async () => {
-      const conf = await loadConfiguration();
-      if (conf) {
-        config = conf;
-        configDetails.value = JSON.stringify(config);
-      } else {
-        console.error('Nie znaleziono pliku konfiguracyjnego');
+    const handleInputChange = (event: Event) => {
+      configDetails.value = '';
+      error.value = '';
+      const inputElement = event.target as HTMLInputElement;
+      config.value.gothicPath = inputElement.value;
+      if (!isGothicPathValid(inputElement.value)) {
+        error.value = 'Invalid Gothic path';
       }
     };
+    const checkConfig = async () => {
+      const conf = await loadConfiguration();
+      if (conf) {
+        config.value = conf;
+      }
+    };
+    checkConfig();
 
-    return {configDetails, selectGameFolder, config, save, load};
+    async function saveConfig() {
+      const configCopy = JSON.parse(JSON.stringify(config.value));
+      if (await saveConfiguration(configCopy)) {
+        //TODO: Replace with toast
+        alert('Configuration saved!');
+        router.push('/');
+      } else {
+        //TODO: Replace with toast
+        configDetails.value = 'Configuration save failed';
+      }
+    }
+
+    return {configDetails, config, error, selectGameFolder, handleInputChange, saveConfig};
   },
 });
 </script>
@@ -62,8 +89,17 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   height: 100%;
+
+  button {
+    padding: 0.25rem;
+    margin: 0.25rem;
+  }
 }
 h2 {
   text-align: center;
+}
+.config-input {
+  width: 500px;
+  padding: 0.25rem;
 }
 </style>

@@ -7,10 +7,11 @@ import {loadConfiguration, saveConfiguration} from './configuration-service';
 import type {Mod} from '../interfaces/mod';
 import type {AppConfiguration} from '../interfaces/app-configuration';
 import {ipcRenderer} from 'electron';
-import {computed} from 'vue';
+
 import {buildPackage, extract, findStrings} from './pak-service';
-import {create} from 'domain';
+
 import {ensureDirectory} from './file-service';
+import {loadMods} from './mod-service';
 
 let appPath: string;
 let staticFilesPath: string;
@@ -35,11 +36,12 @@ const STRINGTABLE_ENCODING = 'utf16le';
 
 const destPath = 'D:\\Repos\\Sefaris\\destMods';
 
-export async function installMods(mods: Mod[]): Promise<string> {
+export async function installMods(modIds: string[]): Promise<string> {
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-  const files: string[] = [];
   const filesDictionary = prepareFilesDictionary();
   const createdFiles: string[] = [];
+
+  const mods: Mod[] = await loadMods();
 
   const startTime = performance.now();
   await deleteMods();
@@ -169,6 +171,7 @@ function getDataPath(configuration: AppConfiguration): string {
   if (!configuration) {
     return '';
   }
+  ensureDirectory(path.join(configuration.gothicPath, 'Data'));
   return path.join(configuration.gothicPath, 'Data');
 }
 

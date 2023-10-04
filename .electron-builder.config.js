@@ -20,6 +20,7 @@ module.exports = async function () {
     extraFiles: [      
       {from:'Static', to:'resources\\app\\Static'},
       {from:'Tools', to:'resources\\app\\Tools'},
+      {from:'Presets', to:'Presets'},
     ],
     extraMetadata: {
       version: getVersion(),

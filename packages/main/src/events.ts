@@ -16,7 +16,10 @@ export function addEvents() {
         console.error(err);
       });
   });
+
   ipcMain.handle('get-app-path', () => {
-    return app.getAppPath();
+    return new Promise<string>(resolve => {
+      return resolve(app.getAppPath());
+    });
   });
 }

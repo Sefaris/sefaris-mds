@@ -69,15 +69,20 @@ export async function isModInstalled(id: string): Promise<boolean> {
 }
 
 export async function loadInstalledMods(): Promise<Mod[]> {
-  const installedMods: Mod[] = [];
-  const modList: Mod[] = await loadMods();
-  const configuration: AppConfiguration | null = await loadConfiguration();
-  if (configuration) {
-    for (const mod of modList) {
-      if (configuration.installedMods.includes(mod.id)) {
-        installedMods.push(mod);
-      }
-    }
+  const mods = await loadMods();
+  const configuration = await loadConfiguration();
+  if (!configuration) {
+    return [];
   }
+
+  const installedMods: Mod[] = [];
+  for (const mod of mods) {
+    if (!configuration.installedMods.includes(mod.id)) {
+      continue;
+    }
+
+    installedMods.push(mod);
+  }
+
   return installedMods;
 }

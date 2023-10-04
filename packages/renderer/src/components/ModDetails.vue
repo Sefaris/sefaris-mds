@@ -12,23 +12,24 @@
 <script lang="ts">
 import {loadModDescription, loadImage} from '#preload';
 import type {Mod} from '#preload';
+import type {PropType} from 'vue';
 import {defineComponent, ref, watch} from 'vue';
 
 export default defineComponent({
   components: {},
   props: {
-    modItem: {
-      type: Object as () => Mod,
+    mod: {
+      type: Object as PropType<Mod>,
       required: true,
     },
   },
   setup(props) {
-    const clonedMod: Mod = JSON.parse(JSON.stringify(props.modItem));
+    const clonedMod: Mod = JSON.parse(JSON.stringify(props.mod));
     const desc = ref(loadModDescription(clonedMod));
     const img = ref(loadImage(clonedMod));
 
     watch(
-      () => props.modItem,
+      () => props.mod,
       newMod => {
         const clonedNewMod: Mod = JSON.parse(JSON.stringify(newMod));
         desc.value = loadModDescription(clonedNewMod);
@@ -36,7 +37,7 @@ export default defineComponent({
       },
     );
 
-    return {mod: props.modItem, desc, img};
+    return {desc, img};
   },
 });
 </script>
