@@ -60,3 +60,4 @@ thumbs.db
 
 # MDS files
 config.json
+Presets/*

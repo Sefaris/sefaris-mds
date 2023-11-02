@@ -4,10 +4,11 @@
       <router-link to="/configuration">Configuration</router-link>
     </div>
 
+
     <div class="top-bar">
       <div class="installation-bar">
         <button
-          :disabled="!selectedMods"
+          :disabled="!selectedMods.length"
           @click="installModifications"
         >
           Install
@@ -50,13 +51,14 @@
 <script lang="ts">
 import { defineComponent, ref, shallowRef } from 'vue';
 
-import type { Mod } from '#preload';
+import type { Mod, Preset } from '#preload';
 import { loadMods, loadInstalledMods, installMods, deleteMods, getPresetNames } from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
 import ProgressBar from '../components/ProgressBar.vue';
 import PresetBar from '../components/PresetBar.vue';
+
 
 export default defineComponent({
   components: { ModDetails, ModItem, ProgressBar, PresetBar },
@@ -67,6 +69,8 @@ export default defineComponent({
     const selectedMods = ref<Mod[]>([]);
     const actionName = ref<string>('Waiting for action...');
     const progress = ref<number>(0);
+    const selectedPreset = ref<string>('');
+
 
     //TODO: Nasłuchiwanie na zdarzenia z funkcji preload
     //Do poprawienia, bo nie działa w większości wypadków
@@ -117,6 +121,9 @@ export default defineComponent({
     }
 
     function onModChange(mod: Mod, value: boolean) {
+
+      //TODO: Pytanie czyt zerujemy preset przy dowolnej zmianie istniejącego czy zostawiamy, bo teoretcznie wypadałoby żeby nie zostawiać bo shader może się nie zgadzać
+      selectedPreset.value = '';
       if (value) {
         selectMod(mod);
         return;
@@ -131,7 +138,7 @@ export default defineComponent({
 
     async function installModifications() {
       const ids = selectedMods.value.map(mod => mod.id);
-      const time = await installMods(ids);
+      const time = await installMods(ids, selectedPreset.value);
       //TODO: Replace with toast
       alert(`Installed ${selectedMods.value.length} mods in ${time}ms`);
     }
@@ -146,8 +153,13 @@ export default defineComponent({
       alert('Deleted all modifications');
     }
 
-    function handleLoadPreset(modIds: string[]) {
-      selectedMods.value = modList.value.filter(mod => modIds.includes(mod.id));
+    function handleLoadPreset(preset: Preset) {
+      selectedMods.value = modList.value.filter(mod => preset.modIds.includes(mod.id));
+      selectedPreset.value = preset.name;
+      const missingMods = preset.modIds.filter((modId: string) => !modList.value.some(mod => mod.id === modId));
+      if (missingMods.length > 0) {
+        alert(`Presets contains mods which you dont have: ${missingMods.join(', ')}`);
+      }
     }
 
     return {
@@ -156,6 +168,7 @@ export default defineComponent({
       selectedMods,
       actionName,
       progress,
+      selectedPreset,
       handleModInfo,
       onModChange,
       installModifications,

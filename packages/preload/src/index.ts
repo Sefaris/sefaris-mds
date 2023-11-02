@@ -5,7 +5,7 @@
 export type {AppConfiguration} from './interfaces/app-configuration';
 export type {Mod} from './interfaces/mod';
 export type {ModDetails} from './interfaces/mod-details';
-
+export type {Preset} from './interfaces/preset';
 export {selectGameFolder} from './services/configuration-service';
 export {
   isGothicPathValid,

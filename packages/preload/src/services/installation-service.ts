@@ -6,15 +6,13 @@ import path from 'path';
 import {loadConfiguration, saveConfiguration} from './configuration-service';
 import type {Mod} from '../interfaces/mod';
 import type {AppConfiguration} from '../interfaces/app-configuration';
-import {app, ipcRenderer} from 'electron';
 
 import {buildPackage, extract, findStrings} from './pak-service';
 
-import {ensureDirectory} from './file-service';
+import {ensureDirectory, findFilesEndsWith} from './file-service';
 import {loadMods} from './mod-service';
-import {updateProgressBar} from './progress-service';
 
-const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents');
+const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
 
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
@@ -30,9 +28,7 @@ const SHADER = 'Shader.Cache';
 
 const STRINGTABLE_ENCODING = 'utf16le';
 
-const destPath = 'D:\\Repos\\Sefaris\\destMods';
-
-export async function installMods(modIds: string[]): Promise<string> {
+export async function installMods(modIds: string[], preset?: string): Promise<string> {
   alert(APP_PATH);
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
   const filesDictionary = prepareFilesDictionary();
@@ -44,6 +40,11 @@ export async function installMods(modIds: string[]): Promise<string> {
   console.log(`Mods to install: ${mods.map(mod => mod.id)}`);
   const startTime = performance.now();
   await deleteMods();
+  await moveSaves();
+
+  await moveSplash(configuration, preset);
+  await moveShader(preset);
+
   for (const mod of mods) {
     for (const extension of MOD_EXTENSTIONS) {
       const files = findFilesEndsWith(mod.path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
@@ -79,24 +80,6 @@ function prepareFilesDictionary(): Record<string, string[]> {
     filesDictionary[extension] = [];
   }
   return filesDictionary;
-}
-
-function findFilesEndsWith(modDirectoryPath: string, fileExtension: string): string[] {
-  const files: string[] = [];
-
-  try {
-    const filesList = fs.readdirSync(modDirectoryPath);
-
-    for (const file of filesList) {
-      if (file.endsWith(`.${fileExtension}`)) {
-        files.push(path.join(modDirectoryPath, file));
-      }
-    }
-  } catch (error) {
-    console.error(`Error while finding files: ${error}`);
-  }
-
-  return files;
 }
 
 async function copyFiles(
@@ -235,4 +218,82 @@ async function mergeStringTables(
     encoding: STRINGTABLE_ENCODING,
     flag: 'a',
   });
+}
+
+async function moveSaves() {
+  const newModsFolder = getNextSaveDirectoryName();
+  const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
+  ensureDirectory(newModsFolderPath);
+  const oldFilesPaths = getOldModsFiles();
+  const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
+  for (let i = 0; i < oldFilesPaths.length; i++) {
+    await fs.promises.rename(oldFilesPaths[i], newFilesPaths[i]);
+  }
+}
+
+function getOldModsFiles() {
+  const saves = findFilesEndsWith(G3_DOCUMENTS_PATH, SAVE_EXTENSION);
+  const savesDat = findFilesEndsWith(G3_DOCUMENTS_PATH, SAVEDAT_EXTENSION);
+  const shader = findFilesEndsWith(G3_DOCUMENTS_PATH, 'Cache');
+
+  return saves.concat(savesDat).concat(shader);
+}
+
+function getNextSaveDirectoryName(): string {
+  let maxNumber = -1;
+  const directories = fs.readdirSync(G3_DOCUMENTS_PATH);
+
+  for (const directory of directories) {
+    const directoryName = path.basename(directory);
+
+    if (directoryName.startsWith('Mods')) {
+      const numberString = directoryName.substring(4);
+      const number = parseInt(numberString, 10);
+
+      if (!isNaN(number)) {
+        maxNumber = Math.max(maxNumber, number);
+      }
+    }
+  }
+
+  const nextNumber = maxNumber + 1;
+  return `Mods${nextNumber.toString()}`;
+}
+
+function getNewModsFilesPaths(files: string[], destDirectory: string) {
+  const newFilesPaths: string[] = [];
+  for (const file of files) {
+    const fileName = path.basename(file);
+    const newFilePath = path.join(G3_DOCUMENTS_PATH, destDirectory, fileName);
+    newFilesPaths.push(newFilePath);
+  }
+  return newFilesPaths;
+}
+
+async function moveSplash(configuration: AppConfiguration, presetName?: string) {
+  let splash = path.join(APP_PATH, 'Static', SPLASH);
+  if (presetName && fs.existsSync(path.join(APP_PATH, 'Presets', presetName, SPLASH))) {
+    splash = path.join(APP_PATH, 'Presets', presetName, SPLASH);
+  }
+
+  console.log(splash);
+  if (!fs.existsSync(splash)) {
+    return;
+  }
+
+  const splashDest = path.join(configuration.gothicPath, SPLASH);
+  console.log(splashDest);
+  await fs.copyFileSync(splash, splashDest);
+}
+
+async function moveShader(presetName?: string) {
+  if (!presetName) {
+    return;
+  }
+  const shader = path.join(APP_PATH, 'Presets', presetName, SHADER);
+  if (!fs.existsSync(shader)) {
+    return;
+  }
+  const shaderDest = path.join(G3_DOCUMENTS_PATH, SHADER);
+  await fs.copyFileSync(shader, shaderDest);
 }

@@ -22,7 +22,7 @@ export async function savePreset(modIds: string[], name: string) {
   await fs.promises.writeFile(presetJsonPath, JSON.stringify(preset));
 }
 
-export async function loadPreset(name: string): Promise<string[]> {
+export async function loadPreset(name: string): Promise<Preset> {
   if (!presetExists(name)) {
     alert(`Preset ${name} does not exist!`);
   }
@@ -30,7 +30,7 @@ export async function loadPreset(name: string): Promise<string[]> {
   const presetJsonPath = path.resolve('Presets', name, PRESET_JSON);
   const presetJson = await fs.promises.readFile(presetJsonPath, 'utf-8');
   const preset: Preset = JSON.parse(presetJson);
-  return preset.modIds;
+  return preset;
 }
 
 export async function getPresetNames(): Promise<string[]> {
@@ -38,7 +38,6 @@ export async function getPresetNames(): Promise<string[]> {
   await ensureDirectory(presetPath);
   const presetDirs = await fs.promises.readdir(presetPath);
   const presets = presetDirs.filter(presetExists);
-  console.log(presets);
   return presets;
 }
 

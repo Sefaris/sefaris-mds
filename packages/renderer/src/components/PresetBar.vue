@@ -68,9 +68,8 @@ export default defineComponent({
     }
 
     async function load() {
-      const mods = await loadPreset(presetName.value);
-      //TODO: Obsługa błędu z brakującymi modami
-      emit('loadPreset', mods);
+      const preset = await loadPreset(presetName.value);
+      emit('loadPreset', preset);
     }
 
     function getModsIds() {
