@@ -1,12 +1,12 @@
-import {contextBridge, ipcRenderer} from 'electron';
+import {ipcRenderer} from 'electron';
 import type {AppConfiguration} from '../interfaces/app-configuration';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const configurationPath = 'config.json';
 
-export function selectGameFolder(): void {
-  ipcRenderer.send('open-folder-dialog');
+export async function selectGameFolder(): Promise<string> {
+  return await ipcRenderer.invoke('open-folder-dialog');
 }
 
 export async function saveConfiguration(configuration: AppConfiguration): Promise<boolean> {
@@ -43,11 +43,3 @@ export function isGothicPathValid(param: AppConfiguration | string): boolean {
     return fs.existsSync(path.join(param.gothicPath, 'Gothic3.exe'));
   }
 }
-
-contextBridge.exposeInMainWorld('Apieriusz', {
-  onFolderSelected: (callback: (folderPath: string) => void) => {
-    ipcRenderer.on('folder-selected', (_, folderPath) => {
-      callback(folderPath);
-    });
-  },
-});

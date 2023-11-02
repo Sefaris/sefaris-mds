@@ -8,10 +8,11 @@ let PRESETS_PATH;
 
 let MAIN_PATH;
 //TODO: Ogarnąć ścieżki do aplikacji
+//przpypisać ścieżki do stałych
 getAppPath().then((mainPath: string) => {
   MAIN_PATH = mainPath;
   PRESETS_PATH = path.join(MAIN_PATH, 'Presets');
-  alert(PRESETS_PATH);
+  console.log(PRESETS_PATH);
 });
 
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {

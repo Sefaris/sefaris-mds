@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="details">
+    <!-- TODO: Wczytywanie obrazów z modów -->
     <!-- <img
       v-if="img"
       :src="img"
@@ -25,8 +26,8 @@ export default defineComponent({
   },
   setup(props) {
     const clonedMod: Mod = JSON.parse(JSON.stringify(props.mod));
-    const desc = ref(loadModDescription(clonedMod));
-    const img = ref(loadImage(clonedMod));
+    const desc = ref<string>(loadModDescription(clonedMod));
+    const img = ref<string | null>(loadImage(clonedMod));
 
     watch(
       () => props.mod,

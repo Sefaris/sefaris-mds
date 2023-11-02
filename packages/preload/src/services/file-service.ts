@@ -6,14 +6,6 @@ export async function ensureDirectory(directoryPath: string): Promise<void> {
   }
 }
 
-export function getAppPath(): Promise<string> {
-  return ipcRenderer.invoke('get-app-path').then(result => {
-    return new Promise<string>((resolve, reject) => {
-      if (result) {
-        return resolve(result);
-      } else {
-        return reject();
-      }
-    });
-  });
+export async function getAppPath(): Promise<string> {
+  return await ipcRenderer.invoke('get-app-path');
 }

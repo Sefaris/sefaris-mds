@@ -11,7 +11,7 @@
     <span v-if="configDetails">{{ configDetails }}</span>
     <span v-if="error">{{ error }}</span>
 
-    <button @click="selectGameFolder">Select game folder</button>
+    <button @click="selectG3Folder">Select game folder</button>
     <button
       :disabled="!config.gothicPath || !!error"
       @click="saveConfig"
@@ -40,15 +40,22 @@ export default defineComponent({
     });
     const error = ref<string>();
 
-    window.Apieriusz.onFolderSelected(async (folderPath: string) => {
+    async function selectG3Folder() {
       error.value = '';
-      config.value.gothicPath = folderPath;
+
+      const folderPath = await selectGameFolder();
+      if (!folderPath) {
+        error.value = 'No folder selected';
+        return;
+      }
       if (!isGothicPathValid(folderPath)) {
         error.value = 'Invalid Gothic path';
+        return;
       }
-    });
+      config.value.gothicPath = folderPath;
+    }
 
-    const handleInputChange = (event: Event) => {
+    function handleInputChange(event: Event) {
       configDetails.value = '';
       error.value = '';
       const inputElement = event.target as HTMLInputElement;
@@ -56,13 +63,13 @@ export default defineComponent({
       if (!isGothicPathValid(inputElement.value)) {
         error.value = 'Invalid Gothic path';
       }
-    };
-    const checkConfig = async () => {
+    }
+    async function checkConfig() {
       const conf = await loadConfiguration();
       if (conf) {
         config.value = conf;
       }
-    };
+    }
     checkConfig();
 
     async function saveConfig() {
@@ -77,7 +84,7 @@ export default defineComponent({
       }
     }
 
-    return {configDetails, config, error, selectGameFolder, handleInputChange, saveConfig};
+    return {configDetails, config, error, selectG3Folder, handleInputChange, saveConfig};
   },
 });
 </script>

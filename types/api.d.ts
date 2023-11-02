@@ -1,7 +1,5 @@
-interface Apieriusz {
-  onFolderSelected(callback: (folderPath: string) => void): void;
-}
+// interface Apieriusz {}
 
-interface Window {
-  Apieriusz: Apieriusz;
-}
+// interface Window {
+//   Apieriusz: Apieriusz;
+// }

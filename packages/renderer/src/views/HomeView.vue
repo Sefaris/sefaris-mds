@@ -1,28 +1,33 @@
 <template>
-  <router-link to="/configuration">Configuration</router-link>
-
-  <div>
-    <button @click="installModifications">Install</button>
-    <button @click="deleteModifications">Delete</button>
-    <button @click="selectAll">SELECT ALL</button>
-  </div>
-
   <div class="container">
-    <mod-details
-      v-if="modInfo"
-      :mod="modInfo"
-    />
-
-    <div class="list-container">
-      <mod-item
-        v-for="(mod, index) in modList"
-        :key="index"
-        :mod="mod"
-        :checked="selectedMods.includes(mod)"
-        @mod-details="handleModInfo(mod)"
-        @change="onModChange(mod, $event)"
-      />
+    <router-link to="/configuration">Configuration</router-link>
+    <div>
+      <button @click="installModifications">Install</button>
+      <button @click="deleteModifications">Delete</button>
+      <button @click="selectAll">SELECT ALL</button>
     </div>
+
+    <div class="mods">
+      <mod-details
+        v-if="modInfo"
+        :mod="modInfo"
+      />
+
+      <div class="mods-list">
+        <mod-item
+          v-for="(mod, index) in modList"
+          :key="index"
+          :mod="mod"
+          :checked="selectedMods.includes(mod)"
+          @mod-details="handleModInfo(mod)"
+          @change="onModChange(mod, $event)"
+        />
+      </div>
+    </div>
+    <progress-bar
+      :action-name="actionName"
+      :progress="progress"
+    />
   </div>
 </template>
 
@@ -34,22 +39,30 @@ import {loadMods, loadInstalledMods, installMods, deleteMods} from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
+import ProgressBar from '../components/ProgressBar.vue';
 
 export default defineComponent({
-  components: {ModDetails, ModItem},
+  components: {ModDetails, ModItem, ProgressBar},
 
   setup() {
     const modInfo = shallowRef<Mod>();
     const modList = shallowRef<Mod[]>([]);
     const selectedMods = ref<Mod[]>([]);
-    const showMessageBox = ref<boolean>(false);
+    const actionName = ref<string>('Waiting for action...');
+    const progress = ref<number>(0);
 
+    //TODO: Nasłuchiwanie na zdarzenia z funkcji preload
+    //Do poprawienia, bo nie działa w większości wypadków
+    window.addEventListener('message', event => {
+      const message = event.data;
+      actionName.value = message.actionName;
+      progress.value = message.progressValue;
+    });
     loadMods().then(mods => {
       modList.value = mods;
       if (mods.length === 0) {
         return;
       }
-
       modInfo.value = mods[0];
     });
 
@@ -103,7 +116,7 @@ export default defineComponent({
       const ids = selectedMods.value.map(mod => mod.id);
       const time = await installMods(ids);
       //TODO: Replace with toast
-      alert(`Installed ${ids.length} mods in ${time}ms`);
+      alert(`Installed ${selectedMods.value.length} mods in ${time}ms`);
     }
 
     function handleModInfo(mod: Mod) {
@@ -120,7 +133,8 @@ export default defineComponent({
       modList,
       modInfo,
       selectedMods,
-      showMessageBox,
+      actionName,
+      progress,
       handleModInfo,
       onModChange,
       installModifications,
@@ -134,14 +148,21 @@ export default defineComponent({
 <style lang="scss">
 .container {
   display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+.mods {
+  display: flex;
   justify-content: space-between;
   gap: 0.5rem;
-}
 
-.list-container {
-  display: flex;
-  flex-direction: column;
-  flex-basis: 40%;
-  gap: 0.5rem;
+  &-list {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 40%;
+    gap: 0.5rem;
+    overflow-y: auto;
+    max-height: 700px;
+  }
 }
 </style>

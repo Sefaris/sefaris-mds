@@ -12,6 +12,7 @@ import {buildPackage, extract, findStrings} from './pak-service';
 
 import {ensureDirectory} from './file-service';
 import {loadMods} from './mod-service';
+import {updateProgressBar} from './progress-service';
 
 let appPath: string;
 let staticFilesPath: string;
@@ -41,11 +42,11 @@ export async function installMods(modIds: string[]): Promise<string> {
   const filesDictionary = prepareFilesDictionary();
   const createdFiles: string[] = [];
 
-  const mods: Mod[] = await loadMods();
-
+  const allMods: Mod[] = await loadMods();
+  const mods = allMods.filter(mod => modIds.includes(mod.id));
+  console.log(mods);
   const startTime = performance.now();
   await deleteMods();
-
   for (const mod of mods) {
     for (const extension of MOD_EXTENSTIONS) {
       const files = findFilesEndsWith(mod.path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
@@ -55,7 +56,6 @@ export async function installMods(modIds: string[]): Promise<string> {
       filesDictionary[extension].push(...files);
     }
   }
-
   appendFakeFiles(filesDictionary);
 
   for (const key in filesDictionary) {
