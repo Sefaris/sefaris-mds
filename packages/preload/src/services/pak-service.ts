@@ -1,19 +1,9 @@
 const {execFile} = require('node:child_process');
 import path from 'path';
 import * as fs from 'fs';
-import {ensureDirectory, getAppPath} from './file-service';
+import {ensureDirectory} from './file-service';
 const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak.exe');
 const G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3PakDir.exe');
-let PRESETS_PATH;
-
-let MAIN_PATH;
-//TODO: Ogarnąć ścieżki do aplikacji
-//przpypisać ścieżki do stałych
-getAppPath().then((mainPath: string) => {
-  MAIN_PATH = mainPath;
-  PRESETS_PATH = path.join(MAIN_PATH, 'Presets');
-  console.log(PRESETS_PATH);
-});
 
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {
   const destinationPath = destPath ?? srcPath + '\\kek.pak';

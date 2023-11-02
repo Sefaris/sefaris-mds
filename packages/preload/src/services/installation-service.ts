@@ -6,7 +6,7 @@ import path from 'path';
 import {loadConfiguration, saveConfiguration} from './configuration-service';
 import type {Mod} from '../interfaces/mod';
 import type {AppConfiguration} from '../interfaces/app-configuration';
-import {ipcRenderer} from 'electron';
+import {app, ipcRenderer} from 'electron';
 
 import {buildPackage, extract, findStrings} from './pak-service';
 
@@ -14,15 +14,10 @@ import {ensureDirectory} from './file-service';
 import {loadMods} from './mod-service';
 import {updateProgressBar} from './progress-service';
 
-let appPath: string;
-let staticFilesPath: string;
-ipcRenderer.invoke('get-app-path').then((applicationPath: string) => {
-  appPath = applicationPath;
-  staticFilesPath = path.join(appPath, 'Static');
-});
-
 const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents');
 
+const APP_PATH = path.resolve();
+const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
 const STATIC_FILE_MOD_EXTENSTION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
 const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
@@ -38,13 +33,15 @@ const STRINGTABLE_ENCODING = 'utf16le';
 const destPath = 'D:\\Repos\\Sefaris\\destMods';
 
 export async function installMods(modIds: string[]): Promise<string> {
+  alert(APP_PATH);
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
   const filesDictionary = prepareFilesDictionary();
   const createdFiles: string[] = [];
 
   const allMods: Mod[] = await loadMods();
   const mods = allMods.filter(mod => modIds.includes(mod.id));
-  console.log(mods);
+  console.log(`Selected mods: ${modIds}`);
+  console.log(`Mods to install: ${mods.map(mod => mod.id)}`);
   const startTime = performance.now();
   await deleteMods();
   for (const mod of mods) {
@@ -163,8 +160,8 @@ export async function deleteMods(): Promise<void> {
 }
 
 function appendFakeFiles(dictionary: Record<string, string[]>): void {
-  dictionary['mod'].push(path.join(staticFilesPath, 'Projects_compiled.m0x'));
-  dictionary['nod'].push(path.join(staticFilesPath, 'Projects_compiled.n0x'));
+  dictionary['mod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.m0x'));
+  dictionary['nod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.n0x'));
 }
 
 function getDataPath(configuration: AppConfiguration): string {

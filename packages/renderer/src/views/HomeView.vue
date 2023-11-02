@@ -1,10 +1,26 @@
 <template>
   <div class="container">
-    <router-link to="/configuration">Configuration</router-link>
-    <div>
-      <button @click="installModifications">Install</button>
-      <button @click="deleteModifications">Delete</button>
-      <button @click="selectAll">SELECT ALL</button>
+    <div class="navbar">
+      <router-link to="/configuration">Configuration</router-link>
+    </div>
+
+    <div class="top-bar">
+      <div class="installation-bar">
+        <button
+          :disabled="!selectedMods"
+          @click="installModifications"
+        >
+          Install
+        </button>
+        <button @click="deleteModifications">Delete</button>
+        <button @click="selectAll">SELECT ALL</button>
+      </div>
+      <div class="preset-bar">
+        <preset-bar
+          :mod-ids="selectedMods"
+          @load-preset="handleLoadPreset"
+        />
+      </div>
     </div>
 
     <div class="mods">
@@ -32,17 +48,18 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, shallowRef} from 'vue';
+import { defineComponent, ref, shallowRef } from 'vue';
 
-import type {Mod} from '#preload';
-import {loadMods, loadInstalledMods, installMods, deleteMods} from '#preload';
+import type { Mod } from '#preload';
+import { loadMods, loadInstalledMods, installMods, deleteMods, getPresetNames } from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
 import ProgressBar from '../components/ProgressBar.vue';
+import PresetBar from '../components/PresetBar.vue';
 
 export default defineComponent({
-  components: {ModDetails, ModItem, ProgressBar},
+  components: { ModDetails, ModItem, ProgressBar, PresetBar },
 
   setup() {
     const modInfo = shallowRef<Mod>();
@@ -129,6 +146,10 @@ export default defineComponent({
       alert('Deleted all modifications');
     }
 
+    function handleLoadPreset(modIds: string[]) {
+      selectedMods.value = modList.value.filter(mod => modIds.includes(mod.id));
+    }
+
     return {
       modList,
       modInfo,
@@ -140,6 +161,8 @@ export default defineComponent({
       installModifications,
       deleteModifications,
       selectAll,
+      getPresetNames,
+      handleLoadPreset,
     };
   },
 });
@@ -147,22 +170,31 @@ export default defineComponent({
 
 <style lang="scss">
 .container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-rows: 1fr 1fr 90%;
   height: 100dvh;
 }
-.mods {
-  display: flex;
+
+.top-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   justify-content: space-between;
-  gap: 0.5rem;
+  align-items: center;
+
+  .preset-bar {
+    display: grid;
+    justify-content: end;
+
+  }
+}
+
+.mods {
+  display: grid;
+  grid-template-columns: 60% 1fr;
 
   &-list {
-    display: flex;
-    flex-direction: column;
-    flex-basis: 40%;
-    gap: 0.5rem;
     overflow-y: auto;
-    max-height: 700px;
   }
 }
 </style>
