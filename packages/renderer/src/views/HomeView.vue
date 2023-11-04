@@ -2,7 +2,8 @@
   <div class="container">
     <div class="navbar">
       <router-link to="/configuration">Configuration</router-link>
-      {{ selectedMods.length }}
+      Selected:{{ selectedMods.length }}
+      Mods: {{ modList.length }}
     </div>
 
     <div class="top-bar">
@@ -136,7 +137,9 @@ export default defineComponent({
     }
 
     async function selectAll() {
-      selectedMods.value = modList.value;
+      for (const mod of modList.value) {
+        selectMod(mod);
+      }
     }
 
     async function installModifications() {

@@ -1,6 +1,6 @@
 <template>
   <div class="preset-container">
-    <button @click="reloadPresets">o</button>
+    <button @click="reloadPresets">Reload</button>
     <input
       v-model="presetName"
       list="presets"
