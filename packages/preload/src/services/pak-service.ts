@@ -71,7 +71,6 @@ export async function extract(
 
     try {
       await fs.renameSync(sourceFilePath, destinationFilePath);
-      console.log(`Przeniesiono ${fileName}`);
     } catch (error) {
       console.error(`Błąd podczas przenoszenia ${fileName}: ${error}`);
     }
@@ -101,6 +100,5 @@ export async function findStrings(dataPath: string): Promise<string> {
     console.error(`Błąd podczas wyszukiwania plików: ${error}`);
   }
 
-  console.log(files);
   return files[0];
 }

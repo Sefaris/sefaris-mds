@@ -18,7 +18,7 @@ export {
   loadModDescription,
   loadImage,
   isModInstalled,
-  loadInstalledMods,
+  loadInstalledModsIds,
 } from './services/mod-service';
 
 export {installMods, deleteMods} from './services/installation-service';

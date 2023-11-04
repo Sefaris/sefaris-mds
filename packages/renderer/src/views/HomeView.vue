@@ -2,11 +2,15 @@
   <div class="container">
     <div class="navbar">
       <router-link to="/configuration">Configuration</router-link>
+      {{ selectedMods.length }}
     </div>
-
 
     <div class="top-bar">
       <div class="installation-bar">
+        <label>Merge<input
+          v-model="merge"
+          type="checkbox"
+        /></label>
         <button
           :disabled="!selectedMods.length"
           @click="installModifications"
@@ -52,7 +56,7 @@
 import { defineComponent, ref, shallowRef } from 'vue';
 
 import type { Mod, Preset } from '#preload';
-import { loadMods, loadInstalledMods, installMods, deleteMods, getPresetNames } from '#preload';
+import { loadMods, loadInstalledModsIds, installMods, deleteMods, getPresetNames } from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
@@ -70,7 +74,7 @@ export default defineComponent({
     const actionName = ref<string>('Waiting for action...');
     const progress = ref<number>(0);
     const selectedPreset = ref<string>('');
-
+    const merge = ref<boolean>(false);
 
     //TODO: Nasłuchiwanie na zdarzenia z funkcji preload
     //Do poprawienia, bo nie działa w większości wypadków
@@ -87,7 +91,7 @@ export default defineComponent({
       modInfo.value = mods[0];
     });
 
-    loadInstalledMods().then(mods => (selectedMods.value = mods));
+    loadInstalledModsIds().then(mods => (selectedMods.value = modList.value.filter(mod => mods.includes(mod.id))));
 
     function selectDependencies(mod: Mod) {
       for (const dependency of mod.dependencies) {
@@ -121,7 +125,6 @@ export default defineComponent({
     }
 
     function onModChange(mod: Mod, value: boolean) {
-
       //TODO: Pytanie czyt zerujemy preset przy dowolnej zmianie istniejącego czy zostawiamy, bo teoretcznie wypadałoby żeby nie zostawiać bo shader może się nie zgadzać
       selectedPreset.value = '';
       if (value) {
@@ -138,9 +141,9 @@ export default defineComponent({
 
     async function installModifications() {
       const ids = selectedMods.value.map(mod => mod.id);
-      const time = await installMods(ids, selectedPreset.value);
+      const time = await installMods(ids, selectedPreset.value, merge.value);
       //TODO: Replace with toast
-      alert(`Installed ${selectedMods.value.length} mods in ${time}ms`);
+      alert(`Installed ${selectedMods.value.length} mods in ${time}s`);
     }
 
     function handleModInfo(mod: Mod) {
@@ -158,7 +161,7 @@ export default defineComponent({
       selectedPreset.value = preset.name;
       const missingMods = preset.modIds.filter((modId: string) => !modList.value.some(mod => mod.id === modId));
       if (missingMods.length > 0) {
-        alert(`Presets contains mods which you dont have: ${missingMods.join(', ')}`);
+        alert(`Preset contains mods which you dont have: ${missingMods.join(', ')}`);
       }
     }
 
@@ -169,6 +172,7 @@ export default defineComponent({
       actionName,
       progress,
       selectedPreset,
+      merge,
       handleModInfo,
       onModChange,
       installModifications,
