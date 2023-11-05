@@ -1,11 +1,14 @@
 <template>
+  <title-bar />
   <router-view></router-view>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { defineComponent } from 'vue';
+import TitleBar from './components/TitleBar.vue';
 
 export default defineComponent({
+  components: { TitleBar },
   setup() {
     return {};
   },
@@ -16,7 +19,7 @@ export default defineComponent({
 @import '../assets/styles/variables.scss';
 
 #app {
-  min-height: 861px;
+  height: calc(100vh - 30px);
   max-width: 800px;
 }
 </style>

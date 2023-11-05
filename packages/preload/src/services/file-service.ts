@@ -1,6 +1,9 @@
+import {exec} from 'child_process';
 import {ipcRenderer} from 'electron';
 import * as fs from 'fs';
 import path from 'path';
+import type {AppConfiguration} from '../interfaces/app-configuration';
+import {loadConfiguration} from './configuration-service';
 export async function ensureDirectory(directoryPath: string): Promise<void> {
   if (!fs.existsSync(directoryPath)) {
     fs.mkdirSync(directoryPath);
@@ -27,4 +30,14 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
   }
 
   return files;
+}
+
+export async function openGameFolder() {
+  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+  exec(`explorer ${configuration.gothicPath}`);
+}
+
+export async function openModsFolder() {
+  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+  exec(`explorer ${configuration.modsPath}`);
 }

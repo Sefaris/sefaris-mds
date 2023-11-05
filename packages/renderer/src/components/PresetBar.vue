@@ -1,6 +1,8 @@
 <template>
   <div class="preset-container">
-    <button @click="reloadPresets">Reload</button>
+    <button @click="reloadPresets">
+      <mdi-icon icon="mdi-reload" />
+    </button>
     <input
       v-model="presetName"
       list="presets"
@@ -18,19 +20,19 @@
       :disabled="!presetName"
       @click="save"
     >
-      Save
+      <mdi-icon icon="mdi-content-save" />
     </button>
     <button
       :disabled="!presetName"
       @click="load"
     >
-      Load
+      <mdi-icon icon="mdi-content-save" />
     </button>
     <button
       :disabled="!presetName"
       @click="remove"
     >
-      Delete
+      <mdi-icon icon="mdi-delete" />
     </button>
   </div>
 </template>
@@ -39,7 +41,10 @@
 import { defineComponent, ref } from 'vue';
 import { getPresetNames, loadPreset, savePreset, deletePreset } from '#preload';
 import type { Mod } from '#preload';
+
+import MdiIcon from './MdiIcon.vue';
 export default defineComponent({
+  components: { MdiIcon },
   props: {
     modIds: {
       type: Array<Mod>,
@@ -86,5 +91,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '../../assets/styles/variables.scss';
+
 .preset-container {}
 </style>

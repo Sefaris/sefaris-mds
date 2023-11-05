@@ -7,6 +7,7 @@ async function createWindow() {
     width: 800,
     height: 900,
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
+    frame: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

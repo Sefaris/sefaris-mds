@@ -19,7 +19,8 @@ export async function savePreset(modIds: string[], name: string) {
   };
 
   const presetJsonPath = path.join(presetPath, PRESET_JSON);
-  await fs.promises.writeFile(presetJsonPath, JSON.stringify(preset));
+
+  await fs.promises.writeFile(presetJsonPath, JSON.stringify(preset, null, 4));
 }
 
 export async function loadPreset(name: string): Promise<Preset> {

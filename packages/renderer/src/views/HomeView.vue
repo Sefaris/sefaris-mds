@@ -12,14 +12,33 @@
           v-model="merge"
           type="checkbox"
         /></label>
-        <button
-          :disabled="!selectedMods.length"
-          @click="installModifications"
-        >
-          Install
-        </button>
-        <button @click="deleteModifications">Delete</button>
-        <button @click="selectAll">SELECT ALL</button>
+
+        <custom-button
+          :action="installModifications"
+          icon="mdi-play"
+        />
+
+        <custom-button
+          :action="deleteModifications"
+          icon="mdi-delete"
+        />
+        <custom-button
+          :action="selectAll"
+          icon="mdi-select-group"
+        />
+
+        <custom-button
+          :action="openGameFolder"
+          icon="mdi-gamepad-variant"
+        />
+        <custom-button
+          :action="openModsFolder"
+          icon="mdi-folder"
+        />
+        <custom-button
+          :action="getPresetNames"
+          text="kekw"
+        />
       </div>
       <div class="preset-bar">
         <preset-bar
@@ -57,16 +76,16 @@
 import { defineComponent, ref, shallowRef } from 'vue';
 
 import type { Mod, Preset } from '#preload';
-import { loadMods, loadInstalledModsIds, installMods, deleteMods, getPresetNames } from '#preload';
+import { loadMods, loadInstalledModsIds, installMods, deleteMods, getPresetNames, openGameFolder, openModsFolder } from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
 import ProgressBar from '../components/ProgressBar.vue';
 import PresetBar from '../components/PresetBar.vue';
-
+import CustomButton from '../components/CustomButton.vue';
 
 export default defineComponent({
-  components: { ModDetails, ModItem, ProgressBar, PresetBar },
+  components: { ModDetails, ModItem, ProgressBar, PresetBar, CustomButton },
 
   setup() {
     const modInfo = shallowRef<Mod>();
@@ -137,6 +156,10 @@ export default defineComponent({
     }
 
     async function selectAll() {
+      if (modList.value.length === selectedMods.value.length) {
+        selectedMods.value = [];
+        return;
+      }
       for (const mod of modList.value) {
         selectMod(mod);
       }
@@ -158,6 +181,7 @@ export default defineComponent({
       //TODO: Replace with toast
       alert('Deleted all modifications');
     }
+
 
     function handleLoadPreset(preset: Preset) {
       selectedMods.value = modList.value.filter(mod => preset.modIds.includes(mod.id));
@@ -183,6 +207,8 @@ export default defineComponent({
       selectAll,
       getPresetNames,
       handleLoadPreset,
+      openGameFolder,
+      openModsFolder,
     };
   },
 });
@@ -193,7 +219,7 @@ export default defineComponent({
   display: grid;
   grid-template-rows: 1fr;
   grid-template-rows: 1fr 1fr 90%;
-  height: 100dvh;
+  height: calc(100vh - 30px);
 }
 
 .top-bar {

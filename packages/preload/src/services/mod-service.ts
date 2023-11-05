@@ -39,25 +39,29 @@ function validateMod(modPath: string): Mod | null {
   return mod;
 }
 
-export function loadModDescription(mod: Mod): string {
+export function loadModDescription(modPath: string): string {
   const md = new MarkdownIt();
-  const file = path.join(mod.path, 'readme.md');
+  const file = path.join(modPath, 'readme.md');
   if (!fs.existsSync(file)) {
     return 'No description available.';
   }
   return md.render(fs.readFileSync(file, 'utf8'));
 }
 
-export function loadImage(mod: Mod): string | null {
-  const files = fs.readdirSync(mod.path);
+export function loadImages(modPath: string): string[] {
+  const files = fs.readdirSync(modPath);
   const imageFiles = files.filter(file => {
     const ext = path.extname(file).toLowerCase();
     return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
   });
+  const images: string[] = [];
   if (imageFiles.length > 0) {
-    return path.join(mod.path, imageFiles[0]);
+    for (const imageFile of imageFiles) {
+      const img = path.join(modPath, imageFile);
+      images.push(`data:image/png;base64,${fs.readFileSync(img).toString('base64')}`);
+    }
   }
-  return null;
+  return images;
 }
 
 export async function isModInstalled(id: string): Promise<boolean> {

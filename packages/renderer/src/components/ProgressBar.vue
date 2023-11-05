@@ -2,14 +2,14 @@
   <div class="progress">
     <div
       class="progress-bar"
-      :style="{width: progress + '%'}"
+      :style="{ width: progress + '%' }"
     ></div>
     <span class="progress-name">{{ actionName }}</span>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -29,6 +29,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '../../assets/styles/variables.scss';
+
 .progress {
   width: 100%;
   height: 20px;
@@ -37,6 +39,7 @@ export default defineComponent({
   overflow: hidden;
   margin-top: auto;
   position: relative;
+
   &-name {
     position: absolute;
     top: 50%;

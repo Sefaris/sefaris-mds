@@ -7,6 +7,11 @@ export type {Mod} from './interfaces/mod';
 export type {ModDetails} from './interfaces/mod-details';
 export type {Preset} from './interfaces/preset';
 export {selectGameFolder} from './services/configuration-service';
+
+export {openGameFolder, openModsFolder} from './services/file-service';
+
+export {minimizeWindow, closeApplication, loadIcon} from './services/titlebar-service';
+
 export {
   isGothicPathValid,
   saveConfiguration,
@@ -16,7 +21,7 @@ export {
 export {
   loadMods,
   loadModDescription,
-  loadImage,
+  loadImages,
   isModInstalled,
   loadInstalledModsIds,
 } from './services/mod-service';

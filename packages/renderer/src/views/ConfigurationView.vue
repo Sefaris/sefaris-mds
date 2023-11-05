@@ -1,31 +1,33 @@
 <template>
-  <RouterLink to="/">Home</RouterLink>
-  <h2>Config</h2>
   <div class="config-container">
-    <input
-      :value="config.gothicPath"
-      class="config-input"
-      type="text"
-      @input="handleInputChange"
-    />
-    <span v-if="configDetails">{{ configDetails }}</span>
-    <span v-if="error">{{ error }}</span>
+    <RouterLink to="/">Home</RouterLink>
+    <h2>Config</h2>
+    <div class="config">
+      <input
+        :value="config.gothicPath"
+        class="config-input"
+        type="text"
+        @input="handleInputChange"
+      />
+      <span v-if="configDetails">{{ configDetails }}</span>
+      <span v-if="error">{{ error }}</span>
 
-    <button @click="selectG3Folder">Select game folder</button>
-    <button
-      :disabled="!config.gothicPath || !!error"
-      @click="saveConfig"
-    >
-      Save
-    </button>
+      <button @click="selectG3Folder">Select game folder</button>
+      <button
+        :disabled="!config.gothicPath || !!error"
+        @click="saveConfig"
+      >
+        Save
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import type {AppConfiguration} from '#preload';
+import type { AppConfiguration } from '#preload';
 
-import {defineComponent, ref} from 'vue';
-import {selectGameFolder, isGothicPathValid, saveConfiguration, loadConfiguration} from '#preload';
+import { defineComponent, ref } from 'vue';
+import { selectGameFolder, isGothicPathValid, saveConfiguration, loadConfiguration } from '#preload';
 import router from '../router';
 
 export default defineComponent({
@@ -84,27 +86,31 @@ export default defineComponent({
       }
     }
 
-    return {configDetails, config, error, selectG3Folder, handleInputChange, saveConfig};
+    return { configDetails, config, error, selectG3Folder, handleInputChange, saveConfig };
   },
 });
 </script>
 
 <style lang="scss">
 .config-container {
+  height: calc(100vh - 30px);
+}
+
+.config {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
 
   button {
     padding: 0.25rem;
     margin: 0.25rem;
   }
 }
+
 h2 {
   text-align: center;
 }
+
 .config-input {
   width: 500px;
   padding: 0.25rem;

@@ -17,10 +17,10 @@
 </template>
 
 <script lang="ts">
-import type {Mod} from '#preload';
+import type { Mod } from '#preload';
 
-import type {PropType} from 'vue';
-import {defineComponent} from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {},
@@ -39,7 +39,7 @@ export default defineComponent({
 
   emits: ['modDetails', 'change'],
 
-  setup(_, {emit}) {
+  setup(_, { emit }) {
     function onChange(event: Event) {
       if (!event.target) {
         return;
@@ -56,6 +56,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '../../assets/styles/variables.scss';
+
 .mod {
   display: flex;
   gap: 0.25rem;
