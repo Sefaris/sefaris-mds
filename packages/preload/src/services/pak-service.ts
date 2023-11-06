@@ -72,7 +72,7 @@ export async function extract(
     try {
       await fs.renameSync(sourceFilePath, destinationFilePath);
     } catch (error) {
-      console.error(`Błąd podczas przenoszenia ${fileName}: ${error}`);
+      console.error(error);
     }
   }
   fs.rm(tempDir, {recursive: true, force: true}, error => {
@@ -87,17 +87,14 @@ export async function extract(
 
 export async function findStrings(dataPath: string): Promise<string> {
   const files: string[] = [];
-  try {
-    const filesList = fs.readdirSync(dataPath);
-    const regex = /^strings/i; // "i" oznacza ignorowanie wielkości liter
 
-    for (const file of filesList) {
-      if (regex.test(file)) {
-        files.push(path.join(dataPath, file));
-      }
+  const filesList = fs.readdirSync(dataPath);
+  const regex = /^strings/i; // "i" oznacza ignorowanie wielkości liter
+
+  for (const file of filesList) {
+    if (regex.test(file)) {
+      files.push(path.join(dataPath, file));
     }
-  } catch (error) {
-    console.error(`Błąd podczas wyszukiwania plików: ${error}`);
   }
 
   return files[0];

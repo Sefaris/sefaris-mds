@@ -16,10 +16,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '../assets/styles/variables.scss';
+@import '../assets/styles/main.scss';
 
 #app {
   height: calc(100vh - 30px);
-  max-width: 800px;
+  max-width: 100vw;
 }
 </style>

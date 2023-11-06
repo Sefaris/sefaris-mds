@@ -6,7 +6,7 @@ import type {AppConfiguration} from '../interfaces/app-configuration';
 import {loadConfiguration} from './configuration-service';
 export async function ensureDirectory(directoryPath: string): Promise<void> {
   if (!fs.existsSync(directoryPath)) {
-    fs.mkdirSync(directoryPath);
+    fs.promises.mkdir(directoryPath, {recursive: true});
   }
 }
 

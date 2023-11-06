@@ -15,6 +15,7 @@
 import { loadModDescription, loadImages } from '#preload';
 import type { Mod } from '#preload';
 import type { PropType } from 'vue';
+import { onBeforeUnmount } from 'vue';
 import { defineComponent, ref, shallowRef, watch } from 'vue';
 
 export default defineComponent({
@@ -49,6 +50,11 @@ export default defineComponent({
       },
     );
 
+    onBeforeUnmount(() => {
+      if (interval.value !== null) {
+        clearInterval(interval.value);
+      }
+    });
 
 
     function changeImage() {

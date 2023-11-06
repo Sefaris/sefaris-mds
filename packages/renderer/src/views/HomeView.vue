@@ -1,23 +1,25 @@
 <template>
   <div class="container">
     <div class="navbar">
-      <router-link to="/configuration">Configuration</router-link>
+      <change-locale />
+
+      <router-link to="/configuration">{{ $t('common.configuration') }}</router-link>
       Selected:{{ selectedMods.length }}
       Mods: {{ modList.length }}
     </div>
 
     <div class="top-bar">
       <div class="installation-bar">
-        <label>Merge<input
-          v-model="merge"
-          type="checkbox"
-        /></label>
-
         <custom-button
+          :disabled="selectedMods.length === 0"
           :action="installModifications"
           icon="mdi-play"
         />
 
+        <custom-button
+          :action="mergeModFiles"
+          icon="mdi-set-merge"
+        />
         <custom-button
           :action="deleteModifications"
           icon="mdi-delete"
@@ -34,10 +36,6 @@
         <custom-button
           :action="openModsFolder"
           icon="mdi-folder"
-        />
-        <custom-button
-          :action="getPresetNames"
-          text="kekw"
         />
       </div>
       <div class="preset-bar">
@@ -76,16 +74,17 @@
 import { defineComponent, ref, shallowRef } from 'vue';
 
 import type { Mod, Preset } from '#preload';
-import { loadMods, loadInstalledModsIds, installMods, deleteMods, getPresetNames, openGameFolder, openModsFolder } from '#preload';
+import { loadMods, loadInstalledModsIds, installMods, deleteMods, getPresetNames, openGameFolder, openModsFolder, mergeModFiles } from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
 import ProgressBar from '../components/ProgressBar.vue';
 import PresetBar from '../components/PresetBar.vue';
 import CustomButton from '../components/CustomButton.vue';
+import ChangeLocale from '../components/ChangeLocale.vue';
 
 export default defineComponent({
-  components: { ModDetails, ModItem, ProgressBar, PresetBar, CustomButton },
+  components: { ModDetails, ModItem, ProgressBar, PresetBar, CustomButton, ChangeLocale },
 
   setup() {
     const modInfo = shallowRef<Mod>();
@@ -94,15 +93,8 @@ export default defineComponent({
     const actionName = ref<string>('Waiting for action...');
     const progress = ref<number>(0);
     const selectedPreset = ref<string>('');
-    const merge = ref<boolean>(false);
 
-    //TODO: Nasłuchiwanie na zdarzenia z funkcji preload
-    //Do poprawienia, bo nie działa w większości wypadków
-    window.addEventListener('message', event => {
-      const message = event.data;
-      actionName.value = message.actionName;
-      progress.value = message.progressValue;
-    });
+
     loadMods().then(mods => {
       modList.value = mods;
       if (mods.length === 0) {
@@ -145,7 +137,6 @@ export default defineComponent({
     }
 
     function onModChange(mod: Mod, value: boolean) {
-      //TODO: Pytanie czyt zerujemy preset przy dowolnej zmianie istniejącego czy zostawiamy, bo teoretcznie wypadałoby żeby nie zostawiać bo shader może się nie zgadzać
       selectedPreset.value = '';
       if (value) {
         selectMod(mod);
@@ -167,7 +158,7 @@ export default defineComponent({
 
     async function installModifications() {
       const ids = selectedMods.value.map(mod => mod.id);
-      const time = await installMods(ids, selectedPreset.value, merge.value);
+      const time = await installMods(ids, selectedPreset.value);
       //TODO: Replace with toast
       alert(`Installed ${selectedMods.value.length} mods in ${time}s`);
     }
@@ -192,6 +183,8 @@ export default defineComponent({
       }
     }
 
+
+
     return {
       modList,
       modInfo,
@@ -199,7 +192,6 @@ export default defineComponent({
       actionName,
       progress,
       selectedPreset,
-      merge,
       handleModInfo,
       onModChange,
       installModifications,
@@ -209,6 +201,7 @@ export default defineComponent({
       handleLoadPreset,
       openGameFolder,
       openModsFolder,
+      mergeModFiles,
     };
   },
 });

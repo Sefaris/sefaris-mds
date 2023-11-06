@@ -27,5 +27,5 @@ export {
 } from './services/mod-service';
 
 export {installMods, deleteMods} from './services/installation-service';
-
+export {mergeModFiles} from './services/merge-service';
 export {savePreset, loadPreset, getPresetNames, deletePreset} from './services/preset-service';

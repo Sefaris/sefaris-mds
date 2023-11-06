@@ -1,6 +1,6 @@
 <template>
   <div class="config-container">
-    <RouterLink to="/">Home</RouterLink>
+    <RouterLink to="/">{{ $t('common.home') }}</RouterLink>
     <h2>Config</h2>
     <div class="config">
       <input

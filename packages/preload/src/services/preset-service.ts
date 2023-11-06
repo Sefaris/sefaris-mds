@@ -2,8 +2,7 @@ import {ensureDirectory} from './file-service';
 import path from 'path';
 import * as fs from 'fs';
 import type {Preset} from '../interfaces/preset';
-// const SPLASH = 'splash.bmp';
-// const SHADER = 'Shader.Cache';
+
 const PRESET_JSON = 'preset.json';
 
 export async function savePreset(modIds: string[], name: string) {
@@ -25,7 +24,8 @@ export async function savePreset(modIds: string[], name: string) {
 
 export async function loadPreset(name: string): Promise<Preset> {
   if (!presetExists(name)) {
-    alert(`Preset ${name} does not exist!`);
+    //TODO: Wrzucić tłumaczenie na fronta
+    alert(`error.presetNotFound ${name}`);
   }
 
   const presetJsonPath = path.resolve('Presets', name, PRESET_JSON);
@@ -44,7 +44,8 @@ export async function getPresetNames(): Promise<string[]> {
 
 export async function deletePreset(name: string) {
   if (!presetExists(name)) {
-    alert(`Preset ${name} does not exist!`);
+    //TODO: Wrzucić tłumaczenie na fronta
+    alert(`error.presetNotFound ${name}`);
   }
 
   const presetPath = path.resolve('Presets', name);

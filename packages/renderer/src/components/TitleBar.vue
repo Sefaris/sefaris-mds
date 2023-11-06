@@ -30,14 +30,14 @@ import { minimizeWindow, closeApplication, loadIcon } from '#preload';
 
 import MdiIcon from './MdiIcon.vue';
 export default defineComponent({
-    components: { MdiIcon },
-    setup() {
-        const icon = ref('');
-        (async () => {
-            icon.value = await loadIcon();
-        })();
-        return { icon, minimizeWindow, closeApplication };
-    },
+  components: { MdiIcon },
+  setup() {
+    const icon = ref('');
+    (async () => {
+      icon.value = await loadIcon();
+    })();
+    return { icon, minimizeWindow, closeApplication };
+  },
 });
 </script>
 
@@ -46,62 +46,62 @@ export default defineComponent({
 
 .title-bar {
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: $title-bar-color;
-    color: $text-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $title-bar-color;
+  color: $text-color;
+  height: 30px;
+  app-region: drag;
+
+  .icon {
     height: 30px;
-    app-region: drag;
+    padding: 2.5px
+  }
 
-    .icon {
-        height: 30px;
-        padding: 2.5px
+  .title {
+    display: flex;
+    align-items: center;
+
+    height: 100%;
+    font-size: 18px;
+
+  }
+
+
+
+  .controls {
+    display: flex;
+    gap: 5px;
+    app-region: none;
+
+    .control {
+      width: 50px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+
+      &:hover {
+        cursor: pointer;
+      }
+
+
     }
 
-    .title {
-        display: flex;
-        align-items: center;
-
-        height: 100%;
-        font-size: 18px;
-
+    .minimize:hover {
+      background-color: $title-bar-hover-color;
     }
 
-
-
-    .controls {
-        display: flex;
-        gap: 5px;
-        app-region: none;
-
-        .control {
-            width: 50px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-
-            &:hover {
-                cursor: pointer;
-            }
-
-
-        }
-
-        .minimize:hover {
-            background-color: $title-bar-hover-color;
-        }
-
-        .maximize:hover {
-            background-color: $title-bar-hover-color;
-        }
-
-        .close:hover {
-            background-color: #b92a20;
-        }
+    .maximize:hover {
+      background-color: $title-bar-hover-color;
     }
+
+    .close:hover {
+      background-color: #b92a20;
+    }
+  }
 
 
 }

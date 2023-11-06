@@ -1,5 +1,6 @@
 <template>
   <button
+    :disabled="disable"
     class="btn"
     :class="customClass"
     @click="func"
@@ -34,12 +35,17 @@ export default defineComponent({
         },
         action: {
             type: Function,
+            default: () => { },
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
         },
     },
     setup(props) {
         const name = ref(`mdi ${props.icon}`);
         return {
-            name, customClass: props.type, func: (props.action as (payload: MouseEvent) => void), buttonText: props.text,
+            name, customClass: props.type, func: (props.action as (payload: MouseEvent) => void), buttonText: props.text, disable: props.disabled,
         };
     },
 });
@@ -56,11 +62,9 @@ export default defineComponent({
     font-size: 1.5rem;
     padding: 0.2rem;
 
-    &:hover {
-        cursor: pointer;
-    }
 
-    &:active {
+
+    &:enabled:active {
         background-color: #3e8e41;
         box-shadow: 0 2px #666;
         transform: translateY(1px);

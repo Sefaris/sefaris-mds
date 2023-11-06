@@ -16,24 +16,21 @@
       </option>
     </datalist>
 
-    <button
+    <custom-button
+      :action="save"
+      icon="mdi-content-save"
       :disabled="!presetName"
-      @click="save"
-    >
-      <mdi-icon icon="mdi-content-save" />
-    </button>
-    <button
+    />
+    <custom-button
+      :action="load"
+      icon="mdi-content-save"
       :disabled="!presetName"
-      @click="load"
-    >
-      <mdi-icon icon="mdi-content-save" />
-    </button>
-    <button
+    />
+    <custom-button
+      :action="remove"
+      icon="mdi-delete"
       :disabled="!presetName"
-      @click="remove"
-    >
-      <mdi-icon icon="mdi-delete" />
-    </button>
+    />
   </div>
 </template>
 
@@ -43,8 +40,9 @@ import { getPresetNames, loadPreset, savePreset, deletePreset } from '#preload';
 import type { Mod } from '#preload';
 
 import MdiIcon from './MdiIcon.vue';
+import CustomButton from './CustomButton.vue';
 export default defineComponent({
-  components: { MdiIcon },
+  components: { MdiIcon, CustomButton },
   props: {
     modIds: {
       type: Array<Mod>,
