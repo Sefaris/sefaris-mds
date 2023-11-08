@@ -53,6 +53,7 @@ export default defineComponent({
   color: $text-color;
   height: 30px;
   app-region: drag;
+  border-bottom: 1px solid $divider-color;
 
   .icon {
     height: 30px;

@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="details">
-    <!-- TODO: Wczytywanie obrazów z modów -->
     <img
       v-if="img"
       class="image"
@@ -76,10 +75,24 @@ export default defineComponent({
 
 .details {
   overflow-y: auto;
+  padding: 0.75rem;
+  margin: 0.5rem;
+  border-radius: 0.25rem;
+  border: 0.25rem solid $secondary-color;
+  background-color: $secondary-color;
 
   .image {
     width: 100%;
-    padding: 1rem;
+    aspect-ratio: 1/1;
   }
+}
+
+h1 {
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+li {
+  margin-left: 1rem;
 }
 </style>

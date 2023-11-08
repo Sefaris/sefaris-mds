@@ -1,7 +1,6 @@
 <template>
   <div class="config-container">
-    <RouterLink to="/">{{ $t('common.home') }}</RouterLink>
-    <h2>Config</h2>
+    <h2>{{ $t('common.configuration') }}</h2>
     <div class="config">
       <input
         :value="config.gothicPath"
@@ -93,7 +92,7 @@ export default defineComponent({
 
 <style lang="scss">
 .config-container {
-  height: calc(100vh - 30px);
+  height: calc(100vh - 60px);
 }
 
 .config {

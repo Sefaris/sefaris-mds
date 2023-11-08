@@ -126,7 +126,7 @@ export default defineComponent({
   &-btn {
     cursor: pointer;
     background-color: transparent;
-    color: $text-white;
+    color: $text-color;
     border: none;
 
     &-caret {
@@ -150,7 +150,7 @@ export default defineComponent({
       margin-top: $margin-small;
       padding: $padding-between;
       width: 150px;
-      background-color: $primary-bg;
+      background-color: $primary-color;
       border: 2px solid $divider-color;
       border-radius: $border-radius-huge 0 $border-radius-huge $border-radius-huge;
       z-index: 5;

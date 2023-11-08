@@ -16,8 +16,9 @@
 <script lang="ts">
 
 
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import MdiIcon from './MdiIcon.vue';
+
 export default defineComponent({
     components: { MdiIcon },
     props: {
@@ -44,8 +45,13 @@ export default defineComponent({
     },
     setup(props) {
         const name = ref(`mdi ${props.icon}`);
+        const disable = ref(props.disabled);
+
+        watch(() => props.disabled, (newVal: boolean) => {
+            disable.value = newVal;
+        });
         return {
-            name, customClass: props.type, func: (props.action as (payload: MouseEvent) => void), buttonText: props.text, disable: props.disabled,
+            name, customClass: props.type, func: (props.action as (payload: MouseEvent) => void), buttonText: props.text, disable,
         };
     },
 });
@@ -55,45 +61,47 @@ export default defineComponent({
 @import '../../assets/styles/variables.scss';
 
 .btn {
-    text-align: center;
     border: none;
     margin: 0.25rem;
     text-decoration: none;
     font-size: 1.5rem;
     padding: 0.2rem;
-
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
+    aspect-ratio: 1/1;
+    border-radius: 10%;
 
     &:enabled:active {
-        background-color: #3e8e41;
-        box-shadow: 0 2px #666;
+        background-color: $accent;
         transform: translateY(1px);
     }
 }
 
 
 .primary {
-    background-color: $primary;
+    background-color: $accent;
 }
 
 .secondary {
-    background-color: $secondary;
+    background-color: $secondary-color;
 }
 
 .success {
-    background-color: $success;
+    background-color: $success-color;
 }
 
 .info {
-    background-color: $info;
+    background-color: $info-color;
 }
 
 .warning {
-    background-color: $warning;
+    background-color: $warning-color;
 }
 
-.danger {
-    background-color: $danger;
+.error {
+    background-color: $error-color;
 }
 
 .light {

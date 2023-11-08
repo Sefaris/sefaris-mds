@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
 import type {AppConfiguration} from '../interfaces/app-configuration';
-
+const UTF8 = 'utf8';
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();
   const mods: Mod[] = [];
@@ -29,7 +29,7 @@ function validateMod(modPath: string): Mod | null {
     return null;
   }
 
-  const mod: Mod = JSON.parse(fs.readFileSync(path.join(modPath, 'mod.json'), 'utf8'));
+  const mod: Mod = JSON.parse(fs.readFileSync(path.join(modPath, 'mod.json'), UTF8));
   if (!mod.id || !mod.title) {
     return null;
   }
@@ -45,11 +45,13 @@ export function loadModDescription(modPath: string): string {
   if (!fs.existsSync(file)) {
     return 'No description available.';
   }
-  return md.render(fs.readFileSync(file, 'utf8'));
+  return md.render(fs.readFileSync(file, UTF8));
 }
 
 export function loadImages(modPath: string): string[] {
-  const files = fs.readdirSync(modPath);
+  const imagesPath = path.join(modPath, 'images');
+  if (!fs.existsSync(imagesPath)) return [];
+  const files = fs.readdirSync(imagesPath);
   const imageFiles = files.filter(file => {
     const ext = path.extname(file).toLowerCase();
     return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
@@ -57,7 +59,7 @@ export function loadImages(modPath: string): string[] {
   const images: string[] = [];
   if (imageFiles.length > 0) {
     for (const imageFile of imageFiles) {
-      const img = path.join(modPath, imageFile);
+      const img = path.join(imagesPath, imageFile);
       images.push(`data:image/png;base64,${fs.readFileSync(img).toString('base64')}`);
     }
   }

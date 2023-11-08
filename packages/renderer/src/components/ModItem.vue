@@ -61,9 +61,20 @@ export default defineComponent({
 .mod {
   display: flex;
   gap: 0.25rem;
+  padding: 0.1rem;
 
   &-title {
+    width: 100%;
     cursor: pointer;
+  }
+
+  &-checkbox {
+    background-color: red;
+    border: 1px solid $primary-color;
+    accent-color: $accent;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 4px;
   }
 }
 </style>

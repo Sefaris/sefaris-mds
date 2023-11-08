@@ -1,3 +1,20 @@
+
+$primary-color: #272932;
+$secondary-color: #0e131a;
+$accent: #E28413;
+
+$text-color:#ffffff;
+
+$title-bar-color: $secondary-color;
+$title-bar-hover-color: #27374d9d;
+
+$nav-bar-color: $secondary-color;
+$nav-bar-hover-color: #27374d9d;
+
+$tool-bar-color: #151d27;
+
+$divider-color: #30303bd2;
+
 $blue: #0d6efd;
 $indigo: #6610f2;
 $purple: #6f42c1;
@@ -9,38 +26,14 @@ $green: #198754;
 $teal: #20c997;
 $cyan: #0dcaf0;
 $gray: #6c757d;
-$gray-light: #f8f9fa;
-$gray-dark: #212529;
-
-$bg-color: #27374D;
-$text-color: $gray-light;
-$title-bar-color: #0e131a;
-$title-bar-hover-color: #1a2330;
 
 
 
 
-$primary: $blue;
-$secondary: $gray;
-$success: $green;
-$info: $cyan;
-$warning: $yellow;
-$danger: $red;
-$light: $gray-light;
-$dark: $gray-dark;
+$light: #f8f9fa;
+$dark: #212529;
 
 
-
-// COLOR
-$primary-bg: #1c1c1c;
-$primary-color: #c7f148;
-$divider-color: #30303b;
-$mask-color: rgba(0, 0, 0, 0.726);
-$block-mask: #695f5b8e;
-$accent: #c7f148;
-$scroll-track: #858585;
-$white: #ffffff;
-$gallery-button-bg: #c4c2c2bf;
 
 $error-color: #e74c3c;
 $warning-color: #f39c12;
@@ -49,12 +42,6 @@ $info-color: #3498db;
 
 // ACTION STATES
 $default-hover: rgba($primary-color, 0.3);
-
-// FONT COLOR
-$text-white: #ffffff;
-$text-secondary: #c4c2c2bf;
-$text-black: #000000;
-$link-hover: $primary-color;
 
 // PADDING
 $padding-enourmous: 52px;

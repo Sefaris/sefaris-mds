@@ -1,10 +1,9 @@
 <template>
   <div class="preset-container">
-    <button @click="reloadPresets">
-      <mdi-icon icon="mdi-reload" />
-    </button>
     <input
       v-model="presetName"
+      placeholder="Preset name..."
+      class="preset-input"
       list="presets"
     />
     <datalist id="presets">
@@ -23,7 +22,7 @@
     />
     <custom-button
       :action="load"
-      icon="mdi-content-save"
+      icon="mdi-upload"
       :disabled="!presetName"
     />
     <custom-button
@@ -39,10 +38,9 @@ import { defineComponent, ref } from 'vue';
 import { getPresetNames, loadPreset, savePreset, deletePreset } from '#preload';
 import type { Mod } from '#preload';
 
-import MdiIcon from './MdiIcon.vue';
 import CustomButton from './CustomButton.vue';
 export default defineComponent({
-  components: { MdiIcon, CustomButton },
+  components: { CustomButton },
   props: {
     modIds: {
       type: Array<Mod>,
@@ -91,5 +89,28 @@ export default defineComponent({
 <style lang="scss">
 @import '../../assets/styles/variables.scss';
 
-.preset-container {}
+.preset-container {
+  display: flex;
+  justify-content: end;
+  gap: 0.25rem;
+  margin-left: 0.5rem;
+
+}
+
+.preset-input {
+
+  background-color: $primary-color;
+  border: 1px solid $accent;
+  border-radius: 0.25rem;
+  color: $text-color;
+  margin: 0.25rem 0;
+  padding: 0 0.5rem;
+  width: 100%;
+
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+    content: '▼';
+    color: $accent;
+  }
+}
 </style>

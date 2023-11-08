@@ -1,14 +1,15 @@
 <template>
   <title-bar />
+  <nav-bar />
   <router-view></router-view>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import TitleBar from './components/TitleBar.vue';
-
+import NavBar from './components/NavBar.vue';
 export default defineComponent({
-  components: { TitleBar },
+  components: { TitleBar, NavBar },
   setup() {
     return {};
   },

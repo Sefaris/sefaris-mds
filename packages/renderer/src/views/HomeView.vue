@@ -1,21 +1,12 @@
 <template>
   <div class="container">
-    <div class="navbar">
-      <change-locale />
-
-      <router-link to="/configuration">{{ $t('common.configuration') }}</router-link>
-      Selected:{{ selectedMods.length }}
-      Mods: {{ modList.length }}
-    </div>
-
-    <div class="top-bar">
+    <div class="tool-bar">
       <div class="installation-bar">
         <custom-button
           :disabled="selectedMods.length === 0"
           :action="installModifications"
           icon="mdi-play"
         />
-
         <custom-button
           :action="mergeModFiles"
           icon="mdi-set-merge"
@@ -28,7 +19,6 @@
           :action="selectAll"
           icon="mdi-select-group"
         />
-
         <custom-button
           :action="openGameFolder"
           icon="mdi-gamepad-variant"
@@ -38,12 +28,10 @@
           icon="mdi-folder"
         />
       </div>
-      <div class="preset-bar">
-        <preset-bar
-          :mod-ids="selectedMods"
-          @load-preset="handleLoadPreset"
-        />
-      </div>
+      <preset-bar
+        :mod-ids="selectedMods"
+        @load-preset="handleLoadPreset"
+      />
     </div>
 
     <div class="mods">
@@ -51,7 +39,6 @@
         v-if="modInfo"
         :mod="modInfo"
       />
-
       <div class="mods-list">
         <mod-item
           v-for="(mod, index) in modList"
@@ -81,10 +68,9 @@ import ModDetails from '../components/ModDetails.vue';
 import ProgressBar from '../components/ProgressBar.vue';
 import PresetBar from '../components/PresetBar.vue';
 import CustomButton from '../components/CustomButton.vue';
-import ChangeLocale from '../components/ChangeLocale.vue';
 
 export default defineComponent({
-  components: { ModDetails, ModItem, ProgressBar, PresetBar, CustomButton, ChangeLocale },
+  components: { ModDetails, ModItem, ProgressBar, PresetBar, CustomButton },
 
   setup() {
     const modInfo = shallowRef<Mod>();
@@ -93,6 +79,7 @@ export default defineComponent({
     const actionName = ref<string>('Waiting for action...');
     const progress = ref<number>(0);
     const selectedPreset = ref<string>('');
+
 
 
     loadMods().then(mods => {
@@ -185,6 +172,8 @@ export default defineComponent({
 
 
 
+
+
     return {
       modList,
       modInfo,
@@ -208,32 +197,54 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '../../assets/styles/variables.scss';
+
 .container {
   display: grid;
-  grid-template-rows: 1fr;
-  grid-template-rows: 1fr 1fr 90%;
-  height: calc(100vh - 30px);
-}
+  grid-template-rows: 1fr calc(100vh - 125px);
+  height: calc(100vh - 60px);
 
-.top-bar {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-content: space-between;
-  align-items: center;
-
-  .preset-bar {
+  .tool-bar {
+    height: 45px;
     display: grid;
-    justify-content: end;
+    grid-template-columns: 60% 1fr;
+
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: $primary-color;
+
+    .installation-bar {
+      display: flex;
+      align-items: center;
+      padding-left: 0.5rem;
+      height: 100%;
+      margin-right: 0.5rem;
+
+      & :nth-last-child(2) {
+        margin-left: auto;
+      }
+    }
+
 
   }
-}
 
-.mods {
-  display: grid;
-  grid-template-columns: 60% 1fr;
+  .mods {
+    display: grid;
+    grid-template-columns: 60% 1fr;
 
-  &-list {
-    overflow-y: auto;
+    &-list {
+      padding: 0.5rem 0.75rem;
+      margin: 0.5rem;
+      overflow-y: auto;
+      background-color: $secondary-color;
+
+      border: 0.25rem solid $secondary-color;
+      border-radius: 0.25rem;
+
+
+    }
   }
+
 }
 </style>
