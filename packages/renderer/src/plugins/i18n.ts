@@ -7,9 +7,6 @@ import ru from '../../../../locales/ru';
 //TODO: wyrzucić stałe do osobnego pliku
 export const DEFAULT_LANGUAGE = 'pl';
 
-export function translate(key: string, values: Record<string, unknown>) {
-  return i18n.global.t(key, values);
-}
 export const LANGUAGE_SETTINGS = [
   {code: 'pl', text: 'Polski'},
   {code: 'ru', text: 'Русский'},

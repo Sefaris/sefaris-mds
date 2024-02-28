@@ -58,7 +58,7 @@ export default defineComponent({
 
     function changeImage() {
       console.log('changeImage', currentImageIndex.value);
-      console.log('gallery', gallery.value.length);
+      console.log('gallery size:', gallery.value.length);
       currentImageIndex.value = (currentImageIndex.value + 1) % gallery.value.length;
       img.value = gallery.value[currentImageIndex.value];
     }
@@ -84,15 +84,23 @@ export default defineComponent({
   .image {
     width: 100%;
     aspect-ratio: 1/1;
+    border-radius: 4px;
   }
-}
 
-h1 {
-  margin-top: 0.25rem;
-  text-align: center;
-}
+  h1 {
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    text-align: center;
+  }
 
-li {
-  margin-left: 1rem;
+  h4 {
+    margin-top: 1rem;
+  }
+
+  ul {
+    margin: 0.5rem 0 1rem 2rem;
+  }
+
+
 }
 </style>

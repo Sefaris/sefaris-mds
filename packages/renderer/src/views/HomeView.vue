@@ -3,27 +3,33 @@
     <div class="tool-bar">
       <div class="installation-bar">
         <custom-button
+          :tooltip="$t('tooltip.install')"
           :disabled="selectedMods.length === 0"
           :action="installModifications"
           icon="mdi-play"
         />
         <custom-button
+          :tooltip="$t('tooltip.merge')"
           :action="mergeModFiles"
           icon="mdi-set-merge"
         />
         <custom-button
+          :tooltip="$t('tooltip.delete')"
           :action="deleteModifications"
           icon="mdi-delete"
         />
         <custom-button
+          :tooltip="$t('tooltip.selectAll')"
           :action="selectAll"
           icon="mdi-select-group"
         />
         <custom-button
+          :tooltip="$t('tooltip.openGameFolder')"
           :action="openGameFolder"
           icon="mdi-gamepad-variant"
         />
         <custom-button
+          :tooltip="$t('tooltip.openModsFolder')"
           :action="openModsFolder"
           icon="mdi-folder"
         />
@@ -41,7 +47,7 @@
       />
       <div class="mods-list">
         <mod-item
-          v-for="(mod, index) in modList"
+          v-for="( mod, index ) in modList "
           :key="index"
           :mod="mod"
           :checked="selectedMods.includes(mod)"
@@ -51,7 +57,7 @@
       </div>
     </div>
     <progress-bar
-      :action-name="actionName"
+      :action-name="$t('progress.waiting')"
       :progress="progress"
     />
   </div>
@@ -76,7 +82,6 @@ export default defineComponent({
     const modInfo = shallowRef<Mod>();
     const modList = shallowRef<Mod[]>([]);
     const selectedMods = ref<Mod[]>([]);
-    const actionName = ref<string>('Waiting for action...');
     const progress = ref<number>(0);
     const selectedPreset = ref<string>('');
 
@@ -178,7 +183,6 @@ export default defineComponent({
       modList,
       modInfo,
       selectedMods,
-      actionName,
       progress,
       selectedPreset,
       handleModInfo,

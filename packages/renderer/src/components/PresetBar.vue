@@ -16,16 +16,19 @@
     </datalist>
 
     <custom-button
+      tooltip="Save preset"
       :action="save"
       icon="mdi-content-save"
       :disabled="!presetName"
     />
     <custom-button
+      tooltip="Load preset"
       :action="load"
       icon="mdi-upload"
       :disabled="!presetName"
     />
     <custom-button
+      tooltip="delete"
       :action="remove"
       icon="mdi-delete"
       :disabled="!presetName"

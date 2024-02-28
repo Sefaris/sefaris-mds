@@ -41,6 +41,7 @@ function validateMod(modPath: string): Mod | null {
 
 export function loadModDescription(modPath: string): string {
   const md = new MarkdownIt();
+
   const file = path.join(modPath, 'readme.md');
   if (!fs.existsSync(file)) {
     return 'No description available.';

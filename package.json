@@ -21,7 +21,7 @@
     "test:preload": "vitest run -r packages/preload --passWithNoTests",
     "test:renderer": "vitest run -r packages/renderer --passWithNoTests",
     "watch": "node scripts/watch.mjs",
-    "lint": "eslint . --ext js,mjs,cjs,ts,mts,cts,vue",
+    "lint": "eslint . --ext js,mjs,cjs,ts,mts,cts,vue --fix",
     "typecheck:main": "tsc --noEmit -p packages/main/tsconfig.json",
     "typecheck:preload": "tsc --noEmit -p packages/preload/tsconfig.json",
     "typecheck:renderer": "vue-tsc --noEmit -p packages/renderer/tsconfig.json",
@@ -54,7 +54,7 @@
     "vue-tsc": "1.8.8"
   },
   "dependencies": {
-    "@floating-ui/vue": "^1.0.2",
+    "@floating-ui/vue": "^1.0.6",
     "@mdi/font": "^7.3.67",
     "electron-updater": "6.1.1",
     "flag-icons": "^6.12.0",

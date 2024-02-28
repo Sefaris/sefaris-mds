@@ -4,12 +4,12 @@
       class="progress-bar"
       :style="{ width: progress + '%' }"
     ></div>
-    <span class="progress-name">{{ actionName }}</span>
+    <span class="progress-name">{{ actionTitle }}</span>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
   props: {
@@ -22,8 +22,16 @@ export default defineComponent({
       default: 0,
     },
   },
-  setup() {
-    return {};
+  setup(props) {
+    const actionTitle = ref(props.actionName);
+
+
+    watch(() => props.actionName, (newVal: string) => {
+      actionTitle.value = newVal;
+    });
+
+
+    return { actionTitle };
   },
 });
 </script>
