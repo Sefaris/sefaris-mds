@@ -21,6 +21,7 @@ const STRINGTABLE_FILENAME = 'stringtable.ini';
 const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
 
 const MOD_EXTENSTIONS = ['mod', 'nod'];
+const DLL_EXTENSION = 'dll';
 const SAVE_EXTENSION = 'g3savcpx';
 const SAVEDAT_EXTENSION = 'g3savcpxdat';
 const SPLASH = 'splash.bmp';
@@ -32,8 +33,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
   alert(APP_PATH);
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
   const filesDictionary = prepareFilesDictionary();
+  const scriptFiles:string[] = [];
   const createdFiles: string[] = [];
   const dataPath = path.join(configuration.gothicPath, 'Data');
+  const scriptsPath = path.join(configuration.gothicPath, 'scripts');
   const allMods: Mod[] = await loadMods();
   const mods = allMods.filter(mod => modIds.includes(mod.id));
 
@@ -52,16 +55,21 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
       }
       filesDictionary[extension].push(...files);
     }
+    const scripts = findFilesEndsWith(mod.path, DLL_EXTENSION);
+    scriptFiles.push(...scripts);
   }
 
   appendFakeFiles(filesDictionary);
 
+  
+  
   for (const key in filesDictionary) {
     {
       await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
     }
   }
-
+  await copyScripts(scriptsPath, scriptFiles, createdFiles);
+  
   await buildStringTable(dataPath, mods, createdFiles);
   const endTime = performance.now();
   const time = ((endTime - startTime) / 1000).toFixed(3);
@@ -103,6 +111,19 @@ async function copyFiles(
 
     createdFiles.push(newFilePath);
   }
+}
+
+async function copyScripts(destinationPath: string,
+  filePaths: string[],
+  createdFiles: string[],
+  ): Promise<void>{
+  for (let i = 0; i < filePaths.length; i++) {
+    const filePath = filePaths[i];
+    const fileName = path.basename(filePath);
+    const newFilePath = path.join(destinationPath, fileName);
+    fs.copyFileSync(filePath, newFilePath);
+    createdFiles.push(newFilePath);
+  }  
 }
 
 function removeFileNameExtension(fileName: string): string {
