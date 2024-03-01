@@ -22,6 +22,7 @@ const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
 
 const MOD_EXTENSTIONS = ['mod', 'nod'];
 const DLL_EXTENSION = 'dll';
+const INI_EXTENSION = 'ini';
 const SAVE_EXTENSION = 'g3savcpx';
 const SAVEDAT_EXTENSION = 'g3savcpxdat';
 const SPLASH = 'splash.bmp';
@@ -30,13 +31,14 @@ const SHADER = 'Shader.Cache';
 const STRINGTABLE_ENCODING = 'utf16le';
 
 export async function installMods(modIds: string[], preset?: string): Promise<string> {
-  alert(APP_PATH);
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
   const filesDictionary = prepareFilesDictionary();
-  const scriptFiles:string[] = [];
+  const scriptFiles: string[] = [];
+  const iniFiles: string[] = [];
   const createdFiles: string[] = [];
   const dataPath = path.join(configuration.gothicPath, 'Data');
   const scriptsPath = path.join(configuration.gothicPath, 'scripts');
+  const iniPath = path.join(configuration.gothicPath, 'ini');
   const allMods: Mod[] = await loadMods();
   const mods = allMods.filter(mod => modIds.includes(mod.id));
 
@@ -57,19 +59,20 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
     }
     const scripts = findFilesEndsWith(mod.path, DLL_EXTENSION);
     scriptFiles.push(...scripts);
+    const inis = findFilesEndsWith(mod.path, INI_EXTENSION);
+    iniFiles.push(...inis);
   }
 
   appendFakeFiles(filesDictionary);
 
-  
-  
   for (const key in filesDictionary) {
     {
       await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
     }
   }
-  await copyScripts(scriptsPath, scriptFiles, createdFiles);
-  
+  await copyScriptsFiles(scriptsPath, scriptFiles, createdFiles);
+  await copyScriptsFiles(iniPath, iniFiles, createdFiles);
+
   await buildStringTable(dataPath, mods, createdFiles);
   const endTime = performance.now();
   const time = ((endTime - startTime) / 1000).toFixed(3);
@@ -96,34 +99,47 @@ async function copyFiles(
   filePaths: string[],
   createdFiles: string[],
 ): Promise<void> {
-  for (let i = 0; i < filePaths.length; i++) {
-    const filePath = filePaths[i];
-    const fileName = path.basename(filePath);
-    const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
-    const destinationFileName = await getFreeFileName(
-      destinationPath,
-      nameWithoutExtension,
-      extension,
-    );
+  try {
+    for (let i = 0; i < filePaths.length; i++) {
+      const filePath = filePaths[i];
+      const fileName = path.basename(filePath);
+      const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
+      const destinationFileName = await getFreeFileName(
+        destinationPath,
+        nameWithoutExtension,
+        extension,
+      );
 
-    const newFilePath = path.join(destinationPath, destinationFileName);
-    fs.copyFileSync(filePath, newFilePath);
+      const newFilePath = path.join(destinationPath, destinationFileName);
+      fs.copyFileSync(filePath, newFilePath);
 
-    createdFiles.push(newFilePath);
+      createdFiles.push(newFilePath);
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
 
-async function copyScripts(destinationPath: string,
+async function copyScriptsFiles(
+  destinationPath: string,
   filePaths: string[],
   createdFiles: string[],
-  ): Promise<void>{
-  for (let i = 0; i < filePaths.length; i++) {
-    const filePath = filePaths[i];
-    const fileName = path.basename(filePath);
-    const newFilePath = path.join(destinationPath, fileName);
-    fs.copyFileSync(filePath, newFilePath);
-    createdFiles.push(newFilePath);
-  }  
+): Promise<void> {
+  //TODO, if file exists, replace path in configuration avoid duplicates in installed mods
+  try {
+    for (let i = 0; i < filePaths.length; i++) {
+      const filePath = filePaths[i];
+      const fileName = path.basename(filePath);
+      if (fileName.includes('stringtable')) {
+        continue;
+      }
+      const newFilePath = path.join(destinationPath, fileName);
+      fs.copyFileSync(filePath, newFilePath);
+      createdFiles.push(newFilePath);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function removeFileNameExtension(fileName: string): string {
@@ -158,8 +174,8 @@ export async function deleteMods(): Promise<void> {
     configuration.filesCreated = [];
 
     await saveConfiguration(configuration);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -173,23 +189,27 @@ async function buildStringTable(
   mods: Mod[],
   createdFiles: string[],
 ): Promise<void> {
-  const stringTablePath = await findStrings(gothicDataPath);
-  const destinationPath = gothicDataPath;
-  const tempDir = path.join(gothicDataPath, 'temp');
-  const fileName = path.basename(stringTablePath);
+  try {
+    const stringTablePath = await findStrings(gothicDataPath);
+    const destinationPath = gothicDataPath;
+    const tempDir = path.join(gothicDataPath, 'temp');
+    const fileName = path.basename(stringTablePath);
 
-  const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
+    const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
 
-  const destinationFileName =
-    (await getFreeFileName(destinationPath, nameWithoutExtension, 'mod')) ??
-    (await getFreeFileName(destinationPath, nameWithoutExtension, 'pak'));
+    const destinationFileName =
+      (await getFreeFileName(destinationPath, nameWithoutExtension, 'mod')) ??
+      (await getFreeFileName(destinationPath, nameWithoutExtension, 'pak'));
 
-  const packageDestPath = path.join(destinationPath, destinationFileName);
-  await mergeStringTables(gothicDataPath, mods, stringTablePath);
-  await buildPackage(tempDir, packageDestPath);
-  createdFiles.push(packageDestPath);
+    const packageDestPath = path.join(destinationPath, destinationFileName);
+    await mergeStringTables(gothicDataPath, mods, stringTablePath);
+    await buildPackage(tempDir, packageDestPath);
+    createdFiles.push(packageDestPath);
 
-  fs.rmSync(tempDir, {recursive: true, force: true});
+    fs.rmSync(tempDir, {recursive: true, force: true});
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function mergeStringTables(
@@ -234,16 +254,20 @@ async function mergeStringTables(
 }
 
 async function moveSaves() {
-  const newModsFolder = getNextSaveDirectoryName();
-  const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
-  const oldFilesPaths = getOldModsFiles();
-  if (oldFilesPaths.length === 0) {
-    return;
-  }
-  await ensureDirectory(newModsFolderPath);
-  const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
-  for (let i = 0; i < oldFilesPaths.length; i++) {
-    await fs.promises.rename(oldFilesPaths[i], newFilesPaths[i]);
+  try {
+    const newModsFolder = getNextSaveDirectoryName();
+    const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
+    const oldFilesPaths = getOldModsFiles();
+    if (oldFilesPaths.length === 0) {
+      return;
+    }
+    await ensureDirectory(newModsFolderPath);
+    const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
+    for (let i = 0; i < oldFilesPaths.length; i++) {
+      await fs.promises.rename(oldFilesPaths[i], newFilesPaths[i]);
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -287,27 +311,35 @@ function getNewModsFilesPaths(files: string[], destDirectory: string) {
 }
 
 async function moveSplash(configuration: AppConfiguration, presetName?: string) {
-  let splash = path.join(APP_PATH, 'Static', SPLASH);
-  if (presetName && fs.existsSync(path.join(APP_PATH, 'Presets', presetName, SPLASH))) {
-    splash = path.join(APP_PATH, 'Presets', presetName, SPLASH);
-  }
+  try {
+    let splash = path.join(APP_PATH, 'Static', SPLASH);
+    if (presetName && fs.existsSync(path.join(APP_PATH, 'Presets', presetName, SPLASH))) {
+      splash = path.join(APP_PATH, 'Presets', presetName, SPLASH);
+    }
 
-  if (!fs.existsSync(splash)) {
-    return;
-  }
+    if (!fs.existsSync(splash)) {
+      return;
+    }
 
-  const splashDest = path.join(configuration.gothicPath, SPLASH);
-  await fs.copyFileSync(splash, splashDest);
+    const splashDest = path.join(configuration.gothicPath, SPLASH);
+    await fs.copyFileSync(splash, splashDest);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function moveShader(presetName?: string) {
-  if (!presetName) {
-    return;
+  try {
+    if (!presetName) {
+      return;
+    }
+    const shader = path.join(APP_PATH, 'Presets', presetName, SHADER);
+    if (!fs.existsSync(shader)) {
+      return;
+    }
+    const shaderDest = path.join(G3_DOCUMENTS_PATH, SHADER);
+    await fs.copyFileSync(shader, shaderDest);
+  } catch (error) {
+    console.error(error);
   }
-  const shader = path.join(APP_PATH, 'Presets', presetName, SHADER);
-  if (!fs.existsSync(shader)) {
-    return;
-  }
-  const shaderDest = path.join(G3_DOCUMENTS_PATH, SHADER);
-  await fs.copyFileSync(shader, shaderDest);
 }

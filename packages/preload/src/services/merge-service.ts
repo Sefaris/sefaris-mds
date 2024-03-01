@@ -73,33 +73,37 @@ function groupFilesMap(files: string[]): Map<string, Map<string, string[]>> {
 }
 
 async function mergeArchives(archives: string[][], mergedFiles: string[], dataPath: string) {
-  const backupDirPath = path.join(dataPath, 'backup');
-  const mergeDirPath = path.join(dataPath, 'merge');
-  for (const files of archives) {
-    if (files.length == 1) {
-      mergedFiles.push(files[0]);
-      continue;
-    }
-    await ensureDirectory(backupDirPath);
-    await ensureDirectory(mergeDirPath);
-    console.log('Files:', files);
-    //copy all files to temp directory
-    for (const file of files) {
-      await fs.promises.rename(file, path.join(backupDirPath, path.basename(file)));
-    }
+  try {
+    const backupDirPath = path.join(dataPath, 'backup');
+    const mergeDirPath = path.join(dataPath, 'merge');
+    for (const files of archives) {
+      if (files.length == 1) {
+        mergedFiles.push(files[0]);
+        continue;
+      }
+      await ensureDirectory(backupDirPath);
+      await ensureDirectory(mergeDirPath);
+      console.log('Files:', files);
+      //copy all files to temp directory
+      for (const file of files) {
+        await fs.promises.rename(file, path.join(backupDirPath, path.basename(file)));
+      }
 
-    const mergeDirFiles = sortModsArchives(await fs.promises.readdir(backupDirPath));
-    for (const file of mergeDirFiles) {
-      const fullFilePath = path.join(backupDirPath, file);
-      console.log(fullFilePath);
-      await extractAll(fullFilePath, mergeDirPath);
+      const mergeDirFiles = sortModsArchives(await fs.promises.readdir(backupDirPath));
+      for (const file of mergeDirFiles) {
+        const fullFilePath = path.join(backupDirPath, file);
+        console.log(fullFilePath);
+        await extractAll(fullFilePath, mergeDirPath);
+      }
+      const resultFile = path.join(dataPath, path.basename(files[0]));
+      console.log('Building:', resultFile);
+      await buildPackage(mergeDirPath, resultFile);
+      console.log('Built:', resultFile);
+      mergedFiles.push(resultFile);
+      await fs.promises.rmdir(backupDirPath, {recursive: true});
+      await fs.promises.rmdir(mergeDirPath, {recursive: true});
     }
-    const resultFile = path.join(dataPath, path.basename(files[0]));
-    console.log('Building:', resultFile);
-    await buildPackage(mergeDirPath, resultFile);
-    console.log('Built:', resultFile);
-    mergedFiles.push(resultFile);
-    await fs.promises.rmdir(backupDirPath, {recursive: true});
-    await fs.promises.rmdir(mergeDirPath, {recursive: true});
+  } catch (error) {
+    console.error('Error:', error);
   }
 }

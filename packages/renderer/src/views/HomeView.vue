@@ -166,7 +166,11 @@ export default defineComponent({
     }
 
 
-    function handleLoadPreset(preset: Preset) {
+    function handleLoadPreset(preset: Preset | null) {
+      if (!preset) {
+        selectedPreset.value = '';
+        return;
+      }
       selectedMods.value = modList.value.filter(mod => preset.modIds.includes(mod.id));
       selectedPreset.value = preset.name;
       const missingMods = preset.modIds.filter((modId: string) => !modList.value.some(mod => mod.id === modId));

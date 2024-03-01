@@ -26,7 +26,7 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    console.error(`Error while finding files: ${error}`);
+      alert(error);
   }
 
   return files;

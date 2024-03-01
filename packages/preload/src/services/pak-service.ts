@@ -72,17 +72,21 @@ export async function extract(
     try {
       await fs.renameSync(sourceFilePath, destinationFilePath);
     } catch (error) {
-      console.error(error);
+      alert(error);
     }
   }
-  fs.rm(tempDir, {recursive: true, force: true}, error => {
-    return new Promise<void>((resolve, reject) => {
-      if (error) {
-        return reject();
-      }
-      return resolve();
+  try {
+    fs.rm(tempDir, {recursive: true, force: true}, error => {
+      return new Promise<void>((resolve, reject) => {
+        if (error) {
+          return reject();
+        }
+        return resolve();
+      });
     });
-  });
+  } catch (error) {
+    alert(error);
+  }
 }
 
 export async function findStrings(dataPath: string): Promise<string> {

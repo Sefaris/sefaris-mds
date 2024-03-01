@@ -10,20 +10,22 @@ export async function selectGameFolder(): Promise<string> {
 }
 
 export async function saveConfiguration(configuration: AppConfiguration): Promise<boolean> {
-  if (import.meta.env.PROD) {
-    configuration.modsPath = path.join(configuration.gothicPath, 'Mods');
-  } else {
-    configuration.modsPath = 'E:\\SteamLibrary\\steamapps\\common\\Gothic 3\\Mods';
-  }
-  if (!configuration.gothicPath) {
-    return false;
-  }
   try {
+    if (import.meta.env.PROD) {
+      configuration.modsPath = path.join(configuration.gothicPath, 'Mods');
+    } else {
+      configuration.modsPath = 'E:\\SteamLibrary\\steamapps\\common\\Gothic 3\\Mods';
+    }
+    if (!configuration.gothicPath) {
+      return false;
+    }
+
     fs.writeFileSync(configurationPath, JSON.stringify(configuration));
-    return true;
-  } catch {
+  } catch (error) {
+    alert(error);
     return false;
   }
+  return true;
 }
 
 export async function loadConfiguration(): Promise<AppConfiguration | null> {
