@@ -1,5 +1,4 @@
-//Ogarnąć progress bar, bo tak jest tragicznie i nie działa
-export async function updateProgressBar(actionName: string, progressValue: number): Promise<void> {
-  window.postMessage({actionName, progressValue});
-  return Promise.resolve();
+//Ogarnąć progress bar, bo tak jest tragicznie ale działa
+export function updateProgressBar(actionName: string, step: number, maxSteps: number) {
+  window.postMessage({actionName, step, maxSteps});
 }

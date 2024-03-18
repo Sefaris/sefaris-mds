@@ -4,7 +4,13 @@ export default {
     home: 'Strona główna',
   },
   progress: {
-    waiting: 'Czekanie na akcję...',
+    wait: 'Czekanie na akcję...',
+    delete: 'Usuwanie modyfikacji...',
+    moveOldSaves: 'Przenoszenie starych zapisów...',
+    searchMods: 'Wyszukiwanie plików modyfikacji...',
+    copyMods: 'Kopiowanie modyfikacji...',
+    copyScripts: 'Kopiowanie skryptów...',
+    mergeArchives: 'Łączenie archiwów...',
   },
   error: {
     presetNotFound: 'Preset {name} nie został znaleziony!',

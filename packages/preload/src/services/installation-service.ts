@@ -7,11 +7,11 @@ import {loadConfiguration, saveConfiguration} from './configuration-service';
 import type {Mod} from '../interfaces/mod';
 import type {AppConfiguration} from '../interfaces/app-configuration';
 
-import {buildPackage, extract, extractAll, findStrings} from './pak-service';
+import {buildPackage, extract, findStrings} from './pak-service';
 
 import {ensureDirectory, findFilesEndsWith} from './file-service';
 import {loadMods} from './mod-service';
-
+import {updateProgressBar} from './progress-service';
 const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
 
 const APP_PATH = path.resolve();
@@ -49,17 +49,18 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
   await moveSplash(configuration, preset);
   await moveShader(preset);
 
-  for (const mod of mods) {
+  for (let i = 0; i < mods.length; i++) {
+    updateProgressBar('progress.searchMods', i, mods.length);
     for (const extension of MOD_EXTENSTIONS) {
-      const files = findFilesEndsWith(mod.path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
+      const files = findFilesEndsWith(mods[i].path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
       if (!filesDictionary[extension]) {
         filesDictionary[extension] = [];
       }
       filesDictionary[extension].push(...files);
     }
-    const scripts = findFilesEndsWith(mod.path, DLL_EXTENSION);
+    const scripts = findFilesEndsWith(mods[i].path, DLL_EXTENSION);
     scriptFiles.push(...scripts);
-    const inis = findFilesEndsWith(mod.path, INI_EXTENSION);
+    const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
     iniFiles.push(...inis);
   }
 
@@ -101,6 +102,7 @@ async function copyFiles(
 ): Promise<void> {
   try {
     for (let i = 0; i < filePaths.length; i++) {
+      updateProgressBar('progress.copyMods', i, filePaths.length);
       const filePath = filePaths[i];
       const fileName = path.basename(filePath);
       const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
@@ -109,10 +111,8 @@ async function copyFiles(
         nameWithoutExtension,
         extension,
       );
-
       const newFilePath = path.join(destinationPath, destinationFileName);
-      fs.copyFileSync(filePath, newFilePath);
-
+      await fs.promises.copyFile(filePath, newFilePath);
       createdFiles.push(newFilePath);
     }
   } catch (error) {
@@ -125,16 +125,19 @@ async function copyScriptsFiles(
   filePaths: string[],
   createdFiles: string[],
 ): Promise<void> {
-  //TODO, if file exists, replace path in configuration avoid duplicates in installed mods
+  if (createdFiles.includes(path.basename(destinationPath))) {
+    return;
+  }
   try {
     for (let i = 0; i < filePaths.length; i++) {
+      updateProgressBar('progress.copyScripts', i, filePaths.length);
       const filePath = filePaths[i];
       const fileName = path.basename(filePath);
       if (fileName.includes('stringtable')) {
         continue;
       }
       const newFilePath = path.join(destinationPath, fileName);
-      fs.copyFileSync(filePath, newFilePath);
+      await fs.promises.copyFile(filePath, newFilePath);
       createdFiles.push(newFilePath);
     }
   } catch (error) {
@@ -164,11 +167,12 @@ async function getFreeFileName(
 
 export async function deleteMods(): Promise<void> {
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-
   try {
-    configuration.filesCreated.forEach((file: string) => {
-      fs.unlinkSync(file);
-    });
+    const filesCount = configuration.filesCreated.length;
+    for (let i = 0; i < filesCount; i++) {
+      updateProgressBar('progress.delete', i, filesCount);
+      fs.unlinkSync(configuration.filesCreated[i]);
+    }
 
     configuration.installedMods = [];
     configuration.filesCreated = [];
@@ -194,7 +198,6 @@ async function buildStringTable(
     const destinationPath = gothicDataPath;
     const tempDir = path.join(gothicDataPath, 'temp');
     const fileName = path.basename(stringTablePath);
-
     const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
 
     const destinationFileName =
@@ -261,9 +264,11 @@ async function moveSaves() {
     if (oldFilesPaths.length === 0) {
       return;
     }
+
     await ensureDirectory(newModsFolderPath);
     const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
     for (let i = 0; i < oldFilesPaths.length; i++) {
+      updateProgressBar('progress.moveOldSaves', i, oldFilesPaths.length);
       await fs.promises.rename(oldFilesPaths[i], newFilesPaths[i]);
     }
   } catch (error) {

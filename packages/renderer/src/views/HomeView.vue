@@ -10,13 +10,15 @@
         />
         <custom-button
           :tooltip="$t('tooltip.merge')"
-          :action="mergeModFiles"
+          :action="mergeMods"
           icon="mdi-set-merge"
+          :disabled="installedMods.length === 0"
         />
         <custom-button
           :tooltip="$t('tooltip.delete')"
           :action="deleteModifications"
           icon="mdi-delete"
+          :disabled="installedMods.length === 0"
         />
         <custom-button
           :tooltip="$t('tooltip.selectAll')"
@@ -56,10 +58,7 @@
         />
       </div>
     </div>
-    <progress-bar
-      :action-name="$t('progress.waiting')"
-      :progress="progress"
-    />
+    <progress-bar />
   </div>
 </template>
 
@@ -84,8 +83,7 @@ export default defineComponent({
     const selectedMods = ref<Mod[]>([]);
     const progress = ref<number>(0);
     const selectedPreset = ref<string>('');
-
-
+    const installedMods = ref<string[]>([]);
 
     loadMods().then(mods => {
       modList.value = mods;
@@ -95,7 +93,10 @@ export default defineComponent({
       modInfo.value = mods[0];
     });
 
-    loadInstalledModsIds().then(mods => (selectedMods.value = modList.value.filter(mod => mods.includes(mod.id))));
+    loadInstalledModsIds().then(mods => {
+      selectedMods.value = modList.value.filter(mod => mods.includes(mod.id));
+      installedMods.value = mods;
+    });
 
     function selectDependencies(mod: Mod) {
       for (const dependency of mod.dependencies) {
@@ -103,7 +104,6 @@ export default defineComponent({
         if (!dependencyMod) {
           throw new Error(`Dependency ${dependency} not found`);
         }
-
         selectMod(dependencyMod);
       }
     }
@@ -112,11 +112,9 @@ export default defineComponent({
       if (!selectedMods.value.includes(mod)) {
         selectedMods.value.push(mod);
       }
-
       if (mod.dependencies.length == 0) {
         return;
       }
-
       selectDependencies(mod);
     }
 
@@ -124,7 +122,6 @@ export default defineComponent({
       if (!selectedMods.value.includes(mod)) {
         return;
       }
-
       selectedMods.value.splice(selectedMods.value.indexOf(mod), 1);
     }
 
@@ -134,7 +131,6 @@ export default defineComponent({
         selectMod(mod);
         return;
       }
-
       deselectMod(mod);
     }
 
@@ -151,8 +147,13 @@ export default defineComponent({
     async function installModifications() {
       const ids = selectedMods.value.map(mod => mod.id);
       const time = await installMods(ids, selectedPreset.value);
+      installedMods.value = ids;
       //TODO: Replace with toast
       alert(`Installed ${selectedMods.value.length} mods in ${time}s`);
+    }
+
+    async function mergeMods() {
+      await mergeModFiles();
     }
 
     function handleModInfo(mod: Mod) {
@@ -161,7 +162,8 @@ export default defineComponent({
 
     function deleteModifications() {
       deleteMods();
-      //TODO: Replace with toast
+      selectedMods.value = [];
+      installedMods.value = [];
       alert('Deleted all modifications');
     }
 
@@ -179,10 +181,6 @@ export default defineComponent({
       }
     }
 
-
-
-
-
     return {
       modList,
       modInfo,
@@ -198,7 +196,8 @@ export default defineComponent({
       handleLoadPreset,
       openGameFolder,
       openModsFolder,
-      mergeModFiles,
+      mergeMods,
+      installedMods,
     };
   },
 });

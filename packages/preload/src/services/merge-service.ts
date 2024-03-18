@@ -4,10 +4,11 @@ import {buildPackage, extractAll} from './pak-service';
 import {loadConfiguration, saveConfiguration} from './configuration-service';
 import {ensureDirectory} from './file-service';
 import type {AppConfiguration} from '../interfaces/app-configuration';
+import {updateProgressBar} from './progress-service';
 
 export async function mergeModFiles() {
+  console.time('mergeModFiles');
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-
   const files = await configuration.filesCreated;
   const dataPath = path.join(configuration.gothicPath, 'Data');
   const mergedFiles: string[] = [];
@@ -17,12 +18,13 @@ export async function mergeModFiles() {
 
   console.log('m', mFiles);
   console.log('n', nFiles);
-  //iterate over array
+
   await mergeArchives(mFiles, mergedFiles, dataPath);
   await mergeArchives(nFiles, mergedFiles, dataPath);
 
   configuration.filesCreated = mergedFiles;
   await saveConfiguration(configuration);
+  console.timeEnd('mergeModFiles');
 }
 
 function sortModsArchives(paths: string[]): string[] {
@@ -76,7 +78,9 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
   try {
     const backupDirPath = path.join(dataPath, 'backup');
     const mergeDirPath = path.join(dataPath, 'merge');
-    for (const files of archives) {
+    for (let i = 0; i < archives.length; i++) {
+      updateProgressBar('progress.mergeArchives', i, archives.length);
+      const files = archives[i];
       if (files.length == 1) {
         mergedFiles.push(files[0]);
         continue;
@@ -84,7 +88,6 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       await ensureDirectory(backupDirPath);
       await ensureDirectory(mergeDirPath);
       console.log('Files:', files);
-      //copy all files to temp directory
       for (const file of files) {
         await fs.promises.rename(file, path.join(backupDirPath, path.basename(file)));
       }
@@ -92,13 +95,10 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       const mergeDirFiles = sortModsArchives(await fs.promises.readdir(backupDirPath));
       for (const file of mergeDirFiles) {
         const fullFilePath = path.join(backupDirPath, file);
-        console.log(fullFilePath);
         await extractAll(fullFilePath, mergeDirPath);
       }
       const resultFile = path.join(dataPath, path.basename(files[0]));
-      console.log('Building:', resultFile);
       await buildPackage(mergeDirPath, resultFile);
-      console.log('Built:', resultFile);
       mergedFiles.push(resultFile);
       await fs.promises.rmdir(backupDirPath, {recursive: true});
       await fs.promises.rmdir(mergeDirPath, {recursive: true});

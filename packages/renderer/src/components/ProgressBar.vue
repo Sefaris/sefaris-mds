@@ -4,34 +4,31 @@
       class="progress-bar"
       :style="{ width: progress + '%' }"
     ></div>
-    <span class="progress-name">{{ actionTitle }}</span>
+    <span class="progress-name">{{ $t(action) }} {{ step + "/" + maxSteps }}</span>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import type { ProgressStatus } from '#preload';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  props: {
-    actionName: {
-      type: String,
-      required: true,
-    },
-    progress: {
-      type: Number,
-      default: 0,
-    },
-  },
-  setup(props) {
-    const actionTitle = ref(props.actionName);
 
-
-    watch(() => props.actionName, (newVal: string) => {
-      actionTitle.value = newVal;
+  setup() {
+    const action = ref('progress.wait');
+    const progress = ref(0);
+    const step = ref(0);
+    const maxSteps = ref(0);
+    window.addEventListener('message', event => {
+      const status = event.data as ProgressStatus;
+      step.value = status.step;
+      maxSteps.value = status.maxSteps - 1;
+      const val = Math.floor(status.step / maxSteps.value * 100);
+      progress.value = val;
+      action.value = status.actionName;
     });
 
-
-    return { actionTitle };
+    return { action, progress, step, maxSteps };
   },
 });
 </script>
@@ -61,7 +58,6 @@ export default defineComponent({
 
     height: 100%;
     background-color: #00a0e9;
-    transition: width 0.5s ease-in-out;
   }
 }
 </style>

@@ -5,7 +5,13 @@ export default {
     presetNotFound: 'Preset {name} not found!',
   },
   progress: {
-    waiting: 'Waiting for action...',
+    wait: 'Waiting for action...',
+    delete: 'Deleting mods...',
+    moveOldSaves: 'Moving old saves...',
+    searchMods: 'Searching for mods files...',
+    copyMods: 'Copying mods...',
+    copyScripts: 'Copying scripts...',
+    mergeArchives: 'Merging archives...',
   },
   error: {
     presetNotFound: 'Preset {name} not found!',
