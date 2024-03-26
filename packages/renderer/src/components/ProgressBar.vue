@@ -2,18 +2,17 @@
   <div class="progress">
     <div
       class="progress-bar"
-      :style="{ width: progress + '%' }"
+      :style="{width: progress + '%'}"
     ></div>
-    <span class="progress-name">{{ $t(action) }} {{ step + "/" + maxSteps }}</span>
+    <span class="progress-name">{{ $t(action) }} {{ step + '/' + maxSteps }}</span>
   </div>
 </template>
 
 <script lang="ts">
-import type { ProgressStatus } from '#preload';
-import { defineComponent, ref } from 'vue';
+import type {ProgressStatus} from '#preload';
+import {defineComponent, ref} from 'vue';
 
 export default defineComponent({
-
   setup() {
     const action = ref('progress.wait');
     const progress = ref(0);
@@ -23,12 +22,12 @@ export default defineComponent({
       const status = event.data as ProgressStatus;
       step.value = status.step;
       maxSteps.value = status.maxSteps - 1;
-      const val = Math.floor(status.step / maxSteps.value * 100);
+      const val = Math.floor((status.step / maxSteps.value) * 100);
       progress.value = val;
       action.value = status.actionName;
     });
 
-    return { action, progress, step, maxSteps };
+    return {action, progress, step, maxSteps};
   },
 });
 </script>

@@ -11,11 +11,11 @@
 </template>
 
 <script lang="ts">
-import { loadModDescription, loadImages } from '#preload';
-import type { Mod } from '#preload';
-import type { PropType } from 'vue';
-import { onBeforeUnmount } from 'vue';
-import { defineComponent, ref, shallowRef, watch } from 'vue';
+import {loadModDescription, loadImages} from '#preload';
+import type {Mod} from '#preload';
+import type {PropType} from 'vue';
+import {onBeforeUnmount} from 'vue';
+import {defineComponent, ref, shallowRef, watch} from 'vue';
 
 export default defineComponent({
   components: {},
@@ -44,7 +44,6 @@ export default defineComponent({
         }
         if (gallery.value.length > 1) {
           interval.value = setInterval(changeImage, 2000);
-
         }
       },
     );
@@ -55,16 +54,13 @@ export default defineComponent({
       }
     });
 
-
     function changeImage() {
       currentImageIndex.value = (currentImageIndex.value + 1) % gallery.value.length;
       img.value = gallery.value[currentImageIndex.value];
     }
 
-
-    return { desc, img, interval };
+    return {desc, img, interval};
   },
-
 });
 </script>
 
@@ -98,7 +94,5 @@ export default defineComponent({
   ul {
     margin: 0.5rem 0 1rem 2rem;
   }
-
-
 }
 </style>

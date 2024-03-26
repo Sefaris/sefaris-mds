@@ -32,12 +32,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { getPresetNames, loadPreset, savePreset, deletePreset } from '#preload';
+import {defineComponent, ref} from 'vue';
+import {getPresetNames, loadPreset, savePreset, deletePreset} from '#preload';
 
 import CustomButton from './CustomButton.vue';
 export default defineComponent({
-  components: { CustomButton },
+  components: {CustomButton},
   props: {
     mods: {
       type: Array<string>,
@@ -45,7 +45,7 @@ export default defineComponent({
     },
   },
   emits: ['loadPreset'],
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     const presetName = ref<string>('');
     const presetNames = ref<string[]>([]);
 
@@ -70,13 +70,7 @@ export default defineComponent({
       emit('loadPreset', preset);
     }
 
-
-
-
-
-
-
-    return { presetName, presetNames, getPresetNames, load, save, remove, reloadPresets };
+    return {presetName, presetNames, getPresetNames, load, save, remove, reloadPresets};
   },
 });
 </script>
@@ -89,11 +83,9 @@ export default defineComponent({
   justify-content: end;
   gap: 0.25rem;
   margin-left: 0.5rem;
-
 }
 
 .preset-input {
-
   background-color: $primary-color;
   border: 1px solid $accent;
   border-radius: 0.25rem;

@@ -6,7 +6,7 @@ import {renderer} from 'unplugin-auto-expose';
 import {join, resolve, dirname} from 'node:path';
 import {injectAppVersion} from '../../version/inject-app-version-plugin.mjs';
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');

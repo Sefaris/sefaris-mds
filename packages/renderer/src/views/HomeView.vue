@@ -49,7 +49,7 @@
       />
       <div class="mods-list">
         <mod-item
-          v-for="( mod, index ) in modList "
+          v-for="(mod, index) in modList"
           :key="index"
           :mod="mod"
           :checked="selectedMods.includes(mod)"
@@ -63,10 +63,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, shallowRef } from 'vue';
+import {defineComponent, ref, shallowRef} from 'vue';
 
-import type { Mod, Preset } from '#preload';
-import { loadMods, loadInstalledModsIds, installMods, deleteMods, getPresetNames, openGameFolder, openModsFolder, mergeModFiles } from '#preload';
+import type {Mod, Preset} from '#preload';
+import {
+  loadMods,
+  loadInstalledModsIds,
+  installMods,
+  deleteMods,
+  getPresetNames,
+  openGameFolder,
+  openModsFolder,
+  mergeModFiles,
+} from '#preload';
 
 import ModItem from '../components/ModItem.vue';
 import ModDetails from '../components/ModDetails.vue';
@@ -75,7 +84,7 @@ import PresetBar from '../components/PresetBar.vue';
 import CustomButton from '../components/CustomButton.vue';
 
 export default defineComponent({
-  components: { ModDetails, ModItem, ProgressBar, PresetBar, CustomButton },
+  components: {ModDetails, ModItem, ProgressBar, PresetBar, CustomButton},
 
   setup() {
     const modInfo = shallowRef<Mod>();
@@ -167,7 +176,6 @@ export default defineComponent({
       alert('Deleted all modifications');
     }
 
-
     function handleLoadPreset(preset: Preset | null) {
       if (!preset) {
         selectedPreset.value = '';
@@ -175,7 +183,9 @@ export default defineComponent({
       }
       selectedMods.value = modList.value.filter(mod => preset.modIds.includes(mod.id));
       selectedPreset.value = preset.name;
-      const missingMods = preset.modIds.filter((modId: string) => !modList.value.some(mod => mod.id === modId));
+      const missingMods = preset.modIds.filter(
+        (modId: string) => !modList.value.some(mod => mod.id === modId),
+      );
       if (missingMods.length > 0) {
         alert(`Preset contains mods which you dont have: ${missingMods.join(', ')}`);
       }
@@ -232,8 +242,6 @@ export default defineComponent({
         margin-left: auto;
       }
     }
-
-
   }
 
   .mods {
@@ -248,10 +256,7 @@ export default defineComponent({
 
       border: 0.25rem solid $secondary-color;
       border-radius: 0.25rem;
-
-
     }
   }
-
 }
 </style>

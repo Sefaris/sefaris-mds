@@ -29,13 +29,13 @@
 </template>
 
 <script lang="ts">
-import type { AppConfiguration } from '#preload';
+import type {AppConfiguration} from '#preload';
 
-import { computed, defineComponent, ref, watch } from 'vue';
-import { selectGameFolder, isGothicPathValid, saveConfiguration, loadConfiguration } from '#preload';
+import {computed, defineComponent, ref, watch} from 'vue';
+import {selectGameFolder, isGothicPathValid, saveConfiguration, loadConfiguration} from '#preload';
 import CustomButton from '../components/CustomButton.vue';
-import type { SUPPORTED_LANGUAGES } from './../plugins/i18n';
-import { i18n, DEFAULT_LANGUAGE, LANGUAGE_SETTINGS } from './../plugins/i18n';
+import type {SUPPORTED_LANGUAGES} from './../plugins/i18n';
+import {i18n, DEFAULT_LANGUAGE, LANGUAGE_SETTINGS} from './../plugins/i18n';
 
 export default defineComponent({
   components: {
@@ -77,7 +77,6 @@ export default defineComponent({
       }
     }
 
-
     async function saveConfig() {
       const configCopy = JSON.parse(JSON.stringify(config.value));
       if (await saveConfiguration(configCopy)) {
@@ -87,9 +86,10 @@ export default defineComponent({
       }
     }
 
-
     const currentLanguageCode = ref(DEFAULT_LANGUAGE);
-    const currentLanguage = computed(() => LANGUAGE_SETTINGS.find(entry => entry.code === currentLanguageCode.value));
+    const currentLanguage = computed(() =>
+      LANGUAGE_SETTINGS.find(entry => entry.code === currentLanguageCode.value),
+    );
 
     function changeLanguage(code: string) {
       if (currentLanguageCode.value === code) {
@@ -107,7 +107,14 @@ export default defineComponent({
       },
     );
 
-    return { config, selectingGothicFolder, selectG3Folder, changeLanguage, currentLanguage, LANGUAGE_SETTINGS };
+    return {
+      config,
+      selectingGothicFolder,
+      selectG3Folder,
+      changeLanguage,
+      currentLanguage,
+      LANGUAGE_SETTINGS,
+    };
   },
 });
 </script>
@@ -125,7 +132,6 @@ export default defineComponent({
 h2 {
   text-align: center;
 }
-
 
 .config-input {
   width: 500px;

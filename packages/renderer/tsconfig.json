@@ -15,7 +15,7 @@
       "/@/*": ["./src/*"]
     },
     "lib": ["ESNext", "dom", "dom.iterable"],
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*.vue",

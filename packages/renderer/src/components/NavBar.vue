@@ -9,14 +9,10 @@
 </template>
 
 <script lang="ts">
-
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
 export default defineComponent({
-
   setup() {
-    return {
-
-    };
+    return {};
   },
 });
 </script>
@@ -44,7 +40,6 @@ export default defineComponent({
         background-color: $nav-bar-hover-color;
       }
     }
-
   }
 
   .options {

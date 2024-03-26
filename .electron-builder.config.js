@@ -17,10 +17,10 @@ module.exports = async function () {
       buildResources: 'buildResources',
     },
     files: ['packages/**/dist/**'],
-    extraFiles: [      
-      {from:'Static', to:'resources\\app\\Static'},
-      {from:'Tools', to:'resources\\app\\Tools'},
-      {from:'Presets', to:'Presets'},
+    extraFiles: [
+      {from: 'Static', to: 'resources\\app\\Static'},
+      {from: 'Tools', to: 'resources\\app\\Tools'},
+      {from: 'Presets', to: 'Presets'},
     ],
     extraMetadata: {
       version: getVersion(),

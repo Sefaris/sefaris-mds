@@ -4,7 +4,7 @@
       <img
         class="icon"
         :src="icon"
-      >Sefaris ModStarter
+      />Sefaris ModStarter
     </div>
     <div class="controls">
       <div
@@ -24,19 +24,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import {defineComponent, ref} from 'vue';
 
-import { minimizeWindow, closeApplication, loadIcon } from '#preload';
+import {minimizeWindow, closeApplication, loadIcon} from '#preload';
 
 import MdiIcon from './MdiIcon.vue';
 export default defineComponent({
-  components: { MdiIcon },
+  components: {MdiIcon},
   setup() {
     const icon = ref('');
     (async () => {
       icon.value = await loadIcon();
     })();
-    return { icon, minimizeWindow, closeApplication };
+    return {icon, minimizeWindow, closeApplication};
   },
 });
 </script>
@@ -45,7 +45,6 @@ export default defineComponent({
 @import '../../assets/styles/variables.scss';
 
 .title-bar {
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -57,7 +56,7 @@ export default defineComponent({
 
   .icon {
     height: 30px;
-    padding: 2.5px
+    padding: 2.5px;
   }
 
   .title {
@@ -66,10 +65,7 @@ export default defineComponent({
 
     height: 100%;
     font-size: 18px;
-
   }
-
-
 
   .controls {
     display: flex;
@@ -83,12 +79,9 @@ export default defineComponent({
       justify-content: center;
       align-items: center;
 
-
       &:hover {
         cursor: pointer;
       }
-
-
     }
 
     .minimize:hover {
@@ -103,7 +96,5 @@ export default defineComponent({
       background-color: #b92a20;
     }
   }
-
-
 }
 </style>
