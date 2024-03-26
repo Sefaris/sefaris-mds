@@ -37,7 +37,7 @@
         />
       </div>
       <preset-bar
-        :mod-ids="selectedMods"
+        :mods="selectedMods.map(mod => mod.id)"
         @load-preset="handleLoadPreset"
       />
     </div>

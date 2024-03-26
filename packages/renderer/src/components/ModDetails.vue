@@ -57,8 +57,6 @@ export default defineComponent({
 
 
     function changeImage() {
-      console.log('changeImage', currentImageIndex.value);
-      console.log('gallery size:', gallery.value.length);
       currentImageIndex.value = (currentImageIndex.value + 1) % gallery.value.length;
       img.value = gallery.value[currentImageIndex.value];
     }

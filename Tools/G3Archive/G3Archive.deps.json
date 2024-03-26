@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v7.0": {
       "G3Archive/1.0.2": {
         "dependencies": {
-          "CommandLineParser": "2.9.1"
+          "CommandLineParser": "2.9.1",
+          "Zlib.Portable.Signed": "1.11.0"
         },
         "runtime": {
           "G3Archive.dll": {}
@@ -19,6 +20,14 @@
           "lib/netstandard2.0/CommandLine.dll": {
             "assemblyVersion": "2.9.1.0",
             "fileVersion": "2.9.1.0"
+          }
+        }
+      },
+      "Zlib.Portable.Signed/1.11.0": {
+        "runtime": {
+          "lib/portable-net4+sl5+wp8+win8+wpa81+MonoTouch+MonoAndroid/Zlib.Portable.dll": {
+            "assemblyVersion": "1.11.0.0",
+            "fileVersion": "1.11.0.0"
           }
         }
       }
@@ -36,6 +45,13 @@
       "sha512": "sha512-OE0sl1/sQ37bjVsPKKtwQlWDgqaxWgtme3xZz7JssWUzg5JpMIyHgCTY9MVMxOg48fJ1AgGT3tgdH5m/kQ5xhA==",
       "path": "commandlineparser/2.9.1",
       "hashPath": "commandlineparser.2.9.1.nupkg.sha512"
+    },
+    "Zlib.Portable.Signed/1.11.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1f4itCxlSBxU8kf85qUmx1+d0iHKLeZK8S7ilb4w0t+uV+/xtOUUVOEAnFMG5uHVBc7L+ycZjWQoA+a1GZKYjg==",
+      "path": "zlib.portable.signed/1.11.0",
+      "hashPath": "zlib.portable.signed.1.11.0.nupkg.sha512"
     }
   }
 }

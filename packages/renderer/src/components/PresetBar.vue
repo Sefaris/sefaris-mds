@@ -1,19 +1,20 @@
 <template>
   <div class="preset-container">
-    <input
+    <select
+      id="presets"
       v-model="presetName"
       placeholder="Preset name..."
       class="preset-input"
       list="presets"
-    />
-    <datalist id="presets">
+      @change="load"
+    >
       <option
         v-for="(preset, index) in presetNames"
         :key="index"
       >
         {{ preset }}
       </option>
-    </datalist>
+    </select>
 
     <custom-button
       tooltip="Save preset"
@@ -22,13 +23,7 @@
       :disabled="!presetName"
     />
     <custom-button
-      tooltip="Load preset"
-      :action="load"
-      icon="mdi-upload"
-      :disabled="!presetName"
-    />
-    <custom-button
-      tooltip="delete"
+      tooltip="Delete preset"
       :action="remove"
       icon="mdi-delete"
       :disabled="!presetName"
@@ -39,14 +34,13 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { getPresetNames, loadPreset, savePreset, deletePreset } from '#preload';
-import type { Mod } from '#preload';
 
 import CustomButton from './CustomButton.vue';
 export default defineComponent({
   components: { CustomButton },
   props: {
-    modIds: {
-      type: Array<Mod>,
+    mods: {
+      type: Array<string>,
       required: true,
     },
   },
@@ -61,7 +55,7 @@ export default defineComponent({
     reloadPresets();
 
     async function save() {
-      await savePreset(getModsIds(), presetName.value);
+      await savePreset(props.mods, presetName.value);
       reloadPresets();
     }
 
@@ -76,15 +70,13 @@ export default defineComponent({
       emit('loadPreset', preset);
     }
 
-    function getModsIds() {
-      return props.modIds.map(mod => mod.id);
-    }
 
 
 
 
 
-    return { presetName, presetNames, getModsIds, getPresetNames, load, save, remove, reloadPresets };
+
+    return { presetName, presetNames, getPresetNames, load, save, remove, reloadPresets };
   },
 });
 </script>

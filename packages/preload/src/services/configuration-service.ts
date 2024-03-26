@@ -3,7 +3,7 @@ import type {AppConfiguration} from '../interfaces/app-configuration';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const configurationPath = 'config.json';
+const configurationFile = 'config.json';
 
 export async function selectGameFolder(): Promise<string> {
   return await ipcRenderer.invoke('open-folder-dialog');
@@ -20,7 +20,7 @@ export async function saveConfiguration(configuration: AppConfiguration): Promis
       return false;
     }
 
-    fs.writeFileSync(configurationPath, JSON.stringify(configuration));
+    fs.writeFileSync(configurationFile, JSON.stringify(configuration));
   } catch (error) {
     alert(error);
     return false;
@@ -29,19 +29,17 @@ export async function saveConfiguration(configuration: AppConfiguration): Promis
 }
 
 export async function loadConfiguration(): Promise<AppConfiguration | null> {
-  if (!fs.existsSync(configurationPath)) {
+  if (!fs.existsSync(configurationFile)) {
     return null;
   }
 
-  return JSON.parse(fs.readFileSync(configurationPath, 'utf-8'));
+  return JSON.parse(fs.readFileSync(configurationFile, 'utf-8'));
 }
 
 export function isGothicPathValid(param: AppConfiguration | string): boolean {
   if (typeof param === 'string') {
-    console.log('Sprawdzam ścieżkę:', param);
     return fs.existsSync(path.join(param, 'Gothic3.exe'));
   } else {
-    console.log('Sprawdzam ścieżkę:', path.join(param.gothicPath, 'Gothic3.exe'));
     return fs.existsSync(path.join(param.gothicPath, 'Gothic3.exe'));
   }
 }

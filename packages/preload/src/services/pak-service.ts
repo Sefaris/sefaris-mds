@@ -2,14 +2,20 @@ const {execFile} = require('node:child_process');
 import path from 'path';
 import * as fs from 'fs';
 import {ensureDirectory} from './file-service';
+
+//New pak tools
 const G3ARCHIVE = path.resolve(__dirname, '../../../Tools/G3Archive/G3Archive.exe');
 
+//Old pak tools
+// const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak.exe');
+// const G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3PakDir.exe');
+
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {
-  const destinationPath = destPath ?? srcPath + '\\kek.pak';
+  const destinationPath = destPath ?? srcPath + '\\package.pak';
   return new Promise((resolve, reject) => {
     execFile(
       G3ARCHIVE,
-      ['--pack', `"${srcPath}"`, '--dest', `"${destinationPath}"`, '--quiet'],
+      ['--pack', `"${srcPath}"`, '--dest', `"${destinationPath}"`, '--quiet', '--compression 0'],
       {
         shell: true,
         windowsHide: false,
@@ -35,7 +41,7 @@ export async function extractAll(file: string, destinationPath: string): Promise
   return new Promise((resolve, reject) => {
     execFile(
       G3ARCHIVE,
-      ['--extract', file, '--dest', destinationPath, '--quiet', '--overwrite'],
+      ['--extract', file, '--dest', destinationPath, '--quiet', '--overwrite', '--no-deleted'],
       {
         shell: false,
         windowsHide: true,
@@ -92,7 +98,7 @@ export async function findStrings(dataPath: string): Promise<string> {
   const files: string[] = [];
 
   const filesList = fs.readdirSync(dataPath);
-  const regex = /^strings/i; // "i" oznacza ignorowanie wielkości liter
+  const regex = /^strings/i;
 
   for (const file of filesList) {
     if (regex.test(file)) {

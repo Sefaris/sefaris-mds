@@ -6,86 +6,108 @@
         :value="config.gothicPath"
         class="config-input"
         type="text"
-        @input="handleInputChange"
       />
-      <span v-if="configDetails">{{ configDetails }}</span>
-      <span v-if="error">{{ error }}</span>
-
-      <button @click="selectG3Folder">Select game folder</button>
-      <button
-        :disabled="!config.gothicPath || !!error"
-        @click="saveConfig"
-      >
-        Save
-      </button>
+      <custom-button
+        tooltip="Select Game folder"
+        :action="selectG3Folder"
+        icon="mdi-folder"
+        :disabled="selectingGothicFolder"
+      />
     </div>
+    <button
+      v-for="(lang, index) in LANGUAGE_SETTINGS"
+      :key="index"
+      href="#"
+      class="dropdown-container-content-row cursor-pointer"
+      @click.prevent="changeLanguage(lang.code)"
+    >
+      <span :class="'fi fi-' + lang.code" />
+
+      <span>{{ lang.text }}</span>
+    </button>
   </div>
 </template>
 
 <script lang="ts">
 import type { AppConfiguration } from '#preload';
 
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { selectGameFolder, isGothicPathValid, saveConfiguration, loadConfiguration } from '#preload';
-import router from '../router';
+import CustomButton from '../components/CustomButton.vue';
+import type { SUPPORTED_LANGUAGES } from './../plugins/i18n';
+import { i18n, DEFAULT_LANGUAGE, LANGUAGE_SETTINGS } from './../plugins/i18n';
 
 export default defineComponent({
-  components: {},
+  components: {
+    CustomButton,
+  },
   setup() {
-    const configDetails = ref<string>();
     const config = ref<AppConfiguration>({
       gothicPath: '',
       modsPath: '',
+      language: 'gb',
       installedMods: [],
       filesCreated: [],
     });
-    const error = ref<string>();
+    const selectingGothicFolder = ref(false);
+    checkConfig();
 
     async function selectG3Folder() {
-      error.value = '';
-
-      const folderPath = await selectGameFolder();
-      if (!folderPath) {
-        error.value = 'No folder selected';
-        return;
-      }
-      if (!isGothicPathValid(folderPath)) {
-        error.value = 'Invalid Gothic path';
-        return;
-      }
-      config.value.gothicPath = folderPath;
-    }
-
-    function handleInputChange(event: Event) {
-      configDetails.value = '';
-      error.value = '';
-      const inputElement = event.target as HTMLInputElement;
-      config.value.gothicPath = inputElement.value;
-      if (!isGothicPathValid(inputElement.value)) {
-        error.value = 'Invalid Gothic path';
+      selectingGothicFolder.value = true;
+      while (selectingGothicFolder.value) {
+        const folderPath = await selectGameFolder();
+        if (!folderPath) {
+          selectingGothicFolder.value = false;
+          break;
+        }
+        if (!isGothicPathValid(folderPath)) {
+          alert('Invalid Gothic path');
+          continue;
+        }
+        config.value.gothicPath = folderPath;
+        await saveConfig();
+        selectingGothicFolder.value = false;
       }
     }
+
     async function checkConfig() {
       const conf = await loadConfiguration();
       if (conf) {
         config.value = conf;
       }
     }
-    checkConfig();
+
 
     async function saveConfig() {
       const configCopy = JSON.parse(JSON.stringify(config.value));
       if (await saveConfiguration(configCopy)) {
-        //TODO: Replace with toast
-        alert('Configuration saved!');
-        router.push('/');
+        //something
       } else {
-        //TODO: Replace with toast
-        configDetails.value = 'Configuration save failed';
+        alert('Error saving configuration');
       }
     }
 
-    return { configDetails, config, error, selectG3Folder, handleInputChange, saveConfig };
+
+    const currentLanguageCode = ref(DEFAULT_LANGUAGE);
+    const currentLanguage = computed(() => LANGUAGE_SETTINGS.find(entry => entry.code === currentLanguageCode.value));
+
+    function changeLanguage(code: string) {
+      if (currentLanguageCode.value === code) {
+        return;
+      }
+      currentLanguageCode.value = code;
+      config.value.language = code;
+      saveConfig();
+    }
+
+    watch(
+      () => currentLanguageCode.value,
+      () => {
+        i18n.global.locale.value = currentLanguageCode.value as SUPPORTED_LANGUAGES;
+      },
+    );
+
+    return { config, selectingGothicFolder, selectG3Folder, changeLanguage, currentLanguage, LANGUAGE_SETTINGS };
   },
 });
 </script>
@@ -97,18 +119,13 @@ export default defineComponent({
 
 .config {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  button {
-    padding: 0.25rem;
-    margin: 0.25rem;
-  }
+  justify-content: center;
 }
 
 h2 {
   text-align: center;
 }
+
 
 .config-input {
   width: 500px;
