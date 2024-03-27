@@ -26,16 +26,20 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const desc = shallowRef<string>(loadModDescription(props.mod.path)) || 'no description';
+    const desc = shallowRef<string>('No descrioption available.');
     const gallery = shallowRef<string[]>(loadImages(props.mod.path));
     const img = ref<string>(gallery.value[0]);
     const currentImageIndex = ref(0);
     const interval = ref(setInterval(changeImage, 2000));
 
+    loadModDescription(props.mod.path).then(value => {
+      desc.value = value;
+    });
+
     watch(
       () => props.mod,
-      newMod => {
-        desc.value = loadModDescription(newMod.path);
+      async newMod => {
+        desc.value = await loadModDescription(newMod.path);
         gallery.value = loadImages(newMod.path);
         img.value = gallery.value[0];
         currentImageIndex.value = 0;

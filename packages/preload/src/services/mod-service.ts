@@ -39,10 +39,12 @@ function validateMod(modPath: string): Mod | null {
   return mod;
 }
 
-export function loadModDescription(modPath: string): string {
+export async function loadModDescription(modPath: string): Promise<string> {
   const md = new MarkdownIt();
+  const config = await loadConfiguration();
+  const locale = config?.language || 'gb';
 
-  const file = path.join(modPath, 'readme.md');
+  const file = path.join(modPath, `readme_${locale}.md`);
   if (!fs.existsSync(file)) {
     return 'No description available.';
   }
