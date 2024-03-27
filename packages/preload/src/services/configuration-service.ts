@@ -20,7 +20,7 @@ export async function saveConfiguration(configuration: AppConfiguration): Promis
       return false;
     }
 
-    fs.writeFileSync(configurationFile, JSON.stringify(configuration));
+    fs.writeFileSync(configurationFile, JSON.stringify(configuration, null, 4));
   } catch (error) {
     alert(error);
     return false;

@@ -86,7 +86,7 @@ export default defineComponent({
       }
     }
 
-    const currentLanguageCode = ref(DEFAULT_LANGUAGE);
+    const currentLanguageCode = ref(config.value.language || DEFAULT_LANGUAGE);
     const currentLanguage = computed(() =>
       LANGUAGE_SETTINGS.find(entry => entry.code === currentLanguageCode.value),
     );
