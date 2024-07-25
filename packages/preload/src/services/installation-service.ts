@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as fs from 'fs';
 import * as os from 'os';
 
@@ -42,47 +41,55 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
   const allMods: Mod[] = await loadMods();
   const mods = allMods.filter(mod => modIds.includes(mod.id));
 
-  const startTime = performance.now();
-  await deleteMods();
-  await moveSaves();
+  try {
+    const startTime = performance.now();
+    await deleteMods();
+    await moveSaves();
 
-  await moveSplash(configuration, preset);
-  await moveShader(preset);
+    await moveSplash(configuration, preset);
+    await moveShader(preset);
 
-  for (let i = 0; i < mods.length; i++) {
-    updateProgressBar('progress.searchMods', i, mods.length);
-    for (const extension of MOD_EXTENSTIONS) {
-      const files = findFilesEndsWith(mods[i].path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
-      if (!filesDictionary[extension]) {
-        filesDictionary[extension] = [];
+    for (let i = 0; i < mods.length; i++) {
+      updateProgressBar('progress.searchMods', i, mods.length);
+      for (const extension of MOD_EXTENSTIONS) {
+        const files = findFilesEndsWith(
+          mods[i].path,
+          `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`,
+        );
+        if (!filesDictionary[extension]) {
+          filesDictionary[extension] = [];
+        }
+        filesDictionary[extension].push(...files);
       }
-      filesDictionary[extension].push(...files);
+      const scripts = findFilesEndsWith(mods[i].path, DLL_EXTENSION);
+      scriptFiles.push(...scripts);
+      const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
+      iniFiles.push(...inis);
     }
-    const scripts = findFilesEndsWith(mods[i].path, DLL_EXTENSION);
-    scriptFiles.push(...scripts);
-    const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
-    iniFiles.push(...inis);
-  }
 
-  appendFakeFiles(filesDictionary);
+    appendFakeFiles(filesDictionary);
 
-  for (const key in filesDictionary) {
-    {
-      await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
+    for (const key in filesDictionary) {
+      {
+        await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
+      }
     }
+    await copyScriptsFiles(scriptsPath, scriptFiles, createdFiles);
+    await copyScriptsFiles(iniPath, iniFiles, createdFiles);
+
+    await buildStringTable(dataPath, mods, createdFiles);
+    const endTime = performance.now();
+    const time = ((endTime - startTime) / 1000).toFixed(3);
+
+    configuration.installedMods = mods.map(mod => mod.id);
+    configuration.filesCreated = createdFiles;
+    await saveConfiguration(configuration);
+
+    return time.toString();
+  } catch (error) {
+    console.error(error);
+    return 'error';
   }
-  await copyScriptsFiles(scriptsPath, scriptFiles, createdFiles);
-  await copyScriptsFiles(iniPath, iniFiles, createdFiles);
-
-  await buildStringTable(dataPath, mods, createdFiles);
-  const endTime = performance.now();
-  const time = ((endTime - startTime) / 1000).toFixed(3);
-
-  configuration.installedMods = mods.map(mod => mod.id);
-  configuration.filesCreated = createdFiles;
-  await saveConfiguration(configuration);
-
-  return time.toString();
 }
 
 function prepareFilesDictionary(): Record<string, string[]> {
@@ -100,23 +107,19 @@ async function copyFiles(
   filePaths: string[],
   createdFiles: string[],
 ): Promise<void> {
-  try {
-    for (let i = 0; i < filePaths.length; i++) {
-      updateProgressBar('progress.copyMods', i, filePaths.length);
-      const filePath = filePaths[i];
-      const fileName = path.basename(filePath);
-      const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
-      const destinationFileName = await getFreeFileName(
-        destinationPath,
-        nameWithoutExtension,
-        extension,
-      );
-      const newFilePath = path.join(destinationPath, destinationFileName);
-      await fs.promises.copyFile(filePath, newFilePath);
-      createdFiles.push(newFilePath);
-    }
-  } catch (error) {
-    console.error(error);
+  for (let i = 0; i < filePaths.length; i++) {
+    updateProgressBar('progress.copyMods', i, filePaths.length);
+    const filePath = filePaths[i];
+    const fileName = path.basename(filePath);
+    const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
+    const destinationFileName = await getFreeFileName(
+      destinationPath,
+      nameWithoutExtension,
+      extension,
+    );
+    const newFilePath = path.join(destinationPath, destinationFileName);
+    await fs.promises.copyFile(filePath, newFilePath);
+    createdFiles.push(newFilePath);
   }
 }
 
@@ -128,20 +131,17 @@ async function copyScriptsFiles(
   if (createdFiles.includes(path.basename(destinationPath))) {
     return;
   }
-  try {
-    for (let i = 0; i < filePaths.length; i++) {
-      updateProgressBar('progress.copyScripts', i, filePaths.length);
-      const filePath = filePaths[i];
-      const fileName = path.basename(filePath);
-      if (fileName.includes('stringtable')) {
-        continue;
-      }
-      const newFilePath = path.join(destinationPath, fileName);
-      await fs.promises.copyFile(filePath, newFilePath);
-      createdFiles.push(newFilePath);
+
+  for (let i = 0; i < filePaths.length; i++) {
+    updateProgressBar('progress.copyScripts', i, filePaths.length);
+    const filePath = filePaths[i];
+    const fileName = path.basename(filePath);
+    if (fileName.includes('stringtable')) {
+      continue;
     }
-  } catch (error) {
-    console.error(error);
+    const newFilePath = path.join(destinationPath, fileName);
+    await fs.promises.copyFile(filePath, newFilePath);
+    createdFiles.push(newFilePath);
   }
 }
 
@@ -167,20 +167,17 @@ async function getFreeFileName(
 
 export async function deleteMods(): Promise<void> {
   const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-  try {
-    const filesCount = configuration.filesCreated.length;
-    for (let i = 0; i < filesCount; i++) {
-      updateProgressBar('progress.delete', i, filesCount);
-      fs.unlinkSync(configuration.filesCreated[i]);
-    }
 
-    configuration.installedMods = [];
-    configuration.filesCreated = [];
-
-    await saveConfiguration(configuration);
-  } catch (error) {
-    console.error(error);
+  const filesCount = configuration.filesCreated.length;
+  for (let i = 0; i < filesCount; i++) {
+    updateProgressBar('progress.delete', i, filesCount);
+    fs.unlinkSync(configuration.filesCreated[i]);
   }
+
+  configuration.installedMods = [];
+  configuration.filesCreated = [];
+
+  await saveConfiguration(configuration);
 }
 
 function appendFakeFiles(dictionary: Record<string, string[]>): void {
@@ -193,26 +190,22 @@ async function buildStringTable(
   mods: Mod[],
   createdFiles: string[],
 ): Promise<void> {
-  try {
-    const stringTablePath = await findStrings(gothicDataPath);
-    const destinationPath = gothicDataPath;
-    const tempDir = path.join(gothicDataPath, 'temp');
-    const fileName = path.basename(stringTablePath);
-    const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
+  const stringTablePath = await findStrings(gothicDataPath);
+  const destinationPath = gothicDataPath;
+  const tempDir = path.join(gothicDataPath, 'temp');
+  const fileName = path.basename(stringTablePath);
+  const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
 
-    const destinationFileName =
-      (await getFreeFileName(destinationPath, nameWithoutExtension, 'mod')) ??
-      (await getFreeFileName(destinationPath, nameWithoutExtension, 'pak'));
+  const destinationFileName =
+    (await getFreeFileName(destinationPath, nameWithoutExtension, 'mod')) ??
+    (await getFreeFileName(destinationPath, nameWithoutExtension, 'pak'));
 
-    const packageDestPath = path.join(destinationPath, destinationFileName);
-    await mergeStringTables(gothicDataPath, mods, stringTablePath);
-    await buildPackage(tempDir, packageDestPath);
-    createdFiles.push(packageDestPath);
+  const packageDestPath = path.join(destinationPath, destinationFileName);
+  await mergeStringTables(gothicDataPath, mods, stringTablePath);
+  await buildPackage(tempDir, packageDestPath);
+  createdFiles.push(packageDestPath);
 
-    fs.rmSync(tempDir, {recursive: true, force: true});
-  } catch (error) {
-    console.error(error);
-  }
+  fs.rmSync(tempDir, {recursive: true, force: true});
 }
 
 async function mergeStringTables(
@@ -257,22 +250,18 @@ async function mergeStringTables(
 }
 
 async function moveSaves() {
-  try {
-    const newModsFolder = getNextSaveDirectoryName();
-    const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
-    const oldFilesPaths = getOldModsFiles();
-    if (oldFilesPaths.length === 0) {
-      return;
-    }
+  const newModsFolder = getNextSaveDirectoryName();
+  const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
+  const oldFilesPaths = getOldModsFiles();
+  if (oldFilesPaths.length === 0) {
+    return;
+  }
 
-    await ensureDirectory(newModsFolderPath);
-    const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
-    for (let i = 0; i < oldFilesPaths.length; i++) {
-      updateProgressBar('progress.moveOldSaves', i, oldFilesPaths.length);
-      await fs.promises.rename(oldFilesPaths[i], newFilesPaths[i]);
-    }
-  } catch (error) {
-    console.error(error);
+  await ensureDirectory(newModsFolderPath);
+  const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
+  for (let i = 0; i < oldFilesPaths.length; i++) {
+    updateProgressBar('progress.moveOldSaves', i, oldFilesPaths.length);
+    await fs.promises.rename(oldFilesPaths[i], newFilesPaths[i]);
   }
 }
 
@@ -316,35 +305,27 @@ function getNewModsFilesPaths(files: string[], destDirectory: string) {
 }
 
 async function moveSplash(configuration: AppConfiguration, presetName?: string) {
-  try {
-    let splash = path.join(APP_PATH, 'Static', SPLASH);
-    if (presetName && fs.existsSync(path.join(APP_PATH, 'Presets', presetName, SPLASH))) {
-      splash = path.join(APP_PATH, 'Presets', presetName, SPLASH);
-    }
-
-    if (!fs.existsSync(splash)) {
-      return;
-    }
-
-    const splashDest = path.join(configuration.gothicPath, SPLASH);
-    await fs.copyFileSync(splash, splashDest);
-  } catch (error) {
-    console.error(error);
+  let splash = path.join(APP_PATH, 'Static', SPLASH);
+  if (presetName && fs.existsSync(path.join(APP_PATH, 'Presets', presetName, SPLASH))) {
+    splash = path.join(APP_PATH, 'Presets', presetName, SPLASH);
   }
+
+  if (!fs.existsSync(splash)) {
+    return;
+  }
+
+  const splashDest = path.join(configuration.gothicPath, SPLASH);
+  await fs.copyFileSync(splash, splashDest);
 }
 
 async function moveShader(presetName?: string) {
-  try {
-    if (!presetName) {
-      return;
-    }
-    const shader = path.join(APP_PATH, 'Presets', presetName, SHADER);
-    if (!fs.existsSync(shader)) {
-      return;
-    }
-    const shaderDest = path.join(G3_DOCUMENTS_PATH, SHADER);
-    await fs.copyFileSync(shader, shaderDest);
-  } catch (error) {
-    console.error(error);
+  if (!presetName) {
+    return;
   }
+  const shader = path.join(APP_PATH, 'Presets', presetName, SHADER);
+  if (!fs.existsSync(shader)) {
+    return;
+  }
+  const shaderDest = path.join(G3_DOCUMENTS_PATH, SHADER);
+  await fs.copyFileSync(shader, shaderDest);
 }
