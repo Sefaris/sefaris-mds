@@ -2,7 +2,6 @@ import type {RouteRecordRaw, Router} from 'vue-router';
 import {createRouter, createWebHashHistory} from 'vue-router';
 
 import HomeView from './views/HomeView.vue';
-import ConfigurationView from './views/ConfigurationView.vue';
 import {loadConfiguration} from '#preload';
 
 const routes: RouteRecordRaw[] = [
@@ -20,11 +19,6 @@ const routes: RouteRecordRaw[] = [
         }
       });
     },
-  },
-  {
-    path: '/configuration',
-    name: 'Configuration',
-    component: ConfigurationView,
   },
 ];
 

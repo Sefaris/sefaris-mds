@@ -11,7 +11,7 @@ export {selectGameFolder} from './services/configuration-service';
 
 export {openGameFolder, openModsFolder} from './services/file-service';
 
-export {minimizeWindow, closeApplication, loadIcon} from './services/titlebar-service';
+export {minimizeWindow, closeApplication} from './services/titlebar-service';
 
 export {
   isGothicPathValid,

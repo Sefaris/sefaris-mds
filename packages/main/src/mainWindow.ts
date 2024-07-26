@@ -4,8 +4,8 @@ import {addEvents} from './events';
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
-    width: 900,
-    height: 1000,
+    width: 800,
+    height: 760,
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     frame: false,
     webPreferences: {

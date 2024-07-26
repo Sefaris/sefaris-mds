@@ -1,19 +1,17 @@
 <template>
   <title-bar />
-  <nav-bar />
   <router-view></router-view>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue';
 import TitleBar from './components/TitleBar.vue';
-import NavBar from './components/NavBar.vue';
 import {onMounted} from 'vue';
 import {loadConfiguration} from '#preload';
 import {i18n} from './plugins/i18n';
 import type {SUPPORTED_LANGUAGES} from './plugins/i18n';
 export default defineComponent({
-  components: {TitleBar, NavBar},
+  components: {TitleBar},
   setup() {
     onMounted(async () => {
       const config = await loadConfiguration();
@@ -34,7 +32,9 @@ export default defineComponent({
 @import '../assets/styles/main.scss';
 
 #app {
-  height: calc(100vh - 30px);
+  height: calc(100vh);
   max-width: 100vw;
+  background-image: url('./../assets/images/background.png');
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
 }
 </style>

@@ -24,4 +24,8 @@ export default defineComponent({
 
 <style lang="scss">
 @import '../../assets/styles/variables.scss';
+
+.mdi {
+  font-size: $font-size-icon;
+}
 </style>
