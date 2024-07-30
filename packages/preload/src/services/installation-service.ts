@@ -27,7 +27,7 @@ const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
 const PRESET_FILES_PATH = path.join(APP_PATH, 'Presets');
 const STATIC_FILE_MOD_EXTENSTION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
-const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
+// const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
 
 const MOD_EXTENSTIONS = ['mod', 'nod'];
 const DLL_EXTENSION = 'dll';
@@ -192,7 +192,7 @@ async function mergeStringTables(gothicDataPath: string, mods: Mod[], originalSt
   });
 
   mods.forEach(element => {
-    const modStringTable = path.join(element.path, STRINGTABLEMOD_FILENAME);
+    const modStringTable = path.join(element.path, STRINGTABLE_FILENAME);
     if (fs.existsSync(modStringTable)) {
       const modStringTableContent = fs
         .readFileSync(modStringTable, {
@@ -229,7 +229,7 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
   mods.forEach(mod => {
     const wrldataMod = path.join(mod.path, WRLDATASC);
     if (fs.existsSync(wrldataMod)) {
-      const wrldataModContent = fs.readFileSync(wrldataPath, { encoding: WRLDATASC_ENCODING, flag: 'r' });
+      const wrldataModContent = fs.readFileSync(wrldataMod, { encoding: WRLDATASC_ENCODING, flag: 'r' });
       const sectors = wrldataModContent.replace(/^[\s\S]*?\[Sector\.List\]/, '');
       fs.appendFileSync(tempWrldataPath, sectors, {
         encoding: WRLDATASC_ENCODING,
