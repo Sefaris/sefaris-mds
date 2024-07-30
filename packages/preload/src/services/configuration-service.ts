@@ -14,7 +14,7 @@ export async function saveConfiguration(configuration: AppConfiguration): Promis
     if (import.meta.env.PROD) {
       configuration.modsPath = path.join(configuration.gothicPath, 'Mods');
     } else {
-      configuration.modsPath = 'E:\\SteamLibrary\\steamapps\\common\\Gothic 3\\Mods';
+      configuration.modsPath = 'C:\\Users\\Komputeriusz\\Desktop\\MDS-Sefaris\\Mods\\mods';
     }
     if (!configuration.gothicPath) {
       return false;

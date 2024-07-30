@@ -17,6 +17,7 @@
           <img
             v-else
             class="main-mods-mod-checkbox-inactive"
+            :class="{ 'main-mods-mod-checkbox-incompatible': isIncompatibleofSelectedMod(mod.id) }"
             src="../../assets/svg/state=unactive.svg"
             @click="selectMod(mod.id)"
           />
@@ -70,6 +71,9 @@ export default defineComponent({
     }
 
     function selectMod(modId: string) {
+      if (isIncompatibleofSelectedMod(modId)) {
+        return;
+      }
       if (!selectedMods.value.includes(modId)) {
         selectedMods.value.push(modId);
       }
@@ -77,6 +81,7 @@ export default defineComponent({
       if (!mod?.dependencies.length) {
         return;
       }
+
       selectDependencies(modId);
     }
 
@@ -87,6 +92,12 @@ export default defineComponent({
       });
     }
 
+    function isIncompatibleofSelectedMod(modId: string): boolean {
+      return selectedMods.value.some(selectedModId => {
+        const mod = mods.value.find(mod => mod.id === selectedModId);
+        return mod?.incompatibles.includes(modId) ?? false;
+      });
+    }
     function deselectMod(modId: string) {
       if (!selectedMods.value.includes(modId)) {
         return;
@@ -94,6 +105,7 @@ export default defineComponent({
       if (isDependencyOfSelectedMod(modId)) {
         return;
       }
+
       selectedMods.value.splice(selectedMods.value.indexOf(modId), 1);
     }
 
@@ -109,6 +121,7 @@ export default defineComponent({
       selectMod,
       deselectMod,
       isDependencyOfSelectedMod,
+      isIncompatibleofSelectedMod,
       checkDetails,
     };
   },
@@ -137,6 +150,12 @@ export default defineComponent({
 
         &-dependency {
           background-color: rgba($primary-color, 0.5) !important;
+        }
+
+        &-incompatible {
+          border-radius: $border-radius-small;
+          background-color: $color-incompatible !important;
+          cursor: default;
         }
 
         &-active {
