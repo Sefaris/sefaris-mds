@@ -43,27 +43,26 @@
 
     <div class="nav-bottom">
       <div class="nav-bottom-links">
-        <span class="nav-bottom-links-label"> {{ $t('nav.title') }}: </span>
+        <span class="nav-bottom-links-label"> {{ $t('nav.bottom.title') }}: </span>
         <div class="nav-bottom-links-container">
           <div class="nav-bottom-links-container">
             <button
               class="nav-bottom-links-container-tab"
-              :class="{ 'nav-bottom-links-container-tab-active': activeTab === 'all' }"
-              @click="setActiveTab('all')"
+              :class="{ 'nav-bottom-links-container-tab-active': activeCategory === 'all' }"
+              @click="selectCategory('all')"
             >
               {{ $t('nav.bottom.all') }} ({{ modsCounter }})
             </button>
             <button
               class="nav-bottom-links-container-tab"
               :class="{
-                'nav-bottom-links-container-tab-active': activeTab === 'installed',
-                'nav-bottom-links-container-tab-disabled': !installedModsCounter
-              }"
-              @click="setActiveTab('installed')"
+                'nav-bottom-links-container-tab-active': activeCategory === 'installed',
+                'nav-bottom-links-container-tab-disabled': !installedModsCounter}"
+              @click="selectCategory('installed')"
             >
               {{ $t('nav.bottom.installed') }} ({{ installedModsCounter }})
             </button>
-            <!-- <button class="nav-bottom-links-container-tab">Pluginy (10)</button> -->
+            <categories-dropdown />
           </div>
         </div>
       </div>
@@ -72,34 +71,24 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { openWebsite } from '#preload';
 import ChangeLocale from './ChangeLocale.vue';
 import KofiButton from './KofiButton.vue';
+import CategoriesDropdown from './CategoriesDropdown.vue';
 import { useModsStore } from '../stores/mods-store';
 export default defineComponent({
-  components: { ChangeLocale, KofiButton },
+  components: { ChangeLocale, KofiButton, CategoriesDropdown },
   setup() {
-    const activeTab = ref('all');
-    const setActiveTab = (tab: string) => {
-      activeTab.value = tab;
-      switch (tab) {
-        case 'all':
-          displayAllMods();
-          break;
-        case 'installed':
-          displayInstalledMods();
-          break;
-      }
-    };
+    const activeCategory = computed(() => modsStore.activeCategory);
     const modsStore = useModsStore();
     const modsCounter = computed(() => modsStore.mods.length);
     const installedModsCounter = computed(() => modsStore.installedMods.length);
+    const selectCategory = (category:string)=> {
+      modsStore.displayCategory(category);
+    };
 
-    const displayAllMods = () => modsStore.displayAllMods();
-    const displayInstalledMods = () => modsStore.displayInstalledMods();
-
-    return { openWebsite, modsCounter, activeTab, setActiveTab, installedModsCounter };
+    return { openWebsite, modsCounter, activeCategory, installedModsCounter, selectCategory };
   },
 });
 </script>
@@ -199,6 +188,7 @@ export default defineComponent({
       }
 
       &-container {
+        display: flex;
         &-tab {
           height: 34px;
           padding: $margin-between $margin-regular;
@@ -214,6 +204,30 @@ export default defineComponent({
 
           &-disabled {
             color: $text-light;
+          }
+
+          &-items {
+            @include center;
+            flex-direction: column;
+            gap:4px;
+            max-height: 400px;
+            overflow-y: auto;
+            &-item{
+              width:100%;
+              border: none;
+              border-radius: 4px;
+              color:$text-white;
+              padding:$padding-tiny;
+              background-color: inherit;
+
+              &-active {
+                border-right: 4px $primary-color solid;
+              }
+              &:hover{
+                background-color: $default-hover;
+              }
+            }
+
           }
         }
       }

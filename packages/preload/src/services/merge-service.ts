@@ -16,8 +16,6 @@ export async function mergeModFiles() {
   const mFiles = Array.from(map.get('.m')?.values() ?? []);
   const nFiles = Array.from(map.get('.n')?.values() ?? []);
 
-  console.log('m', mFiles);
-  console.log('n', nFiles);
 
   await mergeArchives(mFiles, mergedFiles, dataPath);
   await mergeArchives(nFiles, mergedFiles, dataPath);
@@ -87,7 +85,6 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       }
       await ensureDirectory(backupDirPath);
       await ensureDirectory(mergeDirPath);
-      console.log('Files:', files);
       for (const file of files) {
         await fs.promises.rename(file, path.join(backupDirPath, path.basename(file)));
       }

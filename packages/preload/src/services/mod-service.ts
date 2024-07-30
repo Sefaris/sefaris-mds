@@ -25,7 +25,7 @@ export async function loadMods(): Promise<Mod[]> {
 
 function validateMod(modPath: string): Mod | null {
   if (!fs.existsSync(path.join(modPath, 'mod.json'))) {
-    console.log('mod.json not found in ' + modPath);
+    console.error('mod.json not found in ' + modPath);
     return null;
   }
 
@@ -52,7 +52,7 @@ export async function loadModDescription(modPath: string): Promise<string> {
 }
 
 export function loadImages(modPath: string): string[] {
-  const imagesPath = path.join(modPath, 'images');
+  const imagesPath = path.join(modPath, 'Pictures');
   if (!fs.existsSync(imagesPath)) return [];
   const files = fs.readdirSync(imagesPath);
   const imageFiles = files.filter(file => {

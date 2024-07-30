@@ -15,17 +15,17 @@
     </div>
   </div>
   <div
-    v-else
+    v-else-if="mod"
     class="main-preview"
   >
-    <div class="main-preview-name">{{ mod?.title }}</div>
+    <div class="main-preview-name">{{ mod.title }}</div>
     <div
-      v-if="mod?.authors"
+      v-if="mod.authors.length"
       class="main-preview-author"
     >
       {{ $t('main.preview.author') }}:
       <span
-        v-for="(author, index) in mod?.authors"
+        v-for="(author, index) in mod.authors"
         :key="index"
         class="main-preview-author-name"
       >{{ author }}</span>
@@ -64,11 +64,12 @@ export default defineComponent({
     const mod = shallowRef<Mod>();
 
     watch([() => props.selectedMod, () => i18n.global.locale.value], async ([newMod, _]) => {
-      // Logika aktualizacji moda
       mod.value = (await loadMods()).find(mod => mod.id === newMod);
       if (!mod.value) {
-        throw new Error(`Mod ${newMod} doesn't exist!`);
+        console.error(`Mod ${newMod} doesn't exist!`);
+        return;
       }
+
       gallery.value = loadImages(mod.value.path);
       imgSource.value = gallery.value[0];
       currentImageIndex.value = 0;

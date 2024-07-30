@@ -97,8 +97,7 @@ export default defineComponent({
     const startInstallation = async () => {
       installation.value = true;
       installMods(JSON.parse(JSON.stringify(selectedMods.value)))
-        .then((result: string) => {
-          console.log(result);
+        .then(() => {
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installation.value = false;
         })

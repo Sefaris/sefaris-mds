@@ -12,13 +12,29 @@ import NavBar from './components/NavBar.vue';
 import MainSection from './components/MainSection.vue';
 import FooterSection from './components/FooterSection.vue';
 import { useModsStore } from './stores/mods-store';
+import type { AppConfiguration} from '#preload';
+import { loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
 export default defineComponent({
   components: { TitleBar, NavBar, MainSection, FooterSection },
   setup() {
     const modsStore = useModsStore();
     onMounted(async () => {
+      const config = await loadConfiguration();
+      if(!config){
+        alert('No config file, show Gothic 3 directory');
+        const gamePath = await selectGameFolder();
+        const config: AppConfiguration = {
+          gothicPath: gamePath,
+          modsPath: gamePath,
+          language: 'gb',
+          installedMods: [],
+          filesCreated: [],
+        };
+        await saveConfiguration(config);
+      }
       await modsStore.reloadMods();
       await modsStore.loadInstalledMods();
+      await modsStore.loadCategories();
     });
 
     return {};

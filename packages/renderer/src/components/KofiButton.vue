@@ -8,7 +8,7 @@
     >
       {{ $t('nav.top.support') }}
 
-      <img src=" https://storage.ko-fi.com/cdn/cup-border.png" />
+      <img src="https://storage.ko-fi.com/cdn/cup-border.png" />
     </a>
   </div>
 </template>

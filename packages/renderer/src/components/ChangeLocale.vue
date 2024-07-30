@@ -7,7 +7,7 @@
       <template #activator>
         <span
           class="nav-top-wrapper-flag"
-          :class="'fi fi-' + currentLanguage?.code"
+          :class="'fi fi-' + flag"
         />
       </template>
 
@@ -27,21 +27,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { loadConfiguration, saveConfiguration } from '#preload';
 import Dropdown from './Dropdown.vue';
 
 import type { SUPPORTED_LANGUAGES } from '../utils/constants';
 import { DEFAULT_LANGUAGE, LANGUAGE_SETTINGS } from '../utils/constants';
 import { i18n } from '../plugins/i18n';
-const currentLanguageCode = ref(DEFAULT_LANGUAGE);
-const currentLanguage = computed(() => LANGUAGE_SETTINGS.find(entry => entry.code === currentLanguageCode.value));
-
+const currentLanguageCode = ref(i18n.global.locale.value ?? DEFAULT_LANGUAGE);
+const flag = computed(() => i18n.global.locale.value);
 function changeLanguage(code: string) {
   if (currentLanguageCode.value === code) {
     return;
   }
-  currentLanguageCode.value = code;
+  currentLanguageCode.value = code as SUPPORTED_LANGUAGES;
 }
 
 watch(
@@ -60,7 +59,6 @@ onMounted(async () => {
   if (configuration) {
     i18n.global.locale.value = configuration.language as SUPPORTED_LANGUAGES;
   } else {
-    alert('Error loading configuration');
     i18n.global.locale.value = 'gb';
   }
 });

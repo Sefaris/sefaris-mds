@@ -88,14 +88,14 @@ export default defineComponent({
     function isDependencyOfSelectedMod(modId: string): boolean {
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
-        return mod?.dependencies.includes(modId) ?? false;
+        return mod?.dependencies?.includes(modId) ?? false;
       });
     }
 
     function isIncompatibleofSelectedMod(modId: string): boolean {
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
-        return mod?.incompatibles.includes(modId) ?? false;
+        return mod?.incompatibles?.includes(modId) ?? false;
       });
     }
     function deselectMod(modId: string) {

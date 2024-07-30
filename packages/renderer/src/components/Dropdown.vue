@@ -10,6 +10,7 @@
         :id="dropdownId"
         ref="trigger"
         class="dropdown-btn"
+        :class="btnClass"
         type="button"
         aria-haspopup="true"
         :aria-expanded="expanded"
@@ -56,6 +57,10 @@ export default defineComponent({
     showCaret: {
       type: Boolean,
       default: true,
+    },
+    btnClass:{
+      type:String,
+      default: '',
     },
   },
   setup() {
@@ -153,7 +158,7 @@ export default defineComponent({
     &-content {
       margin-top: $margin-regular;
       padding: $padding-between;
-      width: 150px;
+      width: max-content;
       background-color: $primary-bg;
       border: 2px solid $divider-color;
       border-radius: $border-radius-huge 0 $border-radius-huge $border-radius-huge;

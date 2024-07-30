@@ -1,6 +1,6 @@
 import type { Mod } from '@interfaces/mod';
 import { defineStore } from 'pinia';
-import { ref, shallowRef } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import { loadConfiguration, loadMods } from '#preload';
 
 export const useModsStore = defineStore('mods', () => {
@@ -8,13 +8,30 @@ export const useModsStore = defineStore('mods', () => {
   const displayedMods = shallowRef<Mod[]>([]);
   const installedMods = shallowRef<Mod[]>([]);
   const selectedMods = ref<string[]>([]);
-
+  const categories = shallowRef<string[]>([]);
+  const activeCategory = ref<string>('all');
+  const countModsInCategory = computed((category:string)=>mods.value.filter(mod => mod.category === category).length);
+ 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
   }
 
   function setInstalledMods(mods: Mod[]) {
     installedMods.value = mods;
+  }
+
+
+  function displayCategory(category:string){
+    activeCategory.value=category;
+    if(category==='all') {
+      displayAllMods();
+      return;
+    }
+    if(category==='installed') {
+      displayInstalledMods();
+      return;
+    }
+    displayedMods.value = mods.value.filter(mod => mod.category === category);
   }
 
   function displayInstalledMods() {
@@ -36,17 +53,29 @@ export const useModsStore = defineStore('mods', () => {
     mods.value = await loadMods();
     displayedMods.value = mods.value;
   }
+  function loadCategories(){
+    const categorySet = new Set<string>();
+    mods.value.forEach(mod => {
+      if(mod.category){
+        categorySet.add(mod.category);
+      }
+    });
+    categories.value = Array.from(categorySet);
+  }
 
   return {
     mods,
     displayedMods,
     installedMods,
     selectedMods,
+    categories,
+    activeCategory,
+    countModsInCategory,
     setSelectedMods,
     reloadMods,
+    loadCategories,
     loadInstalledMods,
-    displayInstalledMods,
-    displayAllMods,
     setInstalledMods,
+    displayCategory,
   };
 });

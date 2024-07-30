@@ -1,4 +1,4 @@
-export const DEFAULT_LANGUAGE = 'pl';
+export const DEFAULT_LANGUAGE = 'gb';
 
 export const LANGUAGE_SETTINGS = [
   { code: 'pl', text: 'Polski' },
