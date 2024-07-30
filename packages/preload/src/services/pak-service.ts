@@ -1,21 +1,15 @@
-const {execFile} = require('node:child_process');
+const { execFile } = require('node:child_process');
 import path from 'path';
 import * as fs from 'fs';
-import {ensureDirectory} from './file-service';
-
-//New pak tools
-const G3ARCHIVE = path.resolve(__dirname, '../../../Tools/G3Archive/G3Archive.exe');
-
-//Old pak tools
-// const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak.exe');
-// const G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3PakDir.exe');
-
+import { ensureDirectory } from './file-service';
+const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
+const G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe');
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {
-  const destinationPath = destPath ?? srcPath + '\\package.pak';
+  const destinationPath = destPath ?? srcPath + '\\output.pak';
   return new Promise((resolve, reject) => {
     execFile(
-      G3ARCHIVE,
-      ['--pack', `"${srcPath}"`, '--dest', `"${destinationPath}"`, '--quiet', '--compression 0'],
+      G3PAKDIR_PATH,
+      ['--no-comments', '--no-deletion', `"${srcPath}"`, `"${destinationPath}"`],
       {
         shell: true,
         windowsHide: false,
@@ -40,8 +34,8 @@ export async function buildPackage(srcPath: string, destPath?: string): Promise<
 export async function extractAll(file: string, destinationPath: string): Promise<string> {
   return new Promise((resolve, reject) => {
     execFile(
-      G3ARCHIVE,
-      ['--extract', file, '--dest', destinationPath, '--quiet', '--overwrite', '--no-deleted'],
+      G3PAK_PATH,
+      ['--extract-all', file, destinationPath],
       {
         shell: false,
         windowsHide: true,
@@ -62,11 +56,7 @@ export async function extractAll(file: string, destinationPath: string): Promise
   });
 }
 
-export async function extract(
-  file: string,
-  fileNames: string[],
-  destinationPath: string,
-): Promise<void> {
+export async function extract(file: string, fileNames: string[], destinationPath: string): Promise<void> {
   const tempDir = path.join(destinationPath, 'temp');
   await ensureDirectory(tempDir);
   await extractAll(file, tempDir);
@@ -81,10 +71,10 @@ export async function extract(
     }
   }
   try {
-    fs.rm(tempDir, {recursive: true, force: true}, error => {
+    fs.rm(tempDir, { recursive: true, force: true }, error => {
       return new Promise<void>((resolve, reject) => {
         if (error) {
-          return reject();
+          return reject(error);
         }
         return resolve();
       });
@@ -98,7 +88,7 @@ export async function findStrings(dataPath: string): Promise<string> {
   const files: string[] = [];
 
   const filesList = fs.readdirSync(dataPath);
-  const regex = /^strings/i;
+  const regex = /^strings/i; // "i" oznacza ignorowanie wielkości liter
 
   for (const file of filesList) {
     if (regex.test(file)) {

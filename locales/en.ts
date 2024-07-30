@@ -1,4 +1,12 @@
 export default {
+  nav: {
+    title: 'Your goods',
+  },
+  main: {
+    preview: {
+      default: 'Select a modification to learn more',
+    },
+  },
   common: {
     configuration: 'Configuration',
     home: 'Home',
@@ -16,8 +24,9 @@ export default {
   error: {
     presetNotFound: 'Preset {name} not found!',
   },
-  tooltip: {
+  action: {
     install: 'Install mods',
+    play: 'Play',
     delete: 'Delete mods',
     merge: 'Merge archives',
     selectAll: 'Select all mods',

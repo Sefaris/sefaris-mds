@@ -3,5 +3,6 @@ export interface Mod {
   title: string;
   dependencies: string[];
   directoryName: string;
+  authors: string[];
   path: string;
 }

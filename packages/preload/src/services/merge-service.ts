@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import path from 'path';
-import {buildPackage, extractAll} from './pak-service';
-import {loadConfiguration, saveConfiguration} from './configuration-service';
-import {ensureDirectory} from './file-service';
-import type {AppConfiguration} from '../interfaces/app-configuration';
-import {updateProgressBar} from './progress-service';
+import { buildPackage, extractAll } from './pak-service';
+import { loadConfiguration, saveConfiguration } from './configuration-service';
+import { ensureDirectory } from './file-service';
+import type { AppConfiguration } from '@interfaces/app-configuration';
+import { updateProgressBar } from './progress-service';
 
 export async function mergeModFiles() {
   console.time('mergeModFiles');
@@ -100,8 +100,8 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       const resultFile = path.join(dataPath, path.basename(files[0]));
       await buildPackage(mergeDirPath, resultFile);
       mergedFiles.push(resultFile);
-      await fs.promises.rmdir(backupDirPath, {recursive: true});
-      await fs.promises.rmdir(mergeDirPath, {recursive: true});
+      await fs.promises.rmdir(backupDirPath, { recursive: true });
+      await fs.promises.rmdir(mergeDirPath, { recursive: true });
     }
   } catch (error) {
     console.error('Error:', error);

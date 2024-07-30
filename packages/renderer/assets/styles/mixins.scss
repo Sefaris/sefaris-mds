@@ -37,7 +37,3 @@
   flex-direction: column;
   justify-content: space-between;
 }
-
-@mixin page-margin {
-  margin: 100px $margin-big $margin-small $margin-big;
-}

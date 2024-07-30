@@ -1,9 +1,9 @@
-import type {Mod} from '../interfaces/mod';
-import {loadConfiguration} from './configuration-service';
+import type { Mod } from '@interfaces/mod';
+import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
-import type {AppConfiguration} from '../interfaces/app-configuration';
+import type { AppConfiguration } from '@interfaces/app-configuration';
 const UTF8 = 'utf8';
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();

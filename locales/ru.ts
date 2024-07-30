@@ -1,4 +1,12 @@
 export default {
+  nav: {
+    title: 'Ваш товар',
+  },
+  main: {
+    preview: {
+      default: 'Выберите модификацию, чтобы узнать больше',
+    },
+  },
   common: {
     configuration: 'конфигурация',
     home: 'домашняя страница',
@@ -15,8 +23,9 @@ export default {
   error: {
     presetNotFound: 'предустановка {name} не найдена!',
   },
-  tooltip: {
+  action: {
     install: 'установить моды',
+    play: 'играть',
     delete: 'удалить моды',
     merge: 'объединить архивы',
     selectAll: 'выбрать все моды',

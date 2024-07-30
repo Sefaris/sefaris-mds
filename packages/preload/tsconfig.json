@@ -9,6 +9,9 @@
     "isolatedModules": true,
     "types": ["node"],
     "baseUrl": ".",
+    "paths": {
+      "@interfaces/*": ["../../interfaces/*"]
+    },
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*.ts", "../../types/**/*.d.ts"],

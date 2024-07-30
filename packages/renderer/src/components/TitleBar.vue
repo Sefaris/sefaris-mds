@@ -1,6 +1,6 @@
 <template>
   <div class="title-bar">
-    <div class="title"> Sefaris ModStarter </div>
+    <div class="title">G3 ModStarter</div>
     <div class="controls">
       <div
         class="control minimize"
@@ -22,15 +22,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { defineComponent } from 'vue';
 
-import {minimizeWindow, closeApplication} from '#preload';
+import { minimizeWindow, closeApplication } from '#preload';
 
 import MdiIcon from './MdiIcon.vue';
 export default defineComponent({
-  components: {MdiIcon},
+  components: { MdiIcon },
   setup() {
-    return {minimizeWindow, closeApplication};
+    return { minimizeWindow, closeApplication };
   },
 });
 </script>
@@ -43,7 +43,7 @@ export default defineComponent({
   justify-content: space-between;
   align-items: center;
   color: $text-white;
-  height: 30px;
+  height: 32px;
   app-region: drag;
 
   .title {
@@ -71,6 +71,10 @@ export default defineComponent({
 
     .disabled {
       color: $text-disabled;
+    }
+
+    .minimize:hover {
+      background-color: rgba($white, 0.1);
     }
 
     .close:hover {

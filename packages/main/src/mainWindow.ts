@@ -1,6 +1,6 @@
-import {app, BrowserWindow} from 'electron';
-import {join, resolve} from 'node:path';
-import {addEvents} from './events';
+import { app, BrowserWindow } from 'electron';
+import { join, resolve } from 'node:path';
+import { addEvents } from './events';
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({

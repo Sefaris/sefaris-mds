@@ -1,8 +1,8 @@
-import type {RouteRecordRaw, Router} from 'vue-router';
-import {createRouter, createWebHashHistory} from 'vue-router';
+import type { RouteRecordRaw, Router } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 import HomeView from './views/HomeView.vue';
-import {loadConfiguration} from '#preload';
+import { loadConfiguration } from '#preload';
 
 const routes: RouteRecordRaw[] = [
   {

@@ -1,19 +1,9 @@
-import {createI18n} from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
+import { DEFAULT_LANGUAGE } from '../utils/constants';
 
 import en from '../../../../locales/en';
 import pl from '../../../../locales/pl';
 import ru from '../../../../locales/ru';
-
-//TODO: wyrzucić stałe do osobnego pliku
-export const DEFAULT_LANGUAGE = 'pl';
-
-export const LANGUAGE_SETTINGS = [
-  {code: 'pl', text: 'Polski'},
-  {code: 'ru', text: 'Русский'},
-  {code: 'gb', text: 'English'},
-] as const;
-
-export type SUPPORTED_LANGUAGES = (typeof LANGUAGE_SETTINGS)[number]['code'];
 
 export const i18n = createI18n({
   legacy: false,

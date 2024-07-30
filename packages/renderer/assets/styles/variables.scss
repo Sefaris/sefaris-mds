@@ -1,10 +1,9 @@
-
 // COLOR
 $primary-bg: #1c1c1c;
 $primary-color: #c7f148;
 $divider-color: #30303b;
+$border-color: #30303b;
 $mask-color: rgba(0, 0, 0, 0.726);
-$block-mask: #695f5b8e;
 $accent: #c7f148;
 $scroll-track: #858585;
 $white: #ffffff;
@@ -17,13 +16,13 @@ $info-color: #3498db;
 
 // ACTION STATES
 $default-hover: rgba($primary-color, 0.3);
-$title-bar-hover: rgba($white,0.3);
 // FONT COLOR
 $text-white: #ffffff;
 $text-secondary: #c4c2c2bf;
 $text-black: #000000;
 $link-hover: $primary-color;
-$text-disabled: rgba(255, 255, 255, 0.2);
+$text-light: #c3c1c1;
+$text-disabled: rgba($text-white, 0.2);
 
 // PADDING
 $padding-enourmous: 52px;
@@ -34,7 +33,7 @@ $padding-medium: 16px;
 $padding-small: 12px;
 $padding-between: 8px;
 $padding-tiny: 6px;
-$padding-minimal: 3px;
+$padding-minimal: 4px;
 
 // MARGIN
 $margin-enourmous: 52px;
@@ -42,13 +41,14 @@ $margin-huge: 40px;
 $margin-very-big: 32px;
 $margin-big: 24px;
 $margin-medium: 16px;
-$margin-small: 12px;
+$margin-regular: 12px;
+$margin-small:10px;
 $margin-between: 8px;
 $margin-tiny: 6px;
-$margin-minimal: 3px;
+$margin-minimal: 4px;
 
 // FONT-SIZE
-$font-size-enourmous: 40px;
+$font-size-enourmous: 48px;
 $font-size-huge: 32px;
 $font-size-big: 24px;
 $font-size-between: 20px;
@@ -57,8 +57,12 @@ $font-size-regular: 15px;
 $font-size-subtext: 14px;
 $font-size-small: 12px;
 
+// FONT-FAMILY
+$font-lato: 'Lato', sans-serif;
+$font-gothic: Gothic;
+
 // ICONS
-$font-size-icon: 24px;
+$icon-size: 24px;
 
 // FONT-WEIGHT
 $font-weight-thin: 300;
@@ -72,6 +76,14 @@ $animation-duration-short: 0.2s;
 // BORDER RADIUS
 $border-radius-huge: 16px;
 $border-radius-big: 12px;
-$border-radius-medium: 10px;
+$border-radius-medium: 8px;
 $border-radius-regular: 6px;
-$border-radius-small: 3px;
+$border-radius-small: 4px;
+
+// COMPONENTS
+$main-height: 506px;
+$main-sections-width: 364px;
+$footer-height: 108px;
+$progress-bar-height: 8px;
+$app-width: 800px;
+$app-height: 760px;

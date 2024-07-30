@@ -1,4 +1,4 @@
-import {BrowserWindow, app, dialog, ipcMain} from 'electron';
+import { BrowserWindow, app, dialog, ipcMain } from 'electron';
 
 export function addEvents() {
   ipcMain.handle('open-folder-dialog', async (): Promise<string> => {

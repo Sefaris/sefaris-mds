@@ -1,40 +1,41 @@
-@import '@mdi/font/css/materialdesignicons.min.css';
-@import './variables.scss'; 
-@import 'flag-icons/css/flag-icons.min.css';
+@import "@mdi/font/css/materialdesignicons.min.css";
+@import "./variables.scss";
+@import "flag-icons/css/flag-icons.min.css";
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    font-family: 'Lato', sans-serif;
-    font-size: $font-size-regular;
-    background-color: $primary-color;
-    color: $text-white;
+  font-family: $font-lato;
+  font-size: $font-size-regular;
+  background-color: $primary-color;
+  color: $text-white;
 }
 
-
-button:hover{
-    cursor: pointer;
-   
+button:hover {
+  cursor: pointer;
 }
 
 a {
-    text-decoration: none;
-    color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
- /* Chrome, Edge, and Safari */
- *::-webkit-scrollbar {
-     width: 0.5rem;
- }
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+}
 
+*::-webkit-scrollbar-thumb {
+  background-color: $white;
+  border-radius: 8px;
+}
 
- *::-webkit-scrollbar-thumb {
-     background-color: $accent;
-     border-radius: 1rem;
- }
-
+@font-face {
+  font-family: $font-gothic;
+  src: url("/fonts/Gothic3.ttf");
+}
