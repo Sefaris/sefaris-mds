@@ -160,7 +160,7 @@ export default defineComponent({
       padding: $padding-between;
       width: max-content;
       background-color: $primary-bg;
-      border: 2px solid $divider-color;
+      border: $border-width-small solid $divider-color;
       border-radius: $border-radius-huge 0 $border-radius-huge $border-radius-huge;
       z-index: 5;
 

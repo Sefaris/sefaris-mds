@@ -1,6 +1,6 @@
 import type { Mod } from '@interfaces/mod';
 import { defineStore } from 'pinia';
-import { computed, ref, shallowRef } from 'vue';
+import { ref, shallowRef } from 'vue';
 import { loadConfiguration, loadMods } from '#preload';
 
 export const useModsStore = defineStore('mods', () => {
@@ -10,7 +10,6 @@ export const useModsStore = defineStore('mods', () => {
   const selectedMods = ref<string[]>([]);
   const categories = shallowRef<string[]>([]);
   const activeCategory = ref<string>('all');
-  const countModsInCategory = computed((category:string)=>mods.value.filter(mod => mod.category === category).length);
  
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
@@ -20,6 +19,9 @@ export const useModsStore = defineStore('mods', () => {
     installedMods.value = mods;
   }
 
+  function countModsInCategory(category:string){
+    return mods.value.filter(mod=>mod.category===category).length;
+  }
 
   function displayCategory(category:string){
     activeCategory.value=category;

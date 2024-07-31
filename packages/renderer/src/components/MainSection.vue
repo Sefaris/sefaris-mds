@@ -2,6 +2,13 @@
   <div class="main">
     <div class="main-mods">
       <div
+        v-if="!mods.length"
+        class="main-mods-nomods"
+      >
+        <img src="../../assets/images/error_404.webp">
+        {{ $t('main.mods.notFound') }}
+      </div>
+      <div
         v-for="(mod, index) in mods"
         :key="index"
         class="main-mods-mod"
@@ -52,7 +59,6 @@ export default defineComponent({
         modsStore.setSelectedMods(mods);
       },
     });
-
     const installedMods = ref<string[]>([]);
     const selectedMod = ref<string>();
 
@@ -98,6 +104,7 @@ export default defineComponent({
         return mod?.incompatibles?.includes(modId) ?? false;
       });
     }
+
     function deselectMod(modId: string) {
       if (!selectedMods.value.includes(modId)) {
         return;
@@ -142,6 +149,12 @@ export default defineComponent({
     width: $main-sections-width;
     overflow-y: auto;
 
+    &-nomods{
+      @include center;
+      flex-direction: column;
+      gap:10px;
+    }
+
     &-mod {
       @include center-vertically;
 
@@ -173,7 +186,7 @@ export default defineComponent({
         width: 100%;
 
         &-active {
-          border-right: 4px solid $primary-color;
+          border-right: $border-width-regular solid $primary-color;
         }
       }
     }

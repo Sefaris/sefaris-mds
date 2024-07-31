@@ -11,6 +11,9 @@ export default {
     },
   },
   main:{
+    mods:{
+      notFound:'Nie znaleziono modów',
+    },
     preview:{
       default:'Wybierz modyfikację aby dowiedzieć się więcej',
       author:'Autor',
@@ -20,5 +23,8 @@ export default {
     play:'Graj',
     install:'Zainstaluj',
     cancel:'Anuluj zmiany',
+  },
+  alert:{
+    installed:'Modyfikacje pomyślnie zainstalowane w ',
   },
 };

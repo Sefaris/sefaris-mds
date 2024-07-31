@@ -18,7 +18,7 @@ module.exports = async function () {
     },
     files: ['packages/**/dist/**'],
     extraFiles: [
-      { from: 'Static', to: 'resources\\app\\Static' },
+      { from: 'Static', to: 'Static' },
       { from: 'Tools', to: 'resources\\app\\Tools' },
       { from: 'Presets', to: 'Presets' }
     ],

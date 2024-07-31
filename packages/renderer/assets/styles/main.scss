@@ -37,5 +37,5 @@ a {
 
 @font-face {
   font-family: $font-gothic;
-  src: url("/fonts/Gothic3.ttf");
+  src: url("./fonts/Gothic3.ttf") format('truetype');
 }

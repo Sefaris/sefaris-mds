@@ -63,6 +63,7 @@ import { computed, defineComponent, ref } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import { installMods, startGame } from '#preload';
 import type { ProgressStatus } from '@interfaces/progress-status';
+import { i18n } from '../plugins/i18n';
 export default defineComponent({
   components: {},
   setup() {
@@ -97,7 +98,8 @@ export default defineComponent({
     const startInstallation = async () => {
       installation.value = true;
       installMods(JSON.parse(JSON.stringify(selectedMods.value)))
-        .then(() => {
+        .then((time) => {
+          alert(`${i18n.global.t('alert.installed')} ${time}s`);
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installation.value = false;
         })

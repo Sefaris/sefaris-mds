@@ -1,36 +1,30 @@
 export default {
-  nav: {
-    title: 'Your goods',
-  },
-  main: {
-    preview: {
-      default: 'Select a modification to learn more',
+  nav:{
+    top:{
+      support:'Support',
+    },
+    bottom:{
+      title:'Your goods',
+      all:'All',
+      installed:'Installed',
+      categories:'Categories',
     },
   },
-  common: {
-    configuration: 'Configuration',
-    home: 'Home',
-    presetNotFound: 'Preset {name} not found!',
+  main:{
+    mods:{
+      notFound:'Mods not found',
+    },
+    preview:{
+      default:'Select a modification to learn more',
+      author:'Author',
+    },
   },
-  progress: {
-    wait: 'Waiting for action...',
-    delete: 'Deleting mods...',
-    moveOldSaves: 'Moving old saves...',
-    searchMods: 'Searching for mods files...',
-    copyMods: 'Copying mods...',
-    copyScripts: 'Copying scripts...',
-    mergeArchives: 'Merging archives...',
+  action:{
+    play:'Play',
+    install:'Install',
+    cancel:'Cancel changes',
   },
-  error: {
-    presetNotFound: 'Preset {name} not found!',
-  },
-  action: {
-    install: 'Install mods',
-    play: 'Play',
-    delete: 'Delete mods',
-    merge: 'Merge archives',
-    selectAll: 'Select all mods',
-    openGameFolder: 'Open game folder',
-    openModsFolder: 'Open mods folder',
+  alert:{
+    installed:'Mods succesfully installed in ',
   },
 };

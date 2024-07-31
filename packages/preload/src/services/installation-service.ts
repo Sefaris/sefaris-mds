@@ -94,13 +94,17 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         const time = (endTime - startTime) / 1000;
 
         configuration.installedMods = mods.map(mod => mod.id);
-        configuration.filesCreated = createdFiles;
+        //Get rid of possible duplicates
+        console.log(createdFiles);
+        configuration.filesCreated = Array.from(new Set(createdFiles));
+        console.log(configuration.filesCreated);
 
         await saveConfiguration(configuration);
 
         resolve(time.toFixed(3));
       } catch (error) {
         // Remove copied files
+        alert(error);
         for (let i = 0; i < createdFiles.length; i++) {
           updateProgressBar('progress.delete', i, createdFiles.length);
           fs.unlinkSync(createdFiles[i]);

@@ -58,11 +58,12 @@
               :class="{
                 'nav-bottom-links-container-tab-active': activeCategory === 'installed',
                 'nav-bottom-links-container-tab-disabled': !installedModsCounter}"
+              :disabled="!installedModsCounter"
               @click="selectCategory('installed')"
             >
               {{ $t('nav.bottom.installed') }} ({{ installedModsCounter }})
             </button>
-            <categories-dropdown />
+            <categories-dropdown v-if="categoriesExist" />
           </div>
         </div>
       </div>
@@ -84,11 +85,13 @@ export default defineComponent({
     const modsStore = useModsStore();
     const modsCounter = computed(() => modsStore.mods.length);
     const installedModsCounter = computed(() => modsStore.installedMods.length);
+    const categoriesExist = computed(() => modsStore.categories.length>0);
+
     const selectCategory = (category:string)=> {
       modsStore.displayCategory(category);
     };
 
-    return { openWebsite, modsCounter, activeCategory, installedModsCounter, selectCategory };
+    return { openWebsite, modsCounter, activeCategory, installedModsCounter, categoriesExist, selectCategory };
   },
 });
 </script>
@@ -174,7 +177,7 @@ export default defineComponent({
   }
 
   &-bottom {
-    border-bottom: 1px solid $divider-color;
+    border-bottom: $border-width-minimal solid $divider-color;
     @include center;
     height: 34px;
 
@@ -199,7 +202,7 @@ export default defineComponent({
           font-size: $font-size-regular;
 
           &-active {
-            border-bottom: 2px solid $primary-color;
+            border-bottom: $border-width-small solid $primary-color;
           }
 
           &-disabled {
@@ -215,13 +218,13 @@ export default defineComponent({
             &-item{
               width:100%;
               border: none;
-              border-radius: 4px;
+              border-radius: $border-radius-small;
               color:$text-white;
               padding:$padding-tiny;
               background-color: inherit;
 
               &-active {
-                border-right: 4px $primary-color solid;
+                border-right: $border-width-regular $primary-color solid;
               }
               &:hover{
                 background-color: $default-hover;

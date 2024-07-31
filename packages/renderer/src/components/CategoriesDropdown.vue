@@ -10,7 +10,7 @@
           :class="{ 'nav-bottom-links-container-tab-items-item-active': category === activeCategory }"
           @click="selectCategory(category)"
         >
-          {{ category }}
+          {{ category }} ({{ countModsInCategory(category) }})
         </button>
       </div>
     </dropdown>
@@ -29,12 +29,16 @@ export default defineComponent({
     const modsStore = useModsStore();
     const categories = computed(()=>modsStore.categories);
     const activeCategory = computed(() => modsStore.activeCategory);
+
+    const countModsInCategory = (category:string)=>{
+      return modsStore.countModsInCategory(category);
+    };
     const selectCategory = (category:string)=>{
       modsStore.displayCategory(category);
     };
     
     return {
-      categories, selectCategory, activeCategory,
+      categories, selectCategory, activeCategory, countModsInCategory,
     };
   },
 });
