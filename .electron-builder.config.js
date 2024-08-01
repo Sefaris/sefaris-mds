@@ -14,21 +14,21 @@ module.exports = async function () {
   return {
     directories: {
       output: 'dist',
-      buildResources: 'buildResources'
+      buildResources: 'buildResources',
     },
     files: ['packages/**/dist/**'],
     extraFiles: [
       { from: 'Static', to: 'Static' },
       { from: 'Tools', to: 'resources\\app\\Tools' },
-      { from: 'Presets', to: 'Presets' }
+      { from: 'Presets', to: 'Presets' },
     ],
     extraMetadata: {
-      version: getVersion()
+      version: getVersion(),
     },
 
     // Specify linux target just for disabling snap compilation
     linux: {
-      target: 'deb'
-    }
+      target: 'deb',
+    },
   };
 };

@@ -7,7 +7,9 @@
           v-for="(category, index) in categories"
           :key="index"
           class="nav-bottom-links-container-tab-items-item"
-          :class="{ 'nav-bottom-links-container-tab-items-item-active': category === activeCategory }"
+          :class="{
+            'nav-bottom-links-container-tab-items-item-active': category === activeCategory,
+          }"
           @click="selectCategory(category)"
         >
           {{ category }} ({{ countModsInCategory(category) }})

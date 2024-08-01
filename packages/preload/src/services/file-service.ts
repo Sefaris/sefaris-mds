@@ -75,7 +75,11 @@ export function removeFileNameExtension(fileName: string): string {
   return path.parse(fileName).name;
 }
 
-export async function getFreeFileName(destinationPath: string, baseName: string, extension: string): Promise<string> {
+export async function getFreeFileName(
+  destinationPath: string,
+  baseName: string,
+  extension: string,
+): Promise<string> {
   let fileName = `${baseName}.${extension}`;
   let count = 0;
 
@@ -116,7 +120,11 @@ export async function copyFiles(
     const filePath = filePaths[i];
     const fileName = path.basename(filePath);
     const nameWithoutExtension = removeFileNameExtension(fileName).toLowerCase();
-    const destinationFileName = await getFreeFileName(destinationPath, nameWithoutExtension, extension);
+    const destinationFileName = await getFreeFileName(
+      destinationPath,
+      nameWithoutExtension,
+      extension,
+    );
     const newFilePath = path.join(destinationPath, destinationFileName);
     await fs.promises.copyFile(filePath, newFilePath);
     createdFiles.push(newFilePath);

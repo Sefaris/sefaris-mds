@@ -7,7 +7,9 @@
       <span
         class="nav-top-logo"
         @click="openWebsite('https://www.sefaris.eu/')"
-      > Sefaris.eu </span>
+      >
+        Sefaris.eu
+      </span>
 
       <div class="nav-top-wrapper">
         <change-locale />
@@ -57,7 +59,7 @@
               class="nav-bottom-links-container-tab"
               :class="{
                 'nav-bottom-links-container-tab-active': activeCategory === 'installed',
-                'nav-bottom-links-container-tab-disabled': !installedModsCounter
+                'nav-bottom-links-container-tab-disabled': !installedModsCounter,
               }"
               :disabled="!installedModsCounter"
               @click="selectCategory('installed')"
@@ -92,7 +94,14 @@ export default defineComponent({
       modsStore.displayCategory(category);
     };
 
-    return { openWebsite, modsCounter, activeCategory, installedModsCounter, categoriesExist, selectCategory };
+    return {
+      openWebsite,
+      modsCounter,
+      activeCategory,
+      installedModsCounter,
+      categoriesExist,
+      selectCategory,
+    };
   },
 });
 </script>

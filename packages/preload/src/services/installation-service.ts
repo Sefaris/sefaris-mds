@@ -66,7 +66,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         for (let i = 0; i < mods.length; i++) {
           updateProgressBar('progress.searchMods', i, mods.length);
           for (const extension of MOD_EXTENSTIONS) {
-            const files = findFilesEndsWith(mods[i].path, `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`);
+            const files = findFilesEndsWith(
+              mods[i].path,
+              `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`,
+            );
             if (!filesDictionary[extension]) {
               filesDictionary[extension] = [];
             }
@@ -124,7 +127,11 @@ function prepareFilesDictionary(): Record<string, string[]> {
   return filesDictionary;
 }
 
-async function copyScriptsFiles(destinationPath: string, filePaths: string[], createdFiles: string[]): Promise<void> {
+async function copyScriptsFiles(
+  destinationPath: string,
+  filePaths: string[],
+  createdFiles: string[],
+): Promise<void> {
   if (createdFiles.includes(path.basename(destinationPath))) {
     return;
   }
@@ -162,7 +169,11 @@ function appendFakeFiles(dictionary: Record<string, string[]>): void {
   dictionary['nod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.n0x'));
 }
 
-async function buildStringTable(gothicDataPath: string, mods: Mod[], createdFiles: string[]): Promise<void> {
+async function buildStringTable(
+  gothicDataPath: string,
+  mods: Mod[],
+  createdFiles: string[],
+): Promise<void> {
   const stringTablePath = await findStrings(gothicDataPath);
   const tempDir = path.join(gothicDataPath, 'temp');
   const fileName = path.basename(stringTablePath);
@@ -180,7 +191,11 @@ async function buildStringTable(gothicDataPath: string, mods: Mod[], createdFile
   fs.rmSync(tempDir, { recursive: true, force: true });
 }
 
-async function mergeStringTables(gothicDataPath: string, mods: Mod[], originalStringTable: string): Promise<void> {
+async function mergeStringTables(
+  gothicDataPath: string,
+  mods: Mod[],
+  originalStringTable: string,
+): Promise<void> {
   const tempDir = path.join(gothicDataPath, 'temp');
   await ensureDirectory(tempDir);
   await extract(originalStringTable, [STRINGTABLE_FILENAME], tempDir);
@@ -222,7 +237,11 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
   if (!fs.existsSync(wrldataPath)) throw new Error('No wrldatasc file');
   const outputFileName = await getFreeFileName(gothicDataPath, 'projects_compiled', 'mod');
   const outputFilePath = path.join(gothicDataPath, outputFileName);
-  const lastExistingFileName = await getLastExistingFileName(gothicDataPath, 'projects_compiled', 'mod');
+  const lastExistingFileName = await getLastExistingFileName(
+    gothicDataPath,
+    'projects_compiled',
+    'mod',
+  );
   const lastExistingFileNamePath = path.join(gothicDataPath, lastExistingFileName);
   if (fs.existsSync(outputFilePath)) fs.unlinkSync(outputFilePath);
   const tempDir = path.join(gothicDataPath, 'temp');
@@ -233,7 +252,10 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
   mods.forEach(mod => {
     const wrldataMod = path.join(mod.path, WRLDATASC);
     if (fs.existsSync(wrldataMod)) {
-      const wrldataModContent = fs.readFileSync(wrldataMod, { encoding: WRLDATASC_ENCODING, flag: 'r' });
+      const wrldataModContent = fs.readFileSync(wrldataMod, {
+        encoding: WRLDATASC_ENCODING,
+        flag: 'r',
+      });
       const sectors = wrldataModContent.replace(/^[\s\S]*?\[Sector\.List\]/, '');
       fs.appendFileSync(tempWrldataPath, sectors, {
         encoding: WRLDATASC_ENCODING,

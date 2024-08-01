@@ -56,7 +56,11 @@ export async function extractAll(file: string, destinationPath: string): Promise
   });
 }
 
-export async function extract(file: string, fileNames: string[], destinationPath: string): Promise<void> {
+export async function extract(
+  file: string,
+  fileNames: string[],
+  destinationPath: string,
+): Promise<void> {
   const tempDir = path.join(destinationPath, 'temp');
   await ensureDirectory(tempDir);
   await extractAll(file, tempDir);

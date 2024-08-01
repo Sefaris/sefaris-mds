@@ -22,7 +22,9 @@
         <span
           v-if="showCaret"
           class="dropdown-btn-caret"
-        > <i class="mdi mdi-chevron-down" /> </span>
+        >
+          <i class="mdi mdi-chevron-down" />
+        </span>
       </button>
 
       <div
