@@ -28,7 +28,9 @@
         v-for="(author, index) in mod.authors"
         :key="index"
         class="main-preview-author-name"
-      >{{ author }}</span>
+      >
+        {{ author }}
+      </span>
     </div>
     <div class="main-preview-content">
       <div class="main-preview-content-description">
