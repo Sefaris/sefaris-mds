@@ -2,12 +2,14 @@ export default {
   nav: {
     top: {
       support: 'Wesprzyj',
+      options: 'Opcje',
     },
     bottom: {
       title: 'Twoje towary',
       all: 'Wszystkie',
       installed: 'Zainstalowane',
       categories: 'Kategorie',
+      presets: 'Presety',
     },
   },
   main: {

@@ -5,36 +5,31 @@ import type { Preset } from '@interfaces/preset';
 
 const PRESET_JSON = 'preset.json';
 
-export async function savePreset(modIds: string[], name: string) {
-  try {
-    const presetsDirPath = path.resolve('Presets');
-    const presetPath = path.join(presetsDirPath, name);
-    await ensureDirectory(presetsDirPath);
-    await ensureDirectory(presetPath);
-
-    const preset: Preset = {
-      name,
-      modIds,
-    };
-
-    const presetJsonPath = path.join(presetPath, PRESET_JSON);
-
-    await fs.promises.writeFile(presetJsonPath, JSON.stringify(preset, null, 4));
-  } catch (error) {
-    alert(error);
-  }
-}
-
-export async function loadPreset(name: string): Promise<Preset | null> {
+export async function getPreset(name: string): Promise<Preset | null> {
   if (!presetExists(name)) {
     alert(`error.presetNotFound ${name}`);
     return null;
   }
 
   const presetJsonPath = path.resolve('Presets', name, PRESET_JSON);
-  const presetJson = await fs.promises.readFile(presetJsonPath, 'utf-8');
+  const presetJson = fs.readFileSync(presetJsonPath, 'utf-8');
   const preset: Preset = JSON.parse(presetJson);
   return preset;
+}
+
+export async function getAllPresets(): Promise<Preset[]> {
+  const presets: Preset[] = [];
+  const presetsPath = path.resolve('Presets');
+  ensureDirectory(presetsPath);
+  const presetDirs = fs.readdirSync(presetsPath);
+  presetDirs.forEach(dir => {
+    const presetJsonPath = path.resolve('Presets', dir, PRESET_JSON);
+    if (fs.existsSync(presetJsonPath)) {
+      const preset = JSON.parse(fs.readFileSync(presetJsonPath, 'utf-8'));
+      presets.push(preset);
+    }
+  });
+  return presets;
 }
 
 export async function getPresetNames(): Promise<string[]> {
@@ -43,20 +38,6 @@ export async function getPresetNames(): Promise<string[]> {
   const presetDirs = await fs.promises.readdir(presetPath);
   const presets = presetDirs.filter(presetExists);
   return presets;
-}
-
-export async function deletePreset(name: string) {
-  try {
-    if (!presetExists(name)) {
-      alert(`error.presetNotFound ${name}`);
-      return;
-    }
-
-    const presetPath = path.resolve('Presets', name);
-    await fs.promises.rmdir(presetPath, { recursive: true });
-  } catch (error) {
-    alert(error);
-  }
 }
 
 function presetExists(name: string) {

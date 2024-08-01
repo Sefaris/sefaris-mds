@@ -29,6 +29,6 @@ export {
 
 export { installMods, deleteMods } from './services/installation-service';
 export { mergeModFiles } from './services/merge-service';
-export { savePreset, loadPreset, getPresetNames, deletePreset } from './services/preset-service';
+export { getAllPresets, getPresetNames } from './services/preset-service';
 export { openWebsite } from './services/redirect-service';
 export { extractAll } from './services/pak-service';

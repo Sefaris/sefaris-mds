@@ -18,25 +18,7 @@
             href="#"
             class="nav-top-wrapper-links-link"
           >
-            Cheats
-          </button>
-          <button
-            href="#"
-            class="nav-top-wrapper-links-link"
-          >
-            Narzędzia
-          </button>
-          <button
-            href="#"
-            class="nav-top-wrapper-links-link"
-          >
-            Import/Eksport
-          </button>
-          <button
-            href="#"
-            class="nav-top-wrapper-links-link"
-          >
-            Opcje
+            {{ $t('nav.top.options') }}
           </button>
           <kofi-button />
         </div>
@@ -67,6 +49,7 @@
               {{ $t('nav.bottom.installed') }} ({{ installedModsCounter }})
             </button>
             <categories-dropdown v-if="categoriesExist" />
+            <presets-dropdown v-if="true" />
           </div>
         </div>
       </div>
@@ -80,15 +63,17 @@ import { openWebsite } from '#preload';
 import ChangeLocale from './ChangeLocale.vue';
 import KofiButton from './KofiButton.vue';
 import CategoriesDropdown from './CategoriesDropdown.vue';
+import PresetsDropdown from './PresetsDropdown.vue';
 import { useModsStore } from '../stores/mods-store';
 export default defineComponent({
-  components: { ChangeLocale, KofiButton, CategoriesDropdown },
+  components: { ChangeLocale, KofiButton, CategoriesDropdown, PresetsDropdown },
   setup() {
     const activeCategory = computed(() => modsStore.activeCategory);
     const modsStore = useModsStore();
     const modsCounter = computed(() => modsStore.mods.length);
     const installedModsCounter = computed(() => modsStore.installedMods.length);
     const categoriesExist = computed(() => modsStore.categories.length > 0);
+    const presetsExist = computed(() => modsStore.presets.length > 0);
 
     const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
@@ -101,6 +86,7 @@ export default defineComponent({
       installedModsCounter,
       categoriesExist,
       selectCategory,
+      presetsExist,
     };
   },
 });

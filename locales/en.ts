@@ -2,12 +2,14 @@ export default {
   nav: {
     top: {
       support: 'Support',
+      options: 'Options',
     },
     bottom: {
       title: 'Your goods',
       all: 'All',
       installed: 'Installed',
       categories: 'Categories',
+      presets: 'Presets',
     },
   },
   main: {

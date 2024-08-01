@@ -84,10 +84,10 @@ export default defineComponent({
         selectedMods.value.push(modId);
       }
       const mod = mods.value.find(mod => mod.id === modId);
+      modsStore.deactivatePreset();
       if (!mod?.dependencies.length) {
         return;
       }
-
       selectDependencies(modId);
     }
 
@@ -112,7 +112,7 @@ export default defineComponent({
       if (isDependencyOfSelectedMod(modId)) {
         return;
       }
-
+      modsStore.deactivatePreset();
       selectedMods.value.splice(selectedMods.value.indexOf(modId), 1);
     }
 

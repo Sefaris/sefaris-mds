@@ -41,7 +41,7 @@ const WRLDATASC = 'G3_World_01.wrldatasc';
 const STRINGTABLE_ENCODING = 'utf16le';
 const WRLDATASC_ENCODING = 'utf-8';
 
-export async function installMods(modIds: string[], preset?: string): Promise<string> {
+export async function installMods(modIds: string[], preset: string | null): Promise<string> {
   return new Promise((resolve, reject) => {
     (async () => {
       const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
@@ -98,9 +98,8 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         configuration.installedMods = mods.map(mod => mod.id);
         //Get rid of possible duplicates
-        console.log(createdFiles);
+        configuration.preset = preset ? preset : null;
         configuration.filesCreated = Array.from(new Set(createdFiles));
-        console.log(configuration.filesCreated);
 
         await saveConfiguration(configuration);
 
@@ -326,7 +325,7 @@ function getNewModsFilesPaths(files: string[], destDirectory: string) {
   return newFilesPaths;
 }
 
-async function moveSplash(configuration: AppConfiguration, presetName?: string) {
+async function moveSplash(configuration: AppConfiguration, presetName: string | null) {
   let splash = path.join(STATIC_FILES_PATH, SPLASH);
   if (presetName && fs.existsSync(path.join(PRESET_FILES_PATH, presetName, SPLASH))) {
     splash = path.join(PRESET_FILES_PATH, presetName, SPLASH);
@@ -340,7 +339,7 @@ async function moveSplash(configuration: AppConfiguration, presetName?: string) 
   await fs.copyFileSync(splash, splashDest);
 }
 
-async function moveShader(presetName?: string) {
+async function moveShader(presetName: string | null) {
   if (!presetName) {
     return;
   }

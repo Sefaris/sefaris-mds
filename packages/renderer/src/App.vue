@@ -28,6 +28,7 @@ export default defineComponent({
           gothicPath: gamePath,
           modsPath: gamePath,
           language: 'gb',
+          preset: null,
           installedMods: [],
           filesCreated: [],
         };
@@ -36,6 +37,7 @@ export default defineComponent({
       await modsStore.reloadMods();
       await modsStore.loadInstalledMods();
       await modsStore.loadCategories();
+      await modsStore.loadPresets();
     });
 
     return {};

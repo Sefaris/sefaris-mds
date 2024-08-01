@@ -77,6 +77,7 @@ export default defineComponent({
         modsStore.installedMods.map(mod => mod.id),
       ),
     );
+    const activePreset = computed(() => modsStore.activePreset);
     const selectedMods = computed({
       get() {
         return modsStore.selectedMods;
@@ -97,7 +98,7 @@ export default defineComponent({
 
     const startInstallation = async () => {
       installation.value = true;
-      installMods(JSON.parse(JSON.stringify(selectedMods.value)))
+      installMods(JSON.parse(JSON.stringify(selectedMods.value)), activePreset.value)
         .then(time => {
           alert(`${i18n.global.t('alert.installed')} ${time}s`);
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
