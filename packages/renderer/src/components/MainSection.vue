@@ -5,7 +5,7 @@
         v-if="!mods.length"
         class="main-mods-nomods"
       >
-        <img src="../../assets/images/error_404.webp">
+        <img src="../../assets/images/error_404.webp" />
         {{ $t('main.mods.notFound') }}
       </div>
       <div
@@ -149,10 +149,10 @@ export default defineComponent({
     width: $main-sections-width;
     overflow-y: auto;
 
-    &-nomods{
+    &-nomods {
       @include center;
       flex-direction: column;
-      gap:10px;
+      gap: 10px;
     }
 
     &-mod {

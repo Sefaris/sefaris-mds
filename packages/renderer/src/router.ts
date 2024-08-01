@@ -8,7 +8,6 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'Home',
     component: HomeView,
-    
   },
 ];
 

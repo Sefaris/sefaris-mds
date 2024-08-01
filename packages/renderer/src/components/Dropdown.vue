@@ -58,8 +58,8 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    btnClass:{
-      type:String,
+    btnClass: {
+      type: String,
       default: '',
     },
   },

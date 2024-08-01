@@ -10,7 +10,7 @@ export const useModsStore = defineStore('mods', () => {
   const selectedMods = ref<string[]>([]);
   const categories = shallowRef<string[]>([]);
   const activeCategory = ref<string>('all');
- 
+
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
   }
@@ -19,17 +19,17 @@ export const useModsStore = defineStore('mods', () => {
     installedMods.value = mods;
   }
 
-  function countModsInCategory(category:string){
-    return mods.value.filter(mod=>mod.category===category).length;
+  function countModsInCategory(category: string) {
+    return mods.value.filter(mod => mod.category === category).length;
   }
 
-  function displayCategory(category:string){
-    activeCategory.value=category;
-    if(category==='all') {
+  function displayCategory(category: string) {
+    activeCategory.value = category;
+    if (category === 'all') {
       displayAllMods();
       return;
     }
-    if(category==='installed') {
+    if (category === 'installed') {
       displayInstalledMods();
       return;
     }
@@ -55,10 +55,10 @@ export const useModsStore = defineStore('mods', () => {
     mods.value = await loadMods();
     displayedMods.value = mods.value;
   }
-  function loadCategories(){
+  function loadCategories() {
     const categorySet = new Set<string>();
     mods.value.forEach(mod => {
-      if(mod.category){
+      if (mod.category) {
         categorySet.add(mod.category);
       }
     });

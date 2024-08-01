@@ -1,30 +1,30 @@
 export default {
-  nav:{
-    top:{
-      support:'Support',
+  nav: {
+    top: {
+      support: 'Support',
     },
-    bottom:{
-      title:'Your goods',
-      all:'All',
-      installed:'Installed',
-      categories:'Categories',
-    },
-  },
-  main:{
-    mods:{
-      notFound:'Mods not found',
-    },
-    preview:{
-      default:'Select a modification to learn more',
-      author:'Author',
+    bottom: {
+      title: 'Your goods',
+      all: 'All',
+      installed: 'Installed',
+      categories: 'Categories',
     },
   },
-  action:{
-    play:'Play',
-    install:'Install',
-    cancel:'Cancel changes',
+  main: {
+    mods: {
+      notFound: 'Mods not found',
+    },
+    preview: {
+      default: 'Select a modification to learn more',
+      author: 'Author',
+    },
   },
-  alert:{
-    installed:'Mods succesfully installed in ',
+  action: {
+    play: 'Play',
+    install: 'Install',
+    cancel: 'Cancel changes',
+  },
+  alert: {
+    installed: 'Mods succesfully installed in ',
   },
 };

@@ -16,7 +16,6 @@ export async function mergeModFiles() {
   const mFiles = Array.from(map.get('.m')?.values() ?? []);
   const nFiles = Array.from(map.get('.n')?.values() ?? []);
 
-
   await mergeArchives(mFiles, mergedFiles, dataPath);
   await mergeArchives(nFiles, mergedFiles, dataPath);
 

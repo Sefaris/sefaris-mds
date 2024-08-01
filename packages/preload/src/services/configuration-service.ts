@@ -33,7 +33,7 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
     return null;
   }
   const config = JSON.parse(fs.readFileSync(configurationFile, 'utf-8'));
-  if(!isValidConfiguration(config)){
+  if (!isValidConfiguration(config)) {
     return null;
   }
   return config;
@@ -42,10 +42,7 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
 function isValidConfiguration(config: AppConfiguration) {
   const expectedKeys = ['gothicPath', 'modsPath', 'language', 'installedMods', 'filesCreated'];
   const configKeys = Object.keys(config);
-  if (
-    expectedKeys.length !== configKeys.length ||
-    !expectedKeys.every(key => configKeys.includes(key))
-  ) {
+  if (expectedKeys.length !== configKeys.length || !expectedKeys.every(key => configKeys.includes(key))) {
     return false;
   }
 
@@ -57,8 +54,6 @@ function isValidConfiguration(config: AppConfiguration) {
     Array.isArray(config.filesCreated)
   );
 }
-
-
 
 export function isGothicPathValid(param: AppConfiguration | string): boolean {
   if (typeof param === 'string') {

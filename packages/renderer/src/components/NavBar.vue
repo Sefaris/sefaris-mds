@@ -57,7 +57,8 @@
               class="nav-bottom-links-container-tab"
               :class="{
                 'nav-bottom-links-container-tab-active': activeCategory === 'installed',
-                'nav-bottom-links-container-tab-disabled': !installedModsCounter}"
+                'nav-bottom-links-container-tab-disabled': !installedModsCounter
+              }"
               :disabled="!installedModsCounter"
               @click="selectCategory('installed')"
             >
@@ -85,9 +86,9 @@ export default defineComponent({
     const modsStore = useModsStore();
     const modsCounter = computed(() => modsStore.mods.length);
     const installedModsCounter = computed(() => modsStore.installedMods.length);
-    const categoriesExist = computed(() => modsStore.categories.length>0);
+    const categoriesExist = computed(() => modsStore.categories.length > 0);
 
-    const selectCategory = (category:string)=> {
+    const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
     };
 
@@ -212,25 +213,24 @@ export default defineComponent({
           &-items {
             @include center;
             flex-direction: column;
-            gap:4px;
+            gap: 4px;
             max-height: 400px;
             overflow-y: auto;
-            &-item{
-              width:100%;
+            &-item {
+              width: 100%;
               border: none;
               border-radius: $border-radius-small;
-              color:$text-white;
-              padding:$padding-tiny;
+              color: $text-white;
+              padding: $padding-tiny;
               background-color: inherit;
 
               &-active {
                 border-right: $border-width-regular $primary-color solid;
               }
-              &:hover{
+              &:hover {
                 background-color: $default-hover;
               }
             }
-
           }
         }
       }
