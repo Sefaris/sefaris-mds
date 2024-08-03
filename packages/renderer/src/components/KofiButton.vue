@@ -4,7 +4,7 @@
       class="kofi--cta"
       href="#"
       target="_blank"
-      @click="openWebsite('https://ko-fi.com/sefaris')"
+      @click="openWebsite(SEFARIS_KOFI)"
     >
       {{ $t('nav.top.support') }}
 
@@ -16,9 +16,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { openWebsite } from '#preload';
+import { SEFARIS_KOFI } from '../../../../utils/constants';
 export default defineComponent({
   setup() {
-    return { openWebsite };
+    return { openWebsite, SEFARIS_KOFI };
   },
 });
 </script>

@@ -1,13 +1,13 @@
 import { ensureDirectory } from './file-service';
 import path from 'path';
 import * as fs from 'fs';
-import type { Preset } from '@interfaces/preset';
+import type { Preset } from '@interfaces/Preset';
 
 const PRESET_JSON = 'preset.json';
 
 export async function getPreset(name: string): Promise<Preset | null> {
   if (!presetExists(name)) {
-    alert(`error.presetNotFound ${name}`);
+    alert(`alert.presetNotFound ${name}`);
     return null;
   }
 

@@ -28,5 +28,9 @@ export default {
   },
   alert: {
     installed: 'Mods succesfully installed in ',
+    wrongPath: "Gothic3.exe wasn't found. Select correct directory.",
+    presetNotFound: 'Preset not found: ',
+    configNotFound: 'Config not found or corrupted. Select Gothic 3 directory.',
+    missingModsFromPreset: 'Missing mods from preset: ',
   },
 };

@@ -1,8 +1,7 @@
 <template>
   <div class="progress-bar">
     <div
-      v-if="false"
-      class="progress-value"
+      class="progress-bar__value"
       :style="{ width: progressValue }"
     ></div>
   </div>
@@ -43,11 +42,11 @@ export default defineComponent({
 .progress-bar {
   width: $app-width;
   height: $progress-bar-height;
-}
 
-.progress-value {
-  height: $progress-bar-height;
-  background-color: $primary-color;
-  transition: width $animation-duration-short linear;
+  &__value {
+    height: $progress-bar-height;
+    background-color: $primary-color;
+    transition: width $animation-duration-short linear;
+  }
 }
 </style>

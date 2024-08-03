@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
-import type { AppConfiguration } from '@interfaces/app-configuration';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
 export async function ensureDirectory(directoryPath: string): Promise<void> {
@@ -22,7 +22,7 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
     const filesList = fs.readdirSync(directoryPath);
 
     for (const file of filesList) {
-      if (file.endsWith(`.${fileExtension}`)) {
+      if (path.extname(file) === `.${fileExtension}`) {
         files.push(path.join(directoryPath, file));
       }
     }

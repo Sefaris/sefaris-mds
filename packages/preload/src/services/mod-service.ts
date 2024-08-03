@@ -1,20 +1,20 @@
-import type { Mod } from '@interfaces/mod';
+import type { Mod } from '@interfaces/Mod';
 import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
-import type { AppConfiguration } from '@interfaces/app-configuration';
+import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
 const UTF8 = 'utf8';
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();
   const mods: Mod[] = [];
 
-  if (!configuration) {
+  if (!configuration?.modsPath) {
     return [];
   }
 
   fs.readdirSync(configuration.modsPath).forEach(file => {
-    const filePath = path.join(configuration.modsPath, file);
+    const filePath = path.join(configuration.modsPath!, file);
     const mod = validateMod(filePath);
     if (mod) {
       mods.push(mod);
@@ -42,7 +42,7 @@ function validateMod(modPath: string): Mod | null {
 export async function loadModDescription(modPath: string): Promise<string> {
   const md = new MarkdownIt();
   const config = await loadConfiguration();
-  const locale = config?.language || 'gb';
+  const locale = config?.language || DEFAULT_LANGUAGE;
 
   const file = path.join(modPath, `readme_${locale}.md`);
   if (!fs.existsSync(file)) {
@@ -70,7 +70,7 @@ export function loadImages(modPath: string): string[] {
 }
 
 export async function isModInstalled(id: string): Promise<boolean> {
-  const configuration: AppConfiguration | null = await loadConfiguration();
+  const configuration = await loadConfiguration();
   if (configuration) {
     return configuration.installedMods.includes(id);
   }

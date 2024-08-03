@@ -6,7 +6,7 @@
     <div class="nav-top">
       <span
         class="nav-top-logo"
-        @click="openWebsite('https://www.sefaris.eu/')"
+        @click="openWebsite(SEFARIS_WEBSITE)"
       >
         Sefaris.eu
       </span>
@@ -49,7 +49,7 @@
               {{ $t('nav.bottom.installed') }} ({{ installedModsCounter }})
             </button>
             <categories-dropdown v-if="categoriesExist" />
-            <presets-dropdown v-if="true" />
+            <presets-dropdown v-if="presetsExist" />
           </div>
         </div>
       </div>
@@ -65,6 +65,7 @@ import KofiButton from './KofiButton.vue';
 import CategoriesDropdown from './CategoriesDropdown.vue';
 import PresetsDropdown from './PresetsDropdown.vue';
 import { useModsStore } from '../stores/mods-store';
+import { SEFARIS_WEBSITE } from '../../../../utils/constants';
 export default defineComponent({
   components: { ChangeLocale, KofiButton, CategoriesDropdown, PresetsDropdown },
   setup() {
@@ -87,6 +88,7 @@ export default defineComponent({
       categoriesExist,
       selectCategory,
       presetsExist,
+      SEFARIS_WEBSITE,
     };
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <div class="change-locale nav-top-wrapper">
-    <dropdown
+    <app-dropdown
       center
       :show-caret="false"
     >
@@ -22,18 +22,18 @@
 
         <span>{{ lang.text }}</span>
       </button>
-    </dropdown>
+    </app-dropdown>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue';
 import { loadConfiguration, saveConfiguration } from '#preload';
-import Dropdown from './Dropdown.vue';
+import AppDropdown from './AppDropdown.vue';
 
-import type { SUPPORTED_LANGUAGES } from '../utils/constants';
-import { DEFAULT_LANGUAGE, LANGUAGE_SETTINGS } from '../utils/constants';
-import { i18n } from '../plugins/i18n';
+import type { SUPPORTED_LANGUAGES } from '../../../../utils/constants';
+import { DEFAULT_LANGUAGE, LANGUAGE_SETTINGS } from '../../../../utils/constants';
+import { i18n } from '../../../../plugins/i18n';
 const currentLanguageCode = ref(i18n.global.locale.value ?? DEFAULT_LANGUAGE);
 const flag = computed(() => i18n.global.locale.value);
 function changeLanguage(code: string) {
@@ -59,7 +59,7 @@ onMounted(async () => {
   if (configuration) {
     i18n.global.locale.value = configuration.language as SUPPORTED_LANGUAGES;
   } else {
-    i18n.global.locale.value = 'gb';
+    i18n.global.locale.value = DEFAULT_LANGUAGE;
   }
 });
 </script>

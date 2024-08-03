@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron';
-import type { AppConfiguration } from '@interfaces/app-configuration';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import { LANGUAGE_SETTINGS } from '../../../../utils/constants';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -9,58 +10,47 @@ export async function selectGameFolder(): Promise<string> {
   return await ipcRenderer.invoke('open-folder-dialog');
 }
 
-export async function saveConfiguration(configuration: AppConfiguration): Promise<boolean> {
+export async function saveConfiguration(config: AppConfiguration) {
   try {
-    if (import.meta.env.PROD) {
-      configuration.modsPath = path.join(configuration.gothicPath, 'Mods');
-    } else {
-      configuration.modsPath = 'C:\\Users\\Komputeriusz\\Desktop\\MDS-Sefaris\\Mods\\mods';
+    if (!config.modsPath) {
+      config.modsPath = path.join(config.gothicPath, 'Mods');
     }
-    if (!configuration.gothicPath) {
-      return false;
+    if (!isValidConfiguration(config)) {
+      return;
     }
-
-    fs.writeFileSync(configurationFile, JSON.stringify(configuration, null, 4));
+    fs.writeFileSync(path.resolve(configurationFile), JSON.stringify(config, null, 4));
   } catch (error) {
     alert(error);
-    return false;
   }
-  return true;
 }
 
 export async function loadConfiguration(): Promise<AppConfiguration | null> {
-  if (!fs.existsSync(configurationFile)) {
+  if (!fs.existsSync(path.resolve(configurationFile))) {
     return null;
   }
-  const config = JSON.parse(fs.readFileSync(configurationFile, 'utf-8'));
+  const config = JSON.parse(fs.readFileSync(path.resolve(configurationFile), 'utf-8'));
   if (!isValidConfiguration(config)) {
     return null;
   }
   return config;
 }
 
-function isValidConfiguration(config: AppConfiguration) {
-  const expectedKeys = [
-    'gothicPath',
-    'modsPath',
-    'language',
-    'installedMods',
-    'filesCreated',
-    'preset',
-  ];
+export function isValidConfiguration(config: AppConfiguration) {
+  const expectedKeys = ['gothicPath', 'modsPath', 'language', 'installedMods', 'filesCreated'];
   const configKeys = Object.keys(config);
+
   if (
     expectedKeys.length !== configKeys.length ||
     !expectedKeys.every(key => configKeys.includes(key))
   ) {
     return false;
   }
+  if (!isGothicPathValid(config)) return false;
 
   return (
     typeof config.gothicPath === 'string' &&
     typeof config.modsPath === 'string' &&
-    typeof config.language === 'string' &&
-    (typeof config.preset === 'string' || config.preset == null) &&
+    LANGUAGE_SETTINGS.find(item => item.code === config.language) &&
     Array.isArray(config.installedMods) &&
     Array.isArray(config.filesCreated)
   );

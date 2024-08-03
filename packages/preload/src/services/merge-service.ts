@@ -3,7 +3,7 @@ import path from 'path';
 import { buildPackage, extractAll } from './pak-service';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
 import { ensureDirectory } from './file-service';
-import type { AppConfiguration } from '@interfaces/app-configuration';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { updateProgressBar } from './progress-service';
 
 export async function mergeModFiles() {

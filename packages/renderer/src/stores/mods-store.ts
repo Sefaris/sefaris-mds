@@ -1,8 +1,9 @@
-import type { Mod } from '@interfaces/mod';
+import type { Mod } from '@interfaces/Mod';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
 import type { Preset } from '#preload';
 import { getAllPresets, loadConfiguration, loadMods } from '#preload';
+import { translate } from '../../../../plugins/i18n';
 
 export const useModsStore = defineStore('mods', () => {
   const mods = shallowRef<Mod[]>([]);
@@ -11,7 +12,7 @@ export const useModsStore = defineStore('mods', () => {
   const selectedMods = ref<string[]>([]);
   const categories = shallowRef<string[]>([]);
   const presets = shallowRef<Preset[]>([]);
-  const activePreset = ref<string | null>(null);
+  const activePreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
 
   function setSelectedMods(mods: string[]) {
@@ -31,7 +32,7 @@ export const useModsStore = defineStore('mods', () => {
     const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
 
     if (missingMods.length > 0) {
-      alert(`Missing mods from ${preset}:\n ${missingMods.join('\n')}`);
+      alert(`${translate('alert.missingModsFromPreset')} ${missingMods.join('\n')}`);
     } else {
       console.log('All mods from preset are available.');
     }
@@ -63,7 +64,7 @@ export const useModsStore = defineStore('mods', () => {
   }
 
   function deactivatePreset() {
-    activePreset.value = null;
+    activePreset.value = undefined;
   }
 
   async function loadInstalledMods() {
@@ -75,9 +76,7 @@ export const useModsStore = defineStore('mods', () => {
   }
 
   async function loadPresets() {
-    const pre = await getAllPresets();
-    if (!pre) return;
-    presets.value = pre;
+    presets.value = (await getAllPresets()) || [];
   }
 
   async function reloadMods() {
@@ -86,13 +85,7 @@ export const useModsStore = defineStore('mods', () => {
   }
 
   function loadCategories() {
-    const categorySet = new Set<string>();
-    mods.value.forEach(mod => {
-      if (mod.category) {
-        categorySet.add(mod.category);
-      }
-    });
-    categories.value = Array.from(categorySet);
+    categories.value = [...new Set(mods.value.map(mod => mod.category))];
   }
 
   return {

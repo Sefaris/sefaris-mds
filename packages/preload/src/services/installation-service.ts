@@ -3,8 +3,8 @@ import * as os from 'os';
 
 import path from 'path';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
-import type { Mod } from '@interfaces/mod';
-import type { AppConfiguration } from '@interfaces/app-configuration';
+import type { Mod } from '@interfaces/Mod';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 
 import { buildPackage, extract, findStrings } from './pak-service';
 
@@ -41,7 +41,7 @@ const WRLDATASC = 'G3_World_01.wrldatasc';
 const STRINGTABLE_ENCODING = 'utf16le';
 const WRLDATASC_ENCODING = 'utf-8';
 
-export async function installMods(modIds: string[], preset: string | null): Promise<string> {
+export async function installMods(modIds: string[], preset?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     (async () => {
       const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
@@ -98,7 +98,7 @@ export async function installMods(modIds: string[], preset: string | null): Prom
 
         configuration.installedMods = mods.map(mod => mod.id);
         //Get rid of possible duplicates
-        configuration.preset = preset ? preset : null;
+        configuration.preset = preset ? preset : undefined;
         configuration.filesCreated = Array.from(new Set(createdFiles));
 
         await saveConfiguration(configuration);
@@ -325,7 +325,7 @@ function getNewModsFilesPaths(files: string[], destDirectory: string) {
   return newFilesPaths;
 }
 
-async function moveSplash(configuration: AppConfiguration, presetName: string | null) {
+async function moveSplash(configuration: AppConfiguration, presetName?: string) {
   let splash = path.join(STATIC_FILES_PATH, SPLASH);
   if (presetName && fs.existsSync(path.join(PRESET_FILES_PATH, presetName, SPLASH))) {
     splash = path.join(PRESET_FILES_PATH, presetName, SPLASH);
@@ -339,7 +339,7 @@ async function moveSplash(configuration: AppConfiguration, presetName: string | 
   await fs.copyFileSync(splash, splashDest);
 }
 
-async function moveShader(presetName: string | null) {
+async function moveShader(presetName?: string) {
   if (!presetName) {
     return;
   }

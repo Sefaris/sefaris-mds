@@ -1,6 +1,6 @@
 <template>
   <div class="title-bar">
-    <div class="title">G3 ModStarter</div>
+    <div class="title-bar__title">G3 ModStarter</div>
     <div class="controls">
       <div
         class="control minimize"
@@ -46,7 +46,7 @@ export default defineComponent({
   height: 32px;
   app-region: drag;
 
-  .title {
+  &__title {
     display: flex;
     align-items: center;
     padding: 8px;

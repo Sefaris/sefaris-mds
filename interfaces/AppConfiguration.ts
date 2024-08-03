@@ -1,8 +1,8 @@
 export interface AppConfiguration {
   gothicPath: string;
-  modsPath: string;
+  modsPath?: string;
   language: string;
-  preset: string | null;
+  preset?: string;
   installedMods: string[];
   filesCreated: string[];
 }

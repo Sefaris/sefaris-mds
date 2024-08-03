@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dropdown btn-class="nav-bottom-links-container-tab">
+    <app-dropdown btn-class="nav-bottom-links-container-tab">
       <template #activator>{{ $t('nav.bottom.categories') }}</template>
       <div class="nav-bottom-links-container-tab-items">
         <button
@@ -15,18 +15,18 @@
           {{ category }} ({{ countModsInCategory(category) }})
         </button>
       </div>
-    </dropdown>
+    </app-dropdown>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 
-import Dropdown from './Dropdown.vue';
+import AppDropdown from './AppDropdown.vue';
 import { useModsStore } from '../stores/mods-store';
 
 export default defineComponent({
-  components: { Dropdown },
+  components: { AppDropdown },
   setup() {
     const modsStore = useModsStore();
     const categories = computed(() => modsStore.categories);

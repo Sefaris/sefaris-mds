@@ -41,12 +41,7 @@
       v-else
       class="footer-progress"
     >
-      <div class="footer-progress-bar">
-        <div
-          :style="{ width: progressStyle }"
-          class="footer-progress-bar-value"
-        ></div>
-      </div>
+      <progress-bar :progress="progress" />
       <div class="footer-progress-info">
         <div class="footer-progress-info-state">
           <div class="footer-progress-info-state-integration">Trwa integracja modów.</div>
@@ -62,10 +57,11 @@
 import { computed, defineComponent, ref } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import { installMods, startGame } from '#preload';
-import type { ProgressStatus } from '@interfaces/progress-status';
-import { i18n } from '../plugins/i18n';
+import type { ProgressStatus } from '@interfaces/ProgressStatus';
+import { translate } from '../../../../plugins/i18n';
+import ProgressBar from './ProgressBar.vue';
 export default defineComponent({
-  components: {},
+  components: { ProgressBar },
   setup() {
     const modsStore = useModsStore();
     const progress = ref(0);
@@ -100,7 +96,7 @@ export default defineComponent({
       installation.value = true;
       installMods(JSON.parse(JSON.stringify(selectedMods.value)), activePreset.value)
         .then(time => {
-          alert(`${i18n.global.t('alert.installed')} ${time}s`);
+          alert(`${translate('alert.installed')} ${time}s`);
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installation.value = false;
         })

@@ -14,6 +14,8 @@ import FooterSection from './components/FooterSection.vue';
 import { useModsStore } from './stores/mods-store';
 import type { AppConfiguration } from '#preload';
 import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
+import { translate } from '../../../plugins/i18n';
+import { DEFAULT_LANGUAGE } from '../../../utils/constants';
 export default defineComponent({
   components: { TitleBar, NavBar, MainSection, FooterSection },
   setup() {
@@ -21,14 +23,12 @@ export default defineComponent({
     onMounted(async () => {
       const config = await loadConfiguration();
       if (!config) {
-        alert('Config not found or corrupted. Select Gothic 3 directory.');
+        alert(`${translate('alert.configNotFound')}`);
         const gamePath = await selectGameFolder();
         if (!gamePath) closeApplication();
         const config: AppConfiguration = {
           gothicPath: gamePath,
-          modsPath: gamePath,
-          language: 'gb',
-          preset: null,
+          language: DEFAULT_LANGUAGE,
           installedMods: [],
           filesCreated: [],
         };

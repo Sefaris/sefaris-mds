@@ -2,11 +2,11 @@
  * @module preload
  */
 
-export type { AppConfiguration } from '@interfaces/app-configuration';
-export type { Mod } from '@interfaces/mod';
-export type { ModDetails } from '@interfaces/mod-details';
-export type { Preset } from '@interfaces/preset';
-export type { ProgressStatus } from '@interfaces/progress-status';
+export type { AppConfiguration } from '@interfaces/AppConfiguration';
+export type { Mod } from '@interfaces/Mod';
+export type { ModDetails } from '@interfaces/ModDetails';
+export type { Preset } from '@interfaces/Preset';
+export type { ProgressStatus } from '@interfaces/ProgressStatus';
 export { selectGameFolder } from './services/configuration-service';
 
 export { openGameFolder, openModsFolder, startGame } from './services/file-service';

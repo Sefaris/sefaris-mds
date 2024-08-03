@@ -28,5 +28,9 @@ export default {
   },
   alert: {
     installed: 'Modyfikacje pomyślnie zainstalowane w ',
+    wrongPath: 'Gothic3.exe nie znaleziony. Wybierz właściwy folder.',
+    presetNotFound: 'Nie znaleziono presetu: ',
+    configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',
+    missingModsFromPreset: 'Nie znaleziono modyfikacji z presetu: ',
   },
 };

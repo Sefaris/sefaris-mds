@@ -48,7 +48,7 @@
 import { defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import type { Mod } from '#preload';
 import { loadModDescription, loadImages, loadMods } from '#preload';
-import { i18n } from '../plugins/i18n';
+import { i18n } from '../../../../plugins/i18n';
 
 export default defineComponent({
   props: {
