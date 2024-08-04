@@ -48,7 +48,7 @@
 import { defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import type { Mod } from '#preload';
 import { loadModDescription, loadImages, loadMods } from '#preload';
-import { i18n } from '../../../../plugins/i18n';
+import { i18n, translate } from '../../../../plugins/i18n';
 
 export default defineComponent({
   props: {
@@ -72,18 +72,18 @@ export default defineComponent({
         return;
       }
 
+      description.value =
+        (await loadModDescription(mod.value.path)) ?? translate('main.preview.noDescription');
       gallery.value = loadImages(mod.value.path);
       imgSource.value = gallery.value[0];
       currentImageIndex.value = 0;
 
-      description.value = await loadModDescription(mod.value.path);
       if (interval !== null) {
         clearInterval(interval);
       }
       if (gallery.value.length > 1) {
         interval = setInterval(changeImage, 2000);
       }
-      description.value = await loadModDescription(mod.value.path);
     });
 
     onBeforeUnmount(() => {

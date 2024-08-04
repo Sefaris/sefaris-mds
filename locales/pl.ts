@@ -19,6 +19,7 @@ export default {
     preview: {
       default: 'Wybierz modyfikację aby dowiedzieć się więcej',
       author: 'Autor',
+      noDescription: 'Brak opisu dla tej modyfikacji.',
     },
   },
   action: {

@@ -1,0 +1,335 @@
+import { expect, test, vi, beforeEach, describe } from 'vitest';
+import { vol } from 'memfs';
+import {
+  loadImages,
+  loadModDescription,
+  loadMods,
+  validateMod,
+} from '../../packages/preload/src/services/mod-service';
+import path from 'path';
+
+vi.mock('path', async () => {
+  return await vi.importActual('path');
+});
+
+vi.mock('fs', async () => {
+  const { fs } = await import('memfs');
+  return {
+    ...fs,
+  };
+});
+global.alert = vi.fn();
+
+const baseDir = path.resolve();
+
+beforeEach(() => {
+  vol.reset();
+});
+
+describe('mods', () => {
+  test('validateMod returns mod for correct data', () => {
+    const mod = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toMatchObject(mod);
+  });
+
+  test('validateMod returns null for missing mod.json', () => {
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBe(null);
+  });
+
+  test('validateMod returns null for missing id in json file', () => {
+    const mod = {
+      id: '',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    vol.fromJSON(
+      {
+        'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBe(null);
+  });
+
+  test('validateMod returns null for wrong structure in json file', () => {
+    const mod = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: '',
+      dependencies: '',
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBe(null);
+  });
+
+  test('loadModDescription returns readme_pl for correct data', async () => {
+    const mod = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: '',
+      dependencies: '',
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
+        'mods\\A_QuestPaket\\readme_pl.md': 'test content for readme file',
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          modsPath: 'E:\\Games\\Gothic 3\\mods',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    await expect(loadModDescription('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).resolves.toBe(
+      '<p>test content for readme file</p>\n',
+    );
+  });
+
+  test('loadModDescription returns null for non existing readme_pl for polish language', async () => {
+    const mod = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: '',
+      dependencies: '',
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          modsPath: 'E:\\Games\\Gothic 3\\mods',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    await expect(loadModDescription('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).resolves.toBe(null);
+  });
+
+  test('loadMods returns 3 mods for existing correct mods', async () => {
+    const modQP = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    const modMain = {
+      id: 'Main',
+      title: 'Main',
+      authors: [],
+      dependencies: [],
+      incompatibles: [],
+      category: 'Base',
+    };
+    const modPD = {
+      id: 'Pirate Dream',
+      title: 'Pirate Dream',
+      authors: [],
+      dependencies: ['Main'],
+      incompatibles: [],
+      category: 'Story Mods',
+    };
+
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          modsPath: 'E:\\Games\\Gothic 3\\mods',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+        'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
+        'mods\\N_Main\\mod.json': JSON.stringify(modMain),
+        'mods\\O_Pirate_Dream\\mod.json': JSON.stringify(modPD),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    const expectedMods = [modQP, modMain, modPD];
+
+    await expect(loadMods()).resolves.toHaveLength(3);
+    await expect(loadMods()).resolves.toMatchObject(expectedMods);
+  });
+
+  test('loadMods returns empty array for non existing modsPath in config', async () => {
+    const modQP = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    const modMain = {
+      id: 'Main',
+      title: 'Main',
+      authors: [],
+      dependencies: [],
+      incompatibles: [],
+      category: 'Base',
+    };
+    const modPD = {
+      id: 'Pirate Dream',
+      title: 'Pirate Dream',
+      authors: [],
+      dependencies: ['Main'],
+      incompatibles: [],
+      category: 'Story Mods',
+    };
+
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+        'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
+        'mods\\N_Main\\mod.json': JSON.stringify(modMain),
+        'mods\\O_Pirate_Dream\\mod.json': JSON.stringify(modPD),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    await expect(loadMods()).resolves.toEqual([]);
+    await expect(loadMods()).resolves.toHaveLength(0);
+  });
+
+  test('loadImages returns list of 3 images for formats png, jpg, jpeg', () => {
+    const modQP = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+        'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
+        'mods\\QuestPaket\\Pictures\\back.png': '123',
+        'mods\\QuestPaket\\Pictures\\back.jpg': '1223',
+        'mods\\QuestPaket\\Pictures\\back.jpeg': '523',
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(3);
+  });
+
+  test('loadImages returns empty array for gif file', () => {
+    const modQP = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+        'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
+        'mods\\QuestPaket\\Pictures\\back.gif': '123',
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+    expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(0);
+  });
+
+  test('loadImages returns empty array when there is no picture dir', () => {
+    const modQP = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+
+    vol.fromJSON(
+      {
+        'Gothic3.exe': '',
+        [path.join(baseDir, 'config.json')]: JSON.stringify({
+          gothicPath: 'E:\\Games\\Gothic 3',
+          language: 'pl',
+          installedMods: [],
+          filesCreated: [],
+        }),
+        'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
+        'mods\\QuestPaket\\back.png': '123',
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+    expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(0);
+  });
+});

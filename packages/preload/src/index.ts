@@ -19,13 +19,7 @@ export {
   loadConfiguration,
 } from './services/configuration-service';
 
-export {
-  loadMods,
-  loadModDescription,
-  loadImages,
-  isModInstalled,
-  loadInstalledModsIds,
-} from './services/mod-service';
+export { loadMods, loadModDescription, loadImages } from './services/mod-service';
 
 export { installMods, deleteMods } from './services/installation-service';
 export { mergeModFiles } from './services/merge-service';

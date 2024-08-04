@@ -58,6 +58,9 @@ describe('configuration', () => {
   });
 
   test('isValidConfiguration returns false for non-existent Gothic3.exe', () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3': '',
+    });
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
@@ -86,7 +89,7 @@ describe('configuration', () => {
 
   test('isValidConfiguration returns false for not supported language', () => {
     vol.fromJSON({
-      '': '',
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
@@ -143,7 +146,7 @@ describe('configuration', () => {
 
   test('isGothicPathValid returns true for existing Gothic3.exe', () => {
     vol.fromJSON({
-      'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
@@ -159,9 +162,7 @@ describe('configuration', () => {
   test('LoadConfig reads correct config file', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
-    });
-    vol.fromJSON({
-      'config.json': JSON.stringify({
+      [path.join(baseDir, 'config.json')]: JSON.stringify({
         gothicPath: 'E:\\Games\\Gothic 3',
         modsPath: 'E:\\Games\\Gothic 3\\mods',
         language: 'pl',
@@ -174,18 +175,21 @@ describe('configuration', () => {
 
   test('LoadConfig resolves null when config is empty', async () => {
     vol.fromJSON({
-      'config.json': '',
+      [path.join(baseDir, 'config.json')]: '',
     });
     await expect(loadConfiguration()).rejects.toBeDefined();
   });
 
   test('LoadConfig resolves null when there is no config file', async () => {
+    vol.fromJSON({
+      [baseDir]: '',
+    });
     await expect(loadConfiguration()).resolves.toBeNull();
   });
 
   test('saveConfiguration creates config file with correct data', async () => {
     vol.fromJSON({
-      'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
       [baseDir]: '',
     });
     const config = {
@@ -196,6 +200,22 @@ describe('configuration', () => {
       filesCreated: [],
     };
     await saveConfiguration(config);
-    expect(fs.existsSync('config.json')).toBe(true);
+    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBe(true);
+  });
+
+  test('saveConfiguration doesnt create config for wrong data', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3': '',
+      [baseDir]: '',
+    });
+    const config = {
+      gothicPath: 'E:\\Games\\Gothic 3',
+      modsPath: 'E:\\Games\\Gothic 3\\mods',
+      language: 'pl',
+      installedMods: [],
+      filesCreated: [],
+    };
+    await saveConfiguration(config);
+    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBe(false);
   });
 });

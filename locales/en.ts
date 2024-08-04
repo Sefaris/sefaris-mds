@@ -19,6 +19,7 @@ export default {
     preview: {
       default: 'Select a modification to learn more',
       author: 'Author',
+      noDescription: 'No description for this mod.',
     },
   },
   action: {

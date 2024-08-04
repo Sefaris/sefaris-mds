@@ -4,7 +4,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
 import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
+
 const UTF8 = 'utf8';
+
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();
   const mods: Mod[] = [];
@@ -23,13 +25,27 @@ export async function loadMods(): Promise<Mod[]> {
   return mods;
 }
 
-function validateMod(modPath: string): Mod | null {
+export function validateMod(modPath: string): Mod | null {
   if (!fs.existsSync(path.join(modPath, 'mod.json'))) {
     console.error('mod.json not found in ' + modPath);
     return null;
   }
 
   const mod: Mod = JSON.parse(fs.readFileSync(path.join(modPath, 'mod.json'), UTF8));
+
+  if (
+    !(
+      typeof mod.id === 'string' &&
+      typeof mod.title === 'string' &&
+      Array.isArray(mod.authors) &&
+      Array.isArray(mod.dependencies) &&
+      Array.isArray(mod.incompatibles)
+    )
+  ) {
+    console.error(`Wrong json structure for ${path.basename(modPath)}`);
+    return null;
+  }
+
   if (!mod.id || !mod.title) {
     return null;
   }
@@ -39,14 +55,14 @@ function validateMod(modPath: string): Mod | null {
   return mod;
 }
 
-export async function loadModDescription(modPath: string): Promise<string> {
+export async function loadModDescription(modPath: string): Promise<string | null> {
   const md = new MarkdownIt();
   const config = await loadConfiguration();
   const locale = config?.language || DEFAULT_LANGUAGE;
 
   const file = path.join(modPath, `readme_${locale}.md`);
   if (!fs.existsSync(file)) {
-    return 'No description available.';
+    return null;
   }
   return md.render(fs.readFileSync(file, UTF8));
 }
@@ -67,31 +83,4 @@ export function loadImages(modPath: string): string[] {
     }
   }
   return images;
-}
-
-export async function isModInstalled(id: string): Promise<boolean> {
-  const configuration = await loadConfiguration();
-  if (configuration) {
-    return configuration.installedMods.includes(id);
-  }
-  return false;
-}
-
-export async function loadInstalledModsIds(): Promise<string[]> {
-  const mods = await loadMods();
-  const configuration = await loadConfiguration();
-  if (!configuration) {
-    return [];
-  }
-
-  const installedModsIds: string[] = [];
-  for (const mod of mods) {
-    if (!configuration.installedMods.includes(mod.id)) {
-      continue;
-    }
-
-    installedModsIds.push(mod.id);
-  }
-
-  return installedModsIds;
 }

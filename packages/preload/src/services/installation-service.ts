@@ -336,7 +336,7 @@ async function moveSplash(configuration: AppConfiguration, presetName?: string) 
   }
 
   const splashDest = path.join(configuration.gothicPath, SPLASH);
-  await fs.copyFileSync(splash, splashDest);
+  fs.copyFileSync(splash, splashDest);
 }
 
 async function moveShader(presetName?: string) {
@@ -348,5 +348,5 @@ async function moveShader(presetName?: string) {
     return;
   }
   const shaderDest = path.join(G3_DOCUMENTS_PATH, SHADER);
-  await fs.copyFileSync(shader, shaderDest);
+  fs.copyFileSync(shader, shaderDest);
 }
