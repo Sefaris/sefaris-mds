@@ -12,10 +12,10 @@ import NavBar from './components/NavBar.vue';
 import MainSection from './components/MainSection.vue';
 import FooterSection from './components/FooterSection.vue';
 import { useModsStore } from './stores/mods-store';
-import type { AppConfiguration } from '#preload';
 import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
 import { translate } from '../../../plugins/i18n';
 import { DEFAULT_LANGUAGE } from '../../../utils/constants';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 export default defineComponent({
   components: { TitleBar, NavBar, MainSection, FooterSection },
   setup() {

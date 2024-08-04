@@ -46,9 +46,9 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
-import type { Mod } from '#preload';
 import { loadModDescription, loadImages, loadMods } from '#preload';
 import { i18n, translate } from '../../../../plugins/i18n';
+import type { Mod } from '@interfaces/Mod';
 
 export default defineComponent({
   props: {

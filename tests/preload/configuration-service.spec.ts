@@ -27,8 +27,8 @@ beforeEach(() => {
   vol.reset();
 });
 
-describe('configuration', () => {
-  test('isValidConfiguration return true for valid configuration', () => {
+describe('isValidConfiguration', () => {
+  test('returns true for valid configuration', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -43,7 +43,7 @@ describe('configuration', () => {
     expect(isValidConfiguration(config as never)).toBeTruthy();
   });
 
-  test('isValidConfiguration return false for missing modsPath option in json', () => {
+  test('returns false for missing modsPath option in json', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -57,7 +57,7 @@ describe('configuration', () => {
     expect(isValidConfiguration(config as never)).toBeFalsy();
   });
 
-  test('isValidConfiguration returns false for non-existent Gothic3.exe', () => {
+  test('returns false for non-existent Gothic3.exe', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3': '',
     });
@@ -72,7 +72,7 @@ describe('configuration', () => {
     expect(isValidConfiguration(config as never)).toBeFalsy();
   });
 
-  test('isValidConfiguration returns false for incorrect keys in json', () => {
+  test('returns false for incorrect keys in json', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -87,7 +87,7 @@ describe('configuration', () => {
     expect(isValidConfiguration(config as never)).toBeFalsy();
   });
 
-  test('isValidConfiguration returns false for not supported language', () => {
+  test('returns false for not supported language', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -102,7 +102,7 @@ describe('configuration', () => {
     expect(isValidConfiguration(config as never)).toBeFalsy();
   });
 
-  test('isValidConfiguration returns false for installedMods not being array', () => {
+  test('returns false for installedMods not being array', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -117,7 +117,7 @@ describe('configuration', () => {
     expect(isValidConfiguration(config as never)).toBeFalsy();
   });
 
-  test('isValidConfiguration returns false for filesCreated not being array', () => {
+  test('returns false for filesCreated not being array', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -131,8 +131,10 @@ describe('configuration', () => {
 
     expect(isValidConfiguration(config as never)).toBeFalsy();
   });
+});
 
-  test('isGothicPathValid returns false for non-existent Gothic3.exe', () => {
+describe('isGothicPathValid', () => {
+  test('returns false for non-existent Gothic3.exe', () => {
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
@@ -144,7 +146,7 @@ describe('configuration', () => {
     expect(isGothicPathValid(config)).toBeFalsy();
   });
 
-  test('isGothicPathValid returns true for existing Gothic3.exe', () => {
+  test('returns true for existing Gothic3.exe', () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
     });
@@ -158,8 +160,10 @@ describe('configuration', () => {
 
     expect(isGothicPathValid(config)).toBeTruthy();
   });
+});
 
-  test('LoadConfig reads correct config file', async () => {
+describe('loadConfiguration', () => {
+  test('reads correct config file', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
       [path.join(baseDir, 'config.json')]: JSON.stringify({
@@ -173,21 +177,23 @@ describe('configuration', () => {
     await expect(loadConfiguration()).resolves.toBeInstanceOf(Object);
   });
 
-  test('LoadConfig resolves null when config is empty', async () => {
+  test('resolves null when config is empty', async () => {
     vol.fromJSON({
       [path.join(baseDir, 'config.json')]: '',
     });
     await expect(loadConfiguration()).rejects.toBeDefined();
   });
 
-  test('LoadConfig resolves null when there is no config file', async () => {
+  test('resolves null when there is no config file', async () => {
     vol.fromJSON({
       [baseDir]: '',
     });
     await expect(loadConfiguration()).resolves.toBeNull();
   });
+});
 
-  test('saveConfiguration creates config file with correct data', async () => {
+describe('saveConfiguration', () => {
+  test('creates config file with correct data', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
       [baseDir]: '',
@@ -200,10 +206,10 @@ describe('configuration', () => {
       filesCreated: [],
     };
     await saveConfiguration(config);
-    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBe(true);
+    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBeTruthy();
   });
 
-  test('saveConfiguration doesnt create config for wrong data', async () => {
+  test('doesnt create config for wrong data', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3': '',
       [baseDir]: '',
@@ -216,6 +222,6 @@ describe('configuration', () => {
       filesCreated: [],
     };
     await saveConfiguration(config);
-    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBe(false);
+    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBeFalsy();
   });
 });

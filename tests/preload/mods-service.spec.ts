@@ -26,8 +26,8 @@ beforeEach(() => {
   vol.reset();
 });
 
-describe('mods', () => {
-  test('validateMod returns mod for correct data', () => {
+describe('validateMod', () => {
+  test('returns mod for correct data', () => {
     const mod = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -47,7 +47,7 @@ describe('mods', () => {
     expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toMatchObject(mod);
   });
 
-  test('validateMod returns null for missing mod.json', () => {
+  test('returns null for missing mod.json', () => {
     vol.fromJSON(
       {
         'Gothic3.exe': '',
@@ -55,10 +55,10 @@ describe('mods', () => {
       'E:\\Games\\Gothic 3\\',
     );
 
-    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBe(null);
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBeNull();
   });
 
-  test('validateMod returns null for missing id in json file', () => {
+  test('returns null for missing id in json file', () => {
     const mod = {
       id: '',
       title: 'QuestPaket',
@@ -74,10 +74,10 @@ describe('mods', () => {
       'E:\\Games\\Gothic 3\\',
     );
 
-    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBe(null);
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBeNull();
   });
 
-  test('validateMod returns null for wrong structure in json file', () => {
+  test('returns null for wrong structure in json file', () => {
     const mod = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -94,10 +94,12 @@ describe('mods', () => {
       'E:\\Games\\Gothic 3\\',
     );
 
-    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBe(null);
+    expect(validateMod('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).toBeNull();
   });
+});
 
-  test('loadModDescription returns readme_pl for correct data', async () => {
+describe('loadModDescription', () => {
+  test('returns readme_pl for correct data', async () => {
     const mod = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -127,7 +129,7 @@ describe('mods', () => {
     );
   });
 
-  test('loadModDescription returns null for non existing readme_pl for polish language', async () => {
+  test('returns null for non existing readme_pl for polish language', async () => {
     const mod = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -151,10 +153,12 @@ describe('mods', () => {
       'E:\\Games\\Gothic 3\\',
     );
 
-    await expect(loadModDescription('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).resolves.toBe(null);
+    await expect(loadModDescription('E:\\Games\\Gothic 3\\mods\\A_QuestPaket')).resolves.toBeNull();
   });
+});
 
-  test('loadMods returns 3 mods for existing correct mods', async () => {
+describe('loadMods', () => {
+  test('returns 3 mods for existing correct mods', async () => {
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -203,7 +207,7 @@ describe('mods', () => {
     await expect(loadMods()).resolves.toMatchObject(expectedMods);
   });
 
-  test('loadMods returns empty array for non existing modsPath in config', async () => {
+  test('returns empty array for non existing modsPath in config', async () => {
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -248,8 +252,10 @@ describe('mods', () => {
     await expect(loadMods()).resolves.toEqual([]);
     await expect(loadMods()).resolves.toHaveLength(0);
   });
+});
 
-  test('loadImages returns list of 3 images for formats png, jpg, jpeg', () => {
+describe('loadImages', () => {
+  test('returns list of 3 images for formats png, jpg, jpeg', () => {
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -279,7 +285,7 @@ describe('mods', () => {
     expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(3);
   });
 
-  test('loadImages returns empty array for gif file', () => {
+  test('returns empty array for gif file', () => {
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -306,7 +312,7 @@ describe('mods', () => {
     expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(0);
   });
 
-  test('loadImages returns empty array when there is no picture dir', () => {
+  test('returns empty array when there is no picture dir', () => {
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',

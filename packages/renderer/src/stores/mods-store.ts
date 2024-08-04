@@ -1,7 +1,7 @@
 import type { Mod } from '@interfaces/Mod';
+import type { Preset } from '@interfaces/Preset';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
-import type { Preset } from '#preload';
 import { getAllPresets, loadConfiguration, loadMods } from '#preload';
 import { translate } from '../../../../plugins/i18n';
 
