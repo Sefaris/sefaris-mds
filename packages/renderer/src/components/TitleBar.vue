@@ -1,21 +1,21 @@
 <template>
-  <div class="title-bar">
-    <div class="title-bar__title">G3 ModStarter</div>
-    <div class="controls">
+  <div class="title-bar flex justify-between h-8 pl-2">
+    <div class="py-1">G3 ModStarter</div>
+    <div class="flex controls align-middle">
       <div
-        class="control minimize"
+        class="hover:cursor-pointer hover:bg-primary-bg"
         @click="minimizeWindow"
       >
-        <mdi-icon icon="mdi-window-minimize" />
+        <span class="mdi mdi-window-minimize"></span>
       </div>
-      <div class="control disabled">
-        <mdi-icon icon="mdi-window-maximize" />
+      <div class="mx-2">
+        <span class="mdi mdi-window-maximize disabled"></span>
       </div>
       <div
-        class="control close"
+        class="hover:cursor-pointer hover:bg-[#b92a20] pr-2"
         @click="closeApplication"
       >
-        <mdi-icon icon="mdi-window-close" />
+        <span class="mdi mdi-window-close"></span>
       </div>
     </div>
   </div>
@@ -26,9 +26,7 @@ import { defineComponent } from 'vue';
 
 import { minimizeWindow, closeApplication } from '#preload';
 
-import MdiIcon from './MdiIcon.vue';
 export default defineComponent({
-  components: { MdiIcon },
   setup() {
     return { minimizeWindow, closeApplication };
   },
@@ -39,47 +37,15 @@ export default defineComponent({
 @import '../../assets/styles/variables.scss';
 
 .title-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: $text-white;
-  height: 32px;
-  app-region: drag;
-
-  &__title {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    font-size: 15px;
-  }
-
-  .controls {
-    display: flex;
-    app-region: none;
-
-    .control {
-      width: 35px;
-      height: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
-    .disabled {
-      color: $text-disabled;
-    }
-
-    .minimize:hover {
-      background-color: rgba($white, 0.1);
-    }
-
-    .close:hover {
-      background-color: #b92a20;
-    }
-  }
+  -webkit-app-region: drag;
+}
+.mdi {
+  font-size: 24px;
+}
+.disabled {
+  color: $text-disabled;
+}
+.controls {
+  -webkit-app-region: none;
 }
 </style>

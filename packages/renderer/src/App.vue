@@ -49,8 +49,8 @@ export default defineComponent({
 @import '../assets/styles/main.scss';
 
 #app {
-  height: 100vh;
-  max-width: 100vw;
+  height: 760px;
+  max-width: 800px;
   background-image: url('./../assets/images/background.png');
   box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
 }

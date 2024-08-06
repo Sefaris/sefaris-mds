@@ -1,29 +1,22 @@
 <template>
-  <div class="change-locale nav-top-wrapper">
-    <app-dropdown
-      center
-      :show-caret="false"
+  <app-dropdown :show-caret="false">
+    <template #activator>
+      <span
+        class="nav-top-wrapper-flag"
+        :class="'fi fi-' + flag"
+      />
+    </template>
+
+    <button
+      v-for="(lang, index) in LANGUAGE_SETTINGS"
+      :key="index"
+      class="flex items-center hover:bg-primary-hover rounded-md gap-3 py-1.5 px-4"
+      @click="changeLanguage(lang.code)"
     >
-      <template #activator>
-        <span
-          class="nav-top-wrapper-flag"
-          :class="'fi fi-' + flag"
-        />
-      </template>
-
-      <button
-        v-for="(lang, index) in LANGUAGE_SETTINGS"
-        :key="index"
-        href="#"
-        class="dropdown-container-content-row cursor-pointer"
-        @click.prevent="changeLanguage(lang.code)"
-      >
-        <span :class="'fi fi-' + lang.code" />
-
-        <span>{{ lang.text }}</span>
-      </button>
-    </app-dropdown>
-  </div>
+      <span :class="'fi fi-' + lang.code" />
+      <span>{{ lang.text }}</span>
+    </button>
+  </app-dropdown>
 </template>
 
 <script setup lang="ts">
@@ -63,32 +56,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style lang="scss">
-@import '../../assets/styles/variables.scss';
-@import '../../assets/styles/mixins.scss';
-
-button.dropdown-container-content-row {
-  background: none;
-  color: white;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  width: 100%;
-  gap: 12px;
-  padding: $padding-tiny;
-
-  &:focus {
-    color: $accent;
-  }
-}
-
-.change-locale {
-  .dropdown-container-content {
-    width: max-content;
-    padding: $padding-tiny $padding-medium;
-  }
-}
-</style>

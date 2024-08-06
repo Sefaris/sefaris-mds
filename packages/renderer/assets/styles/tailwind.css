@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background-color: #1c1c1c;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }   
+}
+
+@font-face {
+  font-family: 'Gothic';
+  src: url("./fonts/Gothic3.ttf") format('truetype');
+}
+
+html, body {
+  @apply font-lato text-base text-white;
+}
+

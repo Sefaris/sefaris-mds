@@ -20,6 +20,8 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
+    "../../interfaces/*.ts",
+    "../../utils/*.ts",
     "src/**/*.vue",
     "src/**/*.ts",
     "src/**/*.tsx",
