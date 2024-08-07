@@ -1,6 +1,6 @@
 <template>
-  <div class="flex justify-evenly h-126.5 pt-6">
-    <div class="flex flex-col w-91 overflow-y-auto">
+  <div class="flex h-126.5 justify-evenly pt-6">
+    <div class="flex w-91 flex-col overflow-y-auto">
       <no-mods v-if="!mods.length" />
       <mod-item
         v-for="(mod, index) in mods"

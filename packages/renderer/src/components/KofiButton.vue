@@ -1,7 +1,7 @@
 <template>
   <div class="ml-7">
     <a
-      class="flex bg-primary text-black rounded-lg px-3 py-1.5 hover:bg-primary-hover"
+      class="flex rounded-lg bg-primary px-3 py-1.5 text-black hover:bg-primary-hover"
       href="#"
       target="_blank"
       @click="openWebsite(SEFARIS_KOFI)"
@@ -9,7 +9,7 @@
       <span class="h-5">{{ $t('nav.top.support') }}</span>
 
       <img
-        class="h-5 ml-3"
+        class="ml-3 h-5"
         src="https://storage.ko-fi.com/cdn/cup-border.png"
       />
     </a>

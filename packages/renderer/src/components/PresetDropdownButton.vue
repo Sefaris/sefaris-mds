@@ -1,8 +1,8 @@
 <template>
   <button
-    class="hover:bg-default-hover rounded-md py-1.5 px-4 w-full"
+    class="w-full rounded-md px-4 py-1.5 hover:bg-default-hover"
     :class="{
-      'border-r-4 border-primary ': $props.active,
+      'border-r-4 border-primary': $props.active,
     }"
     @click="selectPreset($props.preset)"
   >

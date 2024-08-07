@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center h-15 gap-3">
+  <div class="flex h-15 items-center gap-3">
     <button
       class="h-8.5"
       @click="cancelChanges()"
@@ -7,7 +7,7 @@
       {{ $t('action.cancel') }}
     </button>
     <button
-      class="bg-[url('../../assets/images/install.png')] w-78.75 h-15 mr-6"
+      class="mr-6 h-15 w-78.75 bg-[url('../../assets/images/install.png')]"
       @click="startInstallation()"
     >
       <span class="font-gothic text-3xl">{{ $t('action.install') }}</span>

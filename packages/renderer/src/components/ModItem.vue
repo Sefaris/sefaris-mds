@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center gap-3 py-1.5 mr-2"
+    class="mr-2 flex items-center gap-3 py-1.5"
     :class="{ 'border-r-4 border-primary': isActive }"
   >
     <mod-checkbox :mod-id="mod.id" />

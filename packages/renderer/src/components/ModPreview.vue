@@ -2,14 +2,14 @@
 <template>
   <div
     v-if="!selectedMod"
-    class="w-91 flex items-center justify-center text-light border border-light border-dashed mb-6 rounded-lg"
+    class="mb-6 flex w-91 items-center justify-center rounded-lg border border-dashed border-light text-light"
   >
     <div class="flex flex-col justify-center">
       <span class="w-44 text-center">
         {{ $t('main.preview.default') }}
       </span>
       <img
-        class="mt-3 w-6 m-auto"
+        class="m-auto mt-3 w-6"
         src="../../assets/svg/cursor-default-click.svg"
       />
     </div>
@@ -21,16 +21,20 @@
     <div class="font-bold">{{ mod.title }}</div>
     <div
       v-if="mod.authors.length"
-      class="text-xs text-light mb-2 border-b border-divider"
+      class="mb-2 border-b border-divider text-xs text-light"
     >
       <span
         v-if="mod.authors.length > 1"
         class="mr-2.5"
-      >{{ $t('main.preview.authors') }}:</span>
+      >
+        {{ $t('main.preview.authors') }}:
+      </span>
       <span
         v-else
         class="mr-2.5"
-      >{{ $t('main.preview.author') }}:</span>
+      >
+        {{ $t('main.preview.author') }}:
+      </span>
       <span
         v-for="(author, index) in mod.authors"
         :key="index"
@@ -39,9 +43,9 @@
         {{ author }}
       </span>
     </div>
-    <div class="overflow-y-auto h-105">
+    <div class="h-105 overflow-y-auto">
       <img
-        class="w-full mb-2.5"
+        class="mb-2.5 w-full"
         :src="imgSource"
       />
       <div v-html="description" />

@@ -6,7 +6,7 @@
   >
     <button
       ref="trigger"
-      class="flex items-center bg-transparent h-8"
+      class="flex h-8 items-center bg-transparent"
       @mouseenter="expandDropdown"
       @focus="expandDropdown"
     >
@@ -22,7 +22,7 @@
     <div
       v-if="expanded"
       ref="content"
-      class="flex flex-col bg-primary-bg p-2 w-max border-2 border-solid border-divider rounded-tl-2xl rounded-br-2xl rounded-bl-2xl"
+      class="flex w-max flex-col rounded-bl-2xl rounded-br-2xl rounded-tl-2xl border-2 border-solid border-divider bg-primary-bg p-2"
       :style="dropdownFloatingStyles"
     >
       <slot />

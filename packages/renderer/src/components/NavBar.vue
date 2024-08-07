@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col h-28.5 border-b box-border border-divider">
-    <div class="flex h-8 m-6 justify-between">
+  <div class="box-border flex h-28.5 flex-col border-b border-divider">
+    <div class="m-6 flex h-8 justify-between">
       <span
-        class="text-primary text-xl cursor-pointer hover:text-primary-hover"
+        class="cursor-pointer text-xl text-primary hover:text-primary-hover"
         @click="openWebsite(SEFARIS_WEBSITE)"
       >
         Sefaris.eu
@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="flex justify-center items-center">
+    <div class="flex items-center justify-center">
       <span class="mr-6 text-light"> {{ $t('nav.bottom.title') }}: </span>
       <div class="flex h-8.5 items-center gap-6">
         <category-button

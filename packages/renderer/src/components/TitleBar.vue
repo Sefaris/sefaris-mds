@@ -1,7 +1,7 @@
 <template>
-  <div class="title-bar flex justify-between h-8 pl-2">
+  <div class="title-bar flex h-8 justify-between pl-2">
     <div class="py-1">G3 ModStarter</div>
-    <div class="flex controls align-middle">
+    <div class="controls flex align-middle">
       <div
         class="hover:cursor-pointer hover:bg-primary-bg"
         @click="minimizeWindow"
@@ -12,7 +12,7 @@
         <i class="mdi mdi-window-maximize disabled"></i>
       </div>
       <div
-        class="hover:cursor-pointer hover:bg-[#b92a20] pr-2"
+        class="pr-2 hover:cursor-pointer hover:bg-[#b92a20]"
         @click="closeApplication"
       >
         <i class="mdi mdi-window-close"></i>

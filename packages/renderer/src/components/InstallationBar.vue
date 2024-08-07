@@ -1,13 +1,13 @@
 <template>
-  <div class="h-27 p-6 relative flex">
+  <div class="relative flex h-27 p-6">
     <progress-bar :progress="progress" />
-    <div class="flex justify-between items-center w-full">
+    <div class="flex w-full items-center justify-between">
       <div class="flex flex-col">
         <span>{{ stepName }}.</span>
         <span class="text-light">Nie wyłączaj launchera!</span>
       </div>
       <div>
-        <span class="font-gothic text-primary text-5xl">{{ progress }}%</span>
+        <span class="font-gothic text-5xl text-primary">{{ progress }}%</span>
       </div>
     </div>
   </div>

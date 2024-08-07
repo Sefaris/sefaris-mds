@@ -7,7 +7,7 @@
     <button
       v-for="(lang, index) in LANGUAGE_SETTINGS"
       :key="index"
-      class="flex items-center hover:bg-default-hover rounded-md gap-3 py-1.5 px-4"
+      class="flex items-center gap-3 rounded-md px-4 py-1.5 hover:bg-default-hover"
       @click="changeLanguage(lang.code)"
     >
       <span :class="'fi fi-' + lang.code" />

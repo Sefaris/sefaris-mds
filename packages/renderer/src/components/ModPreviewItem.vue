@@ -7,7 +7,7 @@
     <div class="font-bold">{{ mod.title }}</div>
     <div
       v-if="mod.authors.length"
-      class="text-xs text-light mb-2 border-b border-divider"
+      class="mb-2 border-b border-divider text-xs text-light"
     >
       <span class="mr-2.5">{{ $t('main.preview.author') }}:</span>
       <span
@@ -17,9 +17,9 @@
         {{ author }}
       </span>
     </div>
-    <div class="overflow-y-auto h-105">
+    <div class="h-105 overflow-y-auto">
       <img
-        class="w-87 mb-2.5"
+        class="mb-2.5 w-87"
         :src="imgSource"
       />
       <div v-html="description"></div>

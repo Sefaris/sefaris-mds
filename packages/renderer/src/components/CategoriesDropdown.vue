@@ -1,8 +1,8 @@
 <template>
   <app-dropdown>
     <template #activator>{{ $t('nav.bottom.categories') }}</template>
-    <div class="overflow-y-auto max-h-110">
-      <div class="flex flex-col mr-2 gap-1">
+    <div class="max-h-110 overflow-y-auto">
+      <div class="mr-2 flex flex-col gap-1">
         <category-dropdown-button
           v-for="(category, index) in categories"
           :key="index"
