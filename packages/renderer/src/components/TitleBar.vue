@@ -6,16 +6,16 @@
         class="hover:cursor-pointer hover:bg-primary-bg"
         @click="minimizeWindow"
       >
-        <span class="mdi mdi-window-minimize"></span>
+        <i class="mdi mdi-window-minimize"></i>
       </div>
       <div class="mx-2">
-        <span class="mdi mdi-window-maximize disabled"></span>
+        <i class="mdi mdi-window-maximize disabled"></i>
       </div>
       <div
         class="hover:cursor-pointer hover:bg-[#b92a20] pr-2"
         @click="closeApplication"
       >
-        <span class="mdi mdi-window-close"></span>
+        <i class="mdi mdi-window-close"></i>
       </div>
     </div>
   </div>
@@ -33,9 +33,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-@import '../../assets/styles/variables.scss';
-
+<style scoped>
 .title-bar {
   -webkit-app-region: drag;
 }
@@ -43,7 +41,7 @@ export default defineComponent({
   font-size: 24px;
 }
 .disabled {
-  color: $text-disabled;
+  color: #ffffff33;
 }
 .controls {
   -webkit-app-region: none;

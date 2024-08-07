@@ -9,7 +9,3 @@ export default defineComponent({
   setup() {},
 });
 </script>
-
-<style lang="scss">
-@import '../../assets/styles/variables.scss';
-</style>

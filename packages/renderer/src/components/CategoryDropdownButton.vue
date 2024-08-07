@@ -1,6 +1,6 @@
 <template>
   <button
-    class="hover:bg-primary-hover rounded-md py-1.5 px-4"
+    class="hover:bg-default-hover rounded-md py-1.5 px-4"
     :class="{
       'border-r-4 border-primary': $props.active,
     }"

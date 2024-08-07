@@ -45,12 +45,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-@import '../assets/styles/main.scss';
-
+<style>
 #app {
   height: 760px;
-  max-width: 800px;
+  width: 800px;
   background-image: url('./../assets/images/background.png');
   box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
 }

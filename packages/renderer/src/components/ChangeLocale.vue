@@ -1,16 +1,13 @@
 <template>
   <app-dropdown :show-caret="false">
     <template #activator>
-      <span
-        class="nav-top-wrapper-flag"
-        :class="'fi fi-' + flag"
-      />
+      <span :class="'fi fi-' + flag" />
     </template>
 
     <button
       v-for="(lang, index) in LANGUAGE_SETTINGS"
       :key="index"
-      class="flex items-center hover:bg-primary-hover rounded-md gap-3 py-1.5 px-4"
+      class="flex items-center hover:bg-default-hover rounded-md gap-3 py-1.5 px-4"
       @click="changeLanguage(lang.code)"
     >
       <span :class="'fi fi-' + lang.code" />
@@ -27,8 +24,10 @@ import AppDropdown from './AppDropdown.vue';
 import type { SUPPORTED_LANGUAGES } from '../../../../utils/constants';
 import { DEFAULT_LANGUAGE, LANGUAGE_SETTINGS } from '../../../../utils/constants';
 import { i18n } from '../../../../plugins/i18n';
+
 const currentLanguageCode = ref(i18n.global.locale.value ?? DEFAULT_LANGUAGE);
 const flag = computed(() => i18n.global.locale.value);
+
 function changeLanguage(code: string) {
   if (currentLanguageCode.value === code) {
     return;
@@ -50,8 +49,10 @@ watch(
 onMounted(async () => {
   const configuration = await loadConfiguration();
   if (configuration) {
+    currentLanguageCode.value = configuration.language as SUPPORTED_LANGUAGES;
     i18n.global.locale.value = configuration.language as SUPPORTED_LANGUAGES;
   } else {
+    currentLanguageCode.value = DEFAULT_LANGUAGE;
     i18n.global.locale.value = DEFAULT_LANGUAGE;
   }
 });
