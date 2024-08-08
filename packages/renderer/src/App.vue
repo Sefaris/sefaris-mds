@@ -1,24 +1,57 @@
 <template>
-  <div>
-    {{ APP_VERSION }}
-  </div>
+  <title-bar />
+  <nav-bar />
+  <main-section />
+  <footer-section />
 </template>
 
+<script lang="ts">
+import { defineComponent, onMounted } from 'vue';
+import TitleBar from './components/TitleBar.vue';
+import NavBar from './components/NavBar.vue';
+import MainSection from './components/MainSection.vue';
+import FooterSection from './components/FooterSection.vue';
+import { useModsStore } from './stores/mods-store';
+import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
+import { translate } from '../../../plugins/i18n';
+import { DEFAULT_LANGUAGE } from '../../../utils/constants';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
+export default defineComponent({
+  components: { TitleBar, NavBar, MainSection, FooterSection },
+  setup() {
+    const modsStore = useModsStore();
+    onMounted(async () => {
+      const config = await loadConfiguration();
+      if (!config) {
+        alert(`${translate('alert.configNotFound')}`);
+        const gamePath = await selectGameFolder();
+        if (!gamePath) closeApplication();
+        const config: AppConfiguration = {
+          gothicPath: gamePath,
+          language: DEFAULT_LANGUAGE,
+          installedMods: [],
+          filesCreated: [],
+        };
+        await saveConfiguration(config);
+      }
+      await modsStore.reloadMods();
+      await modsStore.loadInstalledMods();
+      await modsStore.loadCategories();
+      await modsStore.loadPresets();
+    });
 
-
-<script lang="ts" setup>
-  const APP_VERSION = import.meta.env.VITE_APP_VERSION;
+    return {};
+  },
+});
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin: 60px auto;
-  max-width: 700px;
-}
+<style lang="scss">
+@import '../assets/styles/main.scss';
 
+#app {
+  height: 100vh;
+  max-width: 100vw;
+  background-image: url('./../assets/images/background.png');
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
+}
 </style>

@@ -1,10 +1,12 @@
 /* eslint-env node */
 
-import {chrome} from '../../.electron-vendors.cache.json';
+import { chrome } from '../../.electron-vendors.cache.json';
 import vue from '@vitejs/plugin-vue';
-import {renderer} from 'unplugin-auto-expose';
-import {join} from 'node:path';
-import {injectAppVersion} from '../../version/inject-app-version-plugin.mjs';
+import { renderer } from 'unplugin-auto-expose';
+import { join, resolve, dirname } from 'node:path';
+import { injectAppVersion } from '../../version/inject-app-version-plugin.mjs';
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import { fileURLToPath } from 'url';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
@@ -48,6 +50,9 @@ const config = {
       preloadEntry: join(PACKAGE_ROOT, '../preload/src/index.ts'),
     }),
     injectAppVersion(),
+    VueI18nPlugin({
+      include: resolve(dirname(fileURLToPath(import.meta.url)), '../../locales/**'),
+    }),
   ],
 };
 

@@ -12,9 +12,12 @@
     "baseUrl": ".",
     "paths": {
       "#preload": ["../preload/src/index"],
-      "/@/*": ["./src/*"]
+      "/@/*": ["./src/*"],
+      "@interfaces/*": ["../../interfaces/*"],
+      "@utils/*": ["../../utils/*"]
     },
-    "lib": ["ESNext", "dom", "dom.iterable"]
+    "lib": ["ESNext", "dom", "dom.iterable"],
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*.vue",

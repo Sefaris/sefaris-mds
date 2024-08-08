@@ -1,9 +1,13 @@
-import {app, BrowserWindow} from 'electron';
-import {join, resolve} from 'node:path';
+import { app, BrowserWindow } from 'electron';
+import { join, resolve } from 'node:path';
+import { addEvents } from './events';
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
+    width: 800,
+    height: 760,
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
+    frame: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -11,7 +15,11 @@ async function createWindow() {
       webviewTag: false, // The webview tag is not recommended. Consider alternatives like an iframe or Electron's BrowserView. @see https://www.electronjs.org/docs/latest/api/webview-tag#warning
       preload: join(app.getAppPath(), 'packages/preload/dist/index.cjs'),
     },
+    autoHideMenuBar: true,
   });
+
+  //Add events to the BrowserWindow
+  addEvents();
 
   /**
    * If the 'show' property of the BrowserWindow's constructor is omitted from the initialization options,
@@ -62,6 +70,7 @@ export async function restoreOrCreateWindow() {
   if (window === undefined) {
     window = await createWindow();
   }
+  window.resizable = false;
 
   if (window.isMinimized()) {
     window.restore();
