@@ -9,7 +9,7 @@
  * @see https://www.electron.build/configuration/configuration
  */
 module.exports = async function () {
-  const {getVersion} = await import('./version/getVersion.mjs');
+  const { getVersion } = await import('./version/getVersion.mjs');
 
   return {
     directories: {
@@ -17,6 +17,11 @@ module.exports = async function () {
       buildResources: 'buildResources',
     },
     files: ['packages/**/dist/**'],
+    extraFiles: [
+      { from: 'Static', to: 'Static' },
+      { from: 'Tools', to: 'resources\\app\\Tools' },
+      { from: 'Presets', to: 'Presets' },
+    ],
     extraMetadata: {
       version: getVersion(),
     },
