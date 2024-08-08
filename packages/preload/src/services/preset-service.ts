@@ -1,7 +1,7 @@
 import { ensureDirectory } from './file-service';
 import path from 'path';
 import * as fs from 'fs';
-import type { Preset } from '@interfaces/Preset';
+import type { Preset } from '../../../../interfaces/Preset';
 import { UTF8 } from '../../../../utils/constants';
 const PRESET_JSON = 'preset.json';
 

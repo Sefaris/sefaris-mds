@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { LANGUAGE_SETTINGS } from '../../../../utils/constants';
 import * as fs from 'fs';
 import * as path from 'path';

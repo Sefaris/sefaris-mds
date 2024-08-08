@@ -3,8 +3,8 @@ import * as os from 'os';
 
 import path from 'path';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
-import type { Mod } from '@interfaces/Mod';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { Mod } from '../../../../interfaces/Mod';
+import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 
 import { buildPackage, extract, findStrings } from './pak-service';
 
