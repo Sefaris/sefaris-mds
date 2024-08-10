@@ -2,8 +2,11 @@ import { BrowserWindow, app, dialog, ipcMain } from 'electron';
 import { translate } from '../../../plugins/i18n';
 import * as path from 'path';
 import * as fs from 'fs';
+import { createConfigWindow } from './configWindow';
+import { getWindows } from './mainWindow';
 
 export function addEvents() {
+  const windows = getWindows();
   ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -33,12 +36,20 @@ export function addEvents() {
   });
 
   ipcMain.on('minimize-window', () => {
-    BrowserWindow.getAllWindows()
-      .find(w => !w.isDestroyed())
-      ?.minimize();
+    BrowserWindow.getFocusedWindow()?.minimize();
   });
 
   ipcMain.on('close-application', () => {
-    app.quit();
+    if (BrowserWindow.getFocusedWindow() == windows['main']) {
+      app.exit();
+      return;
+    } else if (BrowserWindow.getFocusedWindow() == windows['config']) {
+      windows['config'].close();
+      windows['config'] = undefined;
+    }
+  });
+
+  ipcMain.on('open-config-window', async () => {
+    createConfigWindow();
   });
 }

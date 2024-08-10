@@ -21,3 +21,5 @@ export { mergeModFiles } from './services/merge-service';
 export { getAllPresets } from './services/preset-service';
 export { openWebsite } from './services/redirect-service';
 export { extractAll } from './services/pak-service';
+export { openConfigWindow } from './services/window-service';
+export { loadIniConfiguration, getAllIniNames } from './services/ini-service';

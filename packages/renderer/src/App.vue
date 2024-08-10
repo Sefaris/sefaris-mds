@@ -1,23 +1,18 @@
 <template>
   <title-bar />
-  <nav-bar />
-  <main-section />
-  <footer-section />
+  <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
 import TitleBar from './components/TitleBar.vue';
-import NavBar from './components/NavBar.vue';
-import MainSection from './components/MainSection.vue';
-import FooterSection from './components/FooterSection.vue';
 import { useModsStore } from './stores/mods-store';
 import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
 import { translate } from '../../../plugins/i18n';
 import { DEFAULT_LANGUAGE } from '../../../utils/constants';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
 export default defineComponent({
-  components: { TitleBar, NavBar, MainSection, FooterSection },
+  components: { TitleBar },
   setup() {
     const modsStore = useModsStore();
     onMounted(async () => {
@@ -50,6 +45,8 @@ export default defineComponent({
   height: 760px;
   width: 800px;
   background-image: url('./../assets/images/background.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
 }
 </style>
