@@ -5,6 +5,7 @@ import { i18n } from '../../../plugins/i18n';
 import { createPinia } from 'pinia';
 
 import '../assets/styles/tailwind.css';
+import '../assets/styles/global.scss';
 import 'flag-icons/css/flag-icons.min.css';
 import '@mdi/font/css/materialdesignicons.min.css';
 

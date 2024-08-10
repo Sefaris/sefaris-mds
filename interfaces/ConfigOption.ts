@@ -8,4 +8,5 @@ export interface ConfigOption {
   type: OptionType;
   defaultValue: ConfigValue;
   modes?: string[];
+  ranges?: number[];
 }

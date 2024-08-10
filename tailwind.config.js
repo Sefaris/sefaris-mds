@@ -18,6 +18,7 @@ module.exports = {
         disabled: '#ffffff33',
         menu: '#e0c495',
         'menu-hover': '#ffebdc',
+        slider: '#312e2c',
       },
       lineHeight: {
         3: '12px',
@@ -32,6 +33,8 @@ module.exports = {
       backgroundImage: {
         play: "url('/packages/renderer/assets/images/play.png')",
         install: "url('/packages/renderer/assets/images/install.png')",
+        'checkbox-inactive': "url('../../../assets/images/checkbox-inactive.png')",
+        'checkbox-active': "url('../../../assets/images/checkbox-active.png')",
       },
       fontFamily: {
         lato: ['Lato', 'sans-serif'],
@@ -82,12 +85,14 @@ module.exports = {
       27: '108px',
       28: '112px',
       28.5: '114px',
+      30: '120px',
       32: '128px',
       36: '144px',
       40: '160px',
       44: '176px',
       45: '181px',
       48: '192px',
+      50: '200px',
       52: '208px',
       56: '224px',
       60: '240px',

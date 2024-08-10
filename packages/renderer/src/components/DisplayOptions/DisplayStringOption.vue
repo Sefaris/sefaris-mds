@@ -1,5 +1,7 @@
 <template>
-  <display-base-option :option="$props.option"> </display-base-option>
+  <display-base-option :option="$props.option">
+    {{ $props.option.name }}
+  </display-base-option>
 </template>
 
 <script lang="ts">

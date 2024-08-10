@@ -1,9 +1,11 @@
 <template>
   <div
-    class="mx-40 flex items-center justify-between"
+    class="mx-20 mt-3 flex items-center justify-between"
     :title="$props.option.description"
   >
-    <span class="mr-auto">{{ $props.option.name }}</span>
+    <span class="min-w-50 text-left">
+      {{ $props.option.name }}
+    </span>
     <slot />
   </div>
 </template>

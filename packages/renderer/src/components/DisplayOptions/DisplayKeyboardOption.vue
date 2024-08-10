@@ -1,10 +1,20 @@
 <template>
-  <display-base-option :option="$props.option"> </display-base-option>
+  <display-base-option :option="$props.option">
+    <span
+      v-if="!isListening"
+      class="min-w-50 cursor-pointer text-right hover:text-menu-hover"
+      @click="onRebind"
+    >
+      {{ setting.value }}</span>
+    <span v-else>
+      {{ $t('config.option.waitingForKeyboard') }}
+    </span>
+  </display-base-option>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { defineComponent, onUnmounted, ref, toRef } from 'vue';
 import type { ConfigOption } from '@interfaces/ConfigOption';
 import DisplayBaseOption from './DisplayBaseOption.vue';
 
@@ -17,8 +27,29 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(_) {
-    return {};
+  setup(props) {
+    const setting = toRef(props.option);
+    const isListening = ref(false);
+
+    const handleKeydown = (event: KeyboardEvent) => {
+      isListening.value = false;
+      console.log(`Key pressed: ${event.key}`);
+      setting.value.value = event.key;
+      window.removeEventListener('keydown', handleKeydown);
+    };
+
+    const onRebind = () => {
+      console.log('poczatek słuchania');
+      isListening.value = true;
+
+      window.addEventListener('keydown', handleKeydown);
+    };
+
+    onUnmounted(() => {
+      window.removeEventListener('keydown', handleKeydown);
+    });
+
+    return { setting, isListening, onRebind };
   },
 });
 </script>

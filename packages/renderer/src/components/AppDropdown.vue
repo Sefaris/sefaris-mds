@@ -90,9 +90,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style>
-.caret {
-  font-size: 16px;
-}
-</style>

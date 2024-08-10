@@ -32,18 +32,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.title-bar {
-  -webkit-app-region: drag;
-}
-.mdi {
-  font-size: 24px;
-}
-.disabled {
-  color: #ffffff33;
-}
-.controls {
-  -webkit-app-region: none;
-}
-</style>

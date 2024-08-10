@@ -14,7 +14,7 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
   for (let i = 0; i < lines.length; i++) {
     try {
       const line = lines[i].trim();
-      // Detect a new section
+      // detect a new section
       if (line.startsWith('[') && line.endsWith(']')) {
         if (currentSection?.options.length) {
           configSections.push(currentSection);
@@ -22,7 +22,7 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
         currentSection = { name: line.slice(1, -1), options: [] };
       }
 
-      // Detect an option with value
+      // detect an option with value
       if (line.includes('=')) {
         const [option, value] = line.split('=');
         if (!lines[i + 1].includes(';') || !lines[i + 2].includes(';')) {
@@ -32,8 +32,11 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
         const descriptionLine = lines[i + 1].replace(/^\s*;\s*/, '').trim() || '';
         const typeLine = lines[i + 2].replace(/^\s*;\s*/, '').trim() || '';
         let modesLine: string = '';
-        if (lines[i + 3].includes('|') && !lines[i + 3].includes('=')) {
-          modesLine = lines[i + 3].replace(/^\s*;\s*/, '') || '';
+        // dont throw error for optional line
+        if (lines[i + 3]) {
+          if (lines[i + 3].includes('|') && !lines[i + 3].includes('=')) {
+            modesLine = lines[i + 3].replace(/^\s*;\s*/, '') || '';
+          }
         }
         if (!descriptionLine.length) {
           throw `Expected non empty description in ${name}:Line:${i}!`;
@@ -45,20 +48,20 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
         let parsedValue: ConfigValue = value;
         let parsedDefaultValue: ConfigValue = typeString.at(-1)!.trim();
         let modes: string[] | undefined = undefined;
-
+        let ranges: number[] | undefined = undefined;
         switch (typeString[0].toLowerCase()) {
           case 'string':
           case 'keyboard':
             break;
           case 'mode':
-            modes = modesLine.split('|').map(mode => mode.replace('\r', ''));
-            console.log(modes);
+            modes = modesLine.split('|').map(mode => mode.trim());
             break;
           case 'boolean':
             parsedValue = value.toLowerCase() === 'true';
             parsedDefaultValue = parsedDefaultValue.toLowerCase() === 'true';
             break;
           case 'number':
+            ranges = modesLine.split('|').map(range => parseFloat(range.trim()));
             parsedValue = parseFloat(value);
             parsedDefaultValue = parseFloat(parsedDefaultValue);
             break;
@@ -85,6 +88,7 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
           type: typeString.at(-2)!.trim() as OptionType,
           defaultValue: parsedDefaultValue,
           modes: modes,
+          ranges: ranges,
         });
       }
     } catch (err) {

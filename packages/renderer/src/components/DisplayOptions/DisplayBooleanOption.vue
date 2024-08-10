@@ -1,17 +1,28 @@
 <template>
   <display-base-option
-    class="flex cursor-pointer gap-3"
+    class="flex"
     :option="setting"
   >
-    <option-slider
-      :min="0"
-      :max="1"
-      :value="setting.value as boolean"
-      @slide="n => (setting.value = n)"
-    />
-
-    <span v-if="setting.value">Wł.</span>
-    <span v-else>Wył.</span>
+    <div class="flex items-center">
+      <option-boolean-slider
+        :min="0"
+        :max="1"
+        :value="setting.value ? true : false"
+        @slide="(n: boolean) => (setting.value = n)"
+      />
+      <span
+        v-if="setting.value"
+        class="min-w-50 text-right"
+      >
+        {{ $t('config.option.on') }}
+      </span>
+      <span
+        v-else
+        class="min-w-50 text-right"
+      >
+        {{ $t('config.option.off') }}
+      </span>
+    </div>
   </display-base-option>
 </template>
 
@@ -20,10 +31,10 @@ import type { PropType } from 'vue';
 import { defineComponent, toRef } from 'vue';
 import type { ConfigOption } from '@interfaces/ConfigOption';
 import DisplayBaseOption from './DisplayBaseOption.vue';
-import OptionSlider from '../OptionSlider.vue';
+import OptionBooleanSlider from '../OptionSliders/OptionBooleanSlider.vue';
 
 export default defineComponent({
-  components: { DisplayBaseOption, OptionSlider },
+  components: { DisplayBaseOption, OptionBooleanSlider },
   props: {
     option: {
       type: Object as PropType<ConfigOption>,

@@ -28,7 +28,6 @@ export default defineComponent({
     loadIniConfiguration(props.configName).then(result => {
       if (!result) return;
       sections.value = result;
-      console.log(sections.value);
     });
     return {
       sections,

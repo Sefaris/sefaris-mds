@@ -4,7 +4,8 @@
     :min="$props.min"
     :max="$props.max"
     :value="sliderValue"
-    class="slider cursor-pointer appearance-none"
+    :step="$props.step"
+    class="slider h-0.5 cursor-pointer appearance-none bg-slider"
     @change="onSlide"
   />
 </template>
@@ -21,36 +22,25 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    step: {
+      type: Number,
+      default: 1,
+    },
     value: {
-      type: Boolean,
+      type: Number,
       required: true,
     },
   },
   emits: ['slide'],
   setup(props, emit) {
-    const sliderValue = ref(props.value ? 1 : 0);
+    const sliderValue = ref(props.value);
     const onSlide = (e: Event) => {
       const target = e.target as HTMLInputElement;
       sliderValue.value = Number(target.value);
-      emit.emit('slide', Boolean(sliderValue.value));
+      emit.emit('slide', sliderValue.value);
     };
+
     return { onSlide, sliderValue };
   },
 });
 </script>
-
-<style lang="scss">
-.slider {
-  appearance: none;
-  height: 2px;
-  background: #312e2c;
-
-  &::-webkit-slider-thumb {
-    background: url('../../assets/images/slider-thumb.png');
-    width: 16px;
-    height: 16px;
-    appearance: none;
-    transition: transform 1.3s ease;
-  }
-}
-</style>
