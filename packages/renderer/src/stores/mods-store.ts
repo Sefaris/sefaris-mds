@@ -1,22 +1,28 @@
-import type { Mod } from '@interfaces/Mod';
-import type { Preset } from '@interfaces/Preset';
+import type { Mod } from '../../../../interfaces/Mod';
+import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
 import { getAllPresets, loadConfiguration, loadMods } from '#preload';
 import { translate } from '../../../../plugins/i18n';
-
+import type { InstallationState } from '../../../../types/InstallationState';
 export const useModsStore = defineStore('mods', () => {
   const mods = shallowRef<Mod[]>([]);
   const displayedMods = shallowRef<Mod[]>([]);
   const installedMods = shallowRef<Mod[]>([]);
   const selectedMods = ref<string[]>([]);
+  const selectedMod = ref<string>('');
   const categories = shallowRef<string[]>([]);
   const presets = shallowRef<Preset[]>([]);
   const activePreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
+  const installationState = ref<InstallationState>('ready');
 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
+  }
+
+  function setSelectedMod(mod: string) {
+    selectedMod.value = mod;
   }
 
   function setInstalledMods(mods: Mod[]) {
@@ -88,17 +94,24 @@ export const useModsStore = defineStore('mods', () => {
     categories.value = [...new Set(mods.value.map(mod => mod.category))];
   }
 
+  function setInstallationState(state: InstallationState) {
+    installationState.value = state;
+  }
+
   return {
     mods,
     displayedMods,
     installedMods,
     selectedMods,
+    selectedMod,
     categories,
     activeCategory,
     presets,
     activePreset,
+    installationState,
     countModsInCategory,
     setSelectedMods,
+    setSelectedMod,
     reloadMods,
     loadCategories,
     loadInstalledMods,
@@ -107,5 +120,6 @@ export const useModsStore = defineStore('mods', () => {
     selectPreset,
     loadPresets,
     deactivatePreset,
+    setInstallationState,
   };
 });

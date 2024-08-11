@@ -1,21 +1,21 @@
 <template>
-  <div class="title-bar">
-    <div class="title-bar__title">G3 ModStarter</div>
-    <div class="controls">
+  <div class="title-bar flex h-8 justify-between pl-2">
+    <div class="py-1">G3 ModStarter</div>
+    <div class="controls flex align-middle">
       <div
-        class="control minimize"
+        class="hover:cursor-pointer hover:bg-primary-bg"
         @click="minimizeWindow"
       >
-        <mdi-icon icon="mdi-window-minimize" />
+        <i class="mdi mdi-window-minimize"></i>
       </div>
-      <div class="control disabled">
-        <mdi-icon icon="mdi-window-maximize" />
+      <div class="mx-2">
+        <i class="mdi mdi-window-maximize disabled"></i>
       </div>
       <div
-        class="control close"
+        class="pr-2 hover:cursor-pointer hover:bg-[#b92a20]"
         @click="closeApplication"
       >
-        <mdi-icon icon="mdi-window-close" />
+        <i class="mdi mdi-window-close"></i>
       </div>
     </div>
   </div>
@@ -26,60 +26,24 @@ import { defineComponent } from 'vue';
 
 import { minimizeWindow, closeApplication } from '#preload';
 
-import MdiIcon from './MdiIcon.vue';
 export default defineComponent({
-  components: { MdiIcon },
   setup() {
     return { minimizeWindow, closeApplication };
   },
 });
 </script>
 
-<style lang="scss">
-@import '../../assets/styles/variables.scss';
-
+<style scoped>
 .title-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: $text-white;
-  height: 32px;
-  app-region: drag;
-
-  &__title {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    font-size: 15px;
-  }
-
-  .controls {
-    display: flex;
-    app-region: none;
-
-    .control {
-      width: 35px;
-      height: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
-    .disabled {
-      color: $text-disabled;
-    }
-
-    .minimize:hover {
-      background-color: rgba($white, 0.1);
-    }
-
-    .close:hover {
-      background-color: #b92a20;
-    }
-  }
+  -webkit-app-region: drag;
+}
+.mdi {
+  font-size: 24px;
+}
+.disabled {
+  color: #ffffff33;
+}
+.controls {
+  -webkit-app-region: none;
 }
 </style>

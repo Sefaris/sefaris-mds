@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
 

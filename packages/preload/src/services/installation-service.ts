@@ -3,8 +3,8 @@ import * as os from 'os';
 
 import path from 'path';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
-import type { Mod } from '@interfaces/Mod';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { Mod } from '../../../../interfaces/Mod';
+import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 
 import { buildPackage, extract, findStrings } from './pak-service';
 
@@ -96,14 +96,16 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         const endTime = performance.now();
         const time = (endTime - startTime) / 1000;
 
+        updateProgressBar('progress.saveConfiguration', 0, 2);
+
         configuration.installedMods = mods.map(mod => mod.id);
-        //Get rid of possible duplicates
         configuration.preset = preset ? preset : undefined;
+        // //Get rid of possible duplicates
         configuration.filesCreated = Array.from(new Set(createdFiles));
 
         await saveConfiguration(configuration);
 
-        resolve(time.toFixed(3));
+        resolve(time.toFixed(2));
       } catch (error) {
         // Remove copied files
         alert(error);
@@ -209,8 +211,9 @@ async function mergeStringTables(
     flag: 'w',
   });
 
-  mods.forEach(element => {
-    const modStringTable = path.join(element.path, STRINGTABLE_FILENAME);
+  for (let i = 0; i < mods.length; i++) {
+    updateProgressBar('progress.buildStringtable', i, mods.length);
+    const modStringTable = path.join(mods[i].path, STRINGTABLE_FILENAME);
     if (fs.existsSync(modStringTable)) {
       const modStringTableContent = fs
         .readFileSync(modStringTable, {
@@ -223,7 +226,7 @@ async function mergeStringTables(
         flag: 'a',
       });
     }
-  });
+  }
 
   fs.appendFileSync(stringTable, `\n${locAdminRevision}`, {
     encoding: STRINGTABLE_ENCODING,
@@ -248,8 +251,10 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
   await ensureDirectory(path.join(tempDir, 'G3_World_01'));
   const tempWrldataPath = path.join(tempDir, 'G3_World_01', WRLDATASC);
   fs.copyFileSync(wrldataPath, tempWrldataPath);
-  mods.forEach(mod => {
-    const wrldataMod = path.join(mod.path, WRLDATASC);
+
+  for (let i = 0; i < mods.length; i++) {
+    updateProgressBar('progress.buildStringtable', i, mods.length);
+    const wrldataMod = path.join(mods[i].path, WRLDATASC);
     if (fs.existsSync(wrldataMod)) {
       const wrldataModContent = fs.readFileSync(wrldataMod, {
         encoding: WRLDATASC_ENCODING,
@@ -261,7 +266,7 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
         flag: 'a',
       });
     }
-  });
+  }
 
   await buildPackage(tempDir, outputFilePath);
   fs.rmSync(tempDir, { recursive: true, force: true });
