@@ -15,6 +15,6 @@
     },
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts", "../../types/**/*.d.ts"],
+  "include": ["src/**/*.ts", "../../types/**/*.d.ts", "../../interfaces/*.ts", "../../utils/*.ts"],
   "exclude": ["**/*.spec.ts", "**/*.test.ts"]
 }

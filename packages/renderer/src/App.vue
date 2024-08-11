@@ -15,7 +15,7 @@ import { useModsStore } from './stores/mods-store';
 import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
 import { translate } from '../../../plugins/i18n';
 import { DEFAULT_LANGUAGE } from '../../../utils/constants';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { AppConfiguration } from '../../../interfaces/AppConfiguration';
 export default defineComponent({
   components: { TitleBar, NavBar, MainSection, FooterSection },
   setup() {
@@ -45,12 +45,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-@import '../assets/styles/main.scss';
-
+<style>
 #app {
-  height: 100vh;
-  max-width: 100vw;
+  height: 760px;
+  width: 800px;
   background-image: url('./../assets/images/background.png');
   box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
 }
