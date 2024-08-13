@@ -5,7 +5,8 @@
       class="min-w-50 cursor-pointer text-right hover:text-menu-hover"
       @click="onRebind"
     >
-      {{ setting.value }}</span>
+      {{ setting.value }}
+    </span>
     <span v-else>
       {{ $t('config.option.waitingForKeyboard') }}
     </span>
@@ -27,19 +28,18 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
     const isListening = ref(false);
 
     const handleKeydown = (event: KeyboardEvent) => {
       isListening.value = false;
-      console.log(`Key pressed: ${event.key}`);
       setting.value.value = event.key;
       window.removeEventListener('keydown', handleKeydown);
     };
 
     const onRebind = () => {
-      console.log('poczatek słuchania');
       isListening.value = true;
 
       window.addEventListener('keydown', handleKeydown);

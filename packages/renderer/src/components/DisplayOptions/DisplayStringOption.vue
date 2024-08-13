@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { defineComponent, toRef } from 'vue';
 import type { ConfigOption } from '@interfaces/ConfigOption';
 import DisplayBaseOption from './DisplayBaseOption.vue';
 
@@ -19,8 +19,10 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(_) {
-    return {};
+  emits: ['updateOption'],
+  setup(props) {
+    const setting = toRef(props.option);
+    return { setting };
   },
 });
 </script>

@@ -1,15 +1,16 @@
 <template>
-  <div class="mt-2 text-center text-xl">{{ $props.section.name }}</div>
+  <div class="mt-2 select-none text-center text-xl">{{ $props.section.name }}</div>
   <component
     :is="display.component!"
     v-for="(display, index) in displays"
     :key="index"
     :option="display.option"
+    @update-option="handleUpdateSection"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, toRef } from 'vue';
 import type { PropType } from 'vue';
 import type { ConfigSection } from '@interfaces/ConfigSection';
 import DisplayBooleanOption from './DisplayOptions/DisplayBooleanOption.vue';
@@ -30,7 +31,11 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  emits: ['updateSection'],
+  setup(props, { emit }) {
+    const configSection = toRef(props.section);
+    console.log(configSection.value);
+
     const getComponentType = (type: OptionType): OptionComponent | undefined => {
       switch (type) {
         case 'boolean':
@@ -60,8 +65,21 @@ export default defineComponent({
       option,
     }));
 
+    const handleUpdateSection = (option: { key: string; value: number }) => {
+      const foundOption = configSection.value.options.find(opt => opt.name === option.key);
+
+      if (foundOption) {
+        foundOption.value = option.value;
+      } else {
+        console.warn(`Option with key ${option.key} not found.`);
+      }
+      emit('updateSection', configSection.value);
+    };
+
     return {
       displays,
+      configSection,
+      handleUpdateSection,
     };
   },
 });

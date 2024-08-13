@@ -1,10 +1,12 @@
 <template>
-  <display-base-option :option="$props.option"> </display-base-option>
+  <display-base-option :option="$props.option">
+    <!-- NEVER TO BE USED? -->
+  </display-base-option>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { defineComponent, toRef } from 'vue';
 import type { ConfigOption } from '@interfaces/ConfigOption';
 import DisplayBaseOption from './DisplayBaseOption.vue';
 export default defineComponent({
@@ -15,8 +17,9 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(_) {
-    return {};
+  setup(props) {
+    const setting = toRef(props.option);
+    return { setting };
   },
 });
 </script>

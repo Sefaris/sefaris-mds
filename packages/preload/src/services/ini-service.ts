@@ -121,3 +121,7 @@ export async function loadIniConfiguration(name: string) {
   if (!iniFilePath) return;
   return parseConfig(fs.readFileSync(iniFilePath, 'utf-8'), name);
 }
+
+export async function saveIniConfiguration(content: string) {
+  console.log(content);
+}

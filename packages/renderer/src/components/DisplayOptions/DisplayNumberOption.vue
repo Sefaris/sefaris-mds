@@ -6,7 +6,7 @@
         :max="setting.ranges![1] ?? 100"
         :step="setting.ranges![2] ?? 1"
         :value="Number(setting.value)"
-        @slide="(n: number) => (setting.value = n)"
+        @slide="(n: number) => $emit('updateOption', { key: setting.name, value: n })"
       />
 
       <span class="min-w-50 text-right">
@@ -32,6 +32,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
     return { setting };
