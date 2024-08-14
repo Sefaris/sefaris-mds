@@ -5,7 +5,6 @@
       v-for="(section, index) in sections"
       :key="index"
       :section="section"
-      @update-section="handleUpdateSection"
     />
   </div>
 </template>
@@ -33,20 +32,9 @@ export default defineComponent({
       sections.value = ini;
     });
 
-    const handleUpdateSection = (section: ConfigSection) => {
-      const index = sections.value.findIndex(sec => sec.name === section.name);
-      if (index !== -1) {
-        sections.value[index] = section;
-        console.log(JSON.stringify(sections.value[0].options, null, 4));
-      } else {
-        console.warn(`Section with name ${section.name} not found.`);
-      }
-    };
-
     return {
       sections,
       sectionName,
-      handleUpdateSection,
     };
   },
 });

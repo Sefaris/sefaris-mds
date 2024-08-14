@@ -2,11 +2,11 @@
   <display-base-option :option="$props.option">
     <div
       ref="dropdown"
-      class="relative mx-auto flex max-w-80"
+      class="relative mx-auto flex max-w-80 items-center"
     >
       <input
         v-model="input"
-        class="w-60 border-2 border-divider bg-transparent"
+        class="h-6 w-60 border-2 border-divider bg-transparent"
         type="text"
         @focusin="show = true"
       />
@@ -20,7 +20,7 @@
           :key="index"
           class="flex items-center justify-between bg-divider p-1"
         >
-          <span>
+          <span class="ml-1">
             {{ item }}
           </span>
           <button
@@ -49,7 +49,6 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
     const show = ref(false);

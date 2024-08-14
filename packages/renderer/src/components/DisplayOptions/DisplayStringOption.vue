@@ -19,7 +19,6 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
     return { setting };

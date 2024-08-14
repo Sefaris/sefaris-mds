@@ -9,7 +9,7 @@
         <button
           class="h-6.5 w-6.5"
           :class="[setting.value === mode ? 'bg-checkbox-active' : 'bg-checkbox-inactive']"
-          @click="onModeChange(mode)"
+          @click="setting.value = mode"
         >
         </button>
         <span class="min-w-40 text-left">
@@ -35,15 +35,10 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
 
-    const onModeChange = (mode: string) => {
-      setting.value.value = mode;
-    };
-
-    return { setting, onModeChange };
+    return { setting };
   },
 });
 </script>

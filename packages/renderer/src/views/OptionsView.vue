@@ -43,8 +43,8 @@ export default defineComponent({
     const configRecord = ref(null);
 
     const saveConfig = () => {
-      console.log(configRecord.value);
       console.log(`Saving ${configName.value}`);
+      console.log(JSON.stringify(configRecord.value, null, 2));
     };
 
     return { saveConfig, configName, configRecord };

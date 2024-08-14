@@ -1,6 +1,6 @@
 export type OptionType =
   | 'mode'
-  | 'keyboard'
+  | 'key'
   | 'string'
   | 'number'
   | 'boolean'

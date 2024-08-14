@@ -8,7 +8,7 @@
       {{ setting.value }}
     </span>
     <span v-else>
-      {{ $t('config.option.waitingForKeyboard') }}
+      {{ $t('config.option.waitingForKey') }}
     </span>
   </display-base-option>
 </template>
@@ -28,25 +28,48 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
     const isListening = ref(false);
 
+    const cleanupListeners = () => {
+      window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('mousedown', handleMousedown);
+    };
+
     const handleKeydown = (event: KeyboardEvent) => {
       isListening.value = false;
       setting.value.value = event.key;
-      window.removeEventListener('keydown', handleKeydown);
+      cleanupListeners();
+    };
+
+    const handleMousedown = (event: MouseEvent) => {
+      isListening.value = false;
+      switch (event.button) {
+        case 0:
+          setting.value.value = 'Left Mouse Button';
+          break;
+        case 1:
+          setting.value.value = 'Middle Mouse Button';
+          break;
+        case 2:
+          setting.value.value = 'Right Mouse Button';
+          break;
+        default:
+          setting.value.value = `Mouse Button ${event.button}`;
+      }
+      cleanupListeners();
     };
 
     const onRebind = () => {
       isListening.value = true;
 
       window.addEventListener('keydown', handleKeydown);
+      window.addEventListener('mousedown', handleMousedown);
     };
 
     onUnmounted(() => {
-      window.removeEventListener('keydown', handleKeydown);
+      cleanupListeners();
     });
 
     return { setting, isListening, onRebind };

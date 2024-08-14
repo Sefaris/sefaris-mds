@@ -51,7 +51,7 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
         let ranges: number[] | undefined = undefined;
         switch (typeString[0].toLowerCase()) {
           case 'string':
-          case 'keyboard':
+          case 'key':
             break;
           case 'mode':
             modes = modesLine.split('|').map(mode => mode.trim());

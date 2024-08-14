@@ -8,7 +8,7 @@
         :min="0"
         :max="1"
         :value="setting.value ? true : false"
-        @slide="(n: boolean) => $emit('updateOption', { key: setting.name, value: n })"
+        @slide="(n: boolean) => (setting.value = n)"
       />
       <span
         v-if="setting.value"
@@ -41,7 +41,6 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['updateOption'],
   setup(props) {
     const setting = toRef(props.option);
     return { setting };

@@ -5,7 +5,6 @@
     v-for="(display, index) in displays"
     :key="index"
     :option="display.option"
-    @update-option="handleUpdateSection"
   />
 </template>
 
@@ -16,7 +15,7 @@ import type { ConfigSection } from '@interfaces/ConfigSection';
 import DisplayBooleanOption from './DisplayOptions/DisplayBooleanOption.vue';
 import DisplayStringOption from './DisplayOptions/DisplayStringOption.vue';
 import DisplayNumberOption from './DisplayOptions/DisplayNumberOption.vue';
-import DisplayKeyboardOption from './DisplayOptions/DisplayKeyboardOption.vue';
+import DisplayKeyOption from './DisplayOptions/DisplayKeyOption.vue';
 import DisplayModeOption from './DisplayOptions/DisplayModeOption.vue';
 import DisplayArrayStringOption from './DisplayOptions/DisplayArrayStringOption.vue';
 import DisplayArrayNumberOption from './DisplayOptions/DisplayArrayNumberOption.vue';
@@ -31,8 +30,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['updateSection'],
-  setup(props, { emit }) {
+  setup(props) {
     const configSection = toRef(props.section);
     console.log(configSection.value);
 
@@ -46,8 +44,8 @@ export default defineComponent({
           return DisplayNumberOption;
         case 'mode':
           return DisplayModeOption;
-        case 'keyboard':
-          return DisplayKeyboardOption;
+        case 'key':
+          return DisplayKeyOption;
         case 'arrayType:string':
           return DisplayArrayStringOption;
         case 'arrayType:number':
@@ -65,21 +63,9 @@ export default defineComponent({
       option,
     }));
 
-    const handleUpdateSection = (option: { key: string; value: number }) => {
-      const foundOption = configSection.value.options.find(opt => opt.name === option.key);
-
-      if (foundOption) {
-        foundOption.value = option.value;
-      } else {
-        console.warn(`Option with key ${option.key} not found.`);
-      }
-      emit('updateSection', configSection.value);
-    };
-
     return {
       displays,
       configSection,
-      handleUpdateSection,
     };
   },
 });
