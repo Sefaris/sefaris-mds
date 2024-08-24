@@ -19,6 +19,7 @@ import {
 } from './file-service';
 import { loadMods } from './mod-service';
 import { updateProgressBar } from './progress-service';
+import { UTF8 } from '../../../../utils/constants';
 
 const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
 
@@ -39,7 +40,6 @@ const SHADER = 'Shader.Cache';
 const WRLDATASC = 'G3_World_01.wrldatasc';
 
 const STRINGTABLE_ENCODING = 'utf16le';
-const WRLDATASC_ENCODING = 'utf-8';
 
 export async function installMods(modIds: string[], preset?: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -257,12 +257,12 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
     const wrldataMod = path.join(mods[i].path, WRLDATASC);
     if (fs.existsSync(wrldataMod)) {
       const wrldataModContent = fs.readFileSync(wrldataMod, {
-        encoding: WRLDATASC_ENCODING,
+        encoding: UTF8,
         flag: 'r',
       });
       const sectors = wrldataModContent.replace(/^[\s\S]*?\[Sector\.List\]/, '');
       fs.appendFileSync(tempWrldataPath, sectors, {
-        encoding: WRLDATASC_ENCODING,
+        encoding: UTF8,
         flag: 'a',
       });
     }

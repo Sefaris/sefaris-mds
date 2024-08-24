@@ -12,19 +12,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { getAllIniNames } from '#preload';
 
 export default defineComponent({
   setup() {
     const configFiles = ref<string[]>([]);
-    getAllIniNames().then(result => {
-      if (!result) return;
-      configFiles.value.push(...result);
-    });
+
     const getName = (fullName: string) => {
       return fullName.split('.')[0];
     };
+
+    onMounted(async () => {
+      configFiles.value = await getAllIniNames();
+    });
 
     return { configFiles, getName };
   },

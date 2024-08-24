@@ -5,6 +5,7 @@ import { ensureDirectory } from './file-service';
 import type { ConfigValue } from '../../../../types/ConfigValue';
 import type { ConfigSection } from '../../../../interfaces/ConfigSection';
 import type { OptionType } from '../../../../types/OptionType';
+import { UTF8 } from '../../../../utils/constants';
 
 function parseConfig(configText: string, name: string): ConfigSection[] {
   const lines = configText.split('\n');
@@ -105,7 +106,7 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
 
 export async function getAllIniNames() {
   const config = await loadConfiguration();
-  if (!config) return;
+  if (!config) return [];
   return config.filesCreated
     .filter(file => file.endsWith('.ini'))
     .map(item => path.parse(item).base);
@@ -119,9 +120,40 @@ export async function loadIniConfiguration(name: string) {
 
   const iniFilePath = config.filesCreated.find(file => file.includes(name));
   if (!iniFilePath) return;
-  return parseConfig(fs.readFileSync(iniFilePath, 'utf-8'), name);
+  const configFileContent = fs.readFileSync(iniFilePath, UTF8);
+  return parseConfig(configFileContent, name);
 }
 
-export async function saveIniConfiguration(content: string) {
-  console.log(content);
+export async function saveIniConfiguration(sections: ConfigSection[], name: string) {
+  const config = await loadConfiguration();
+  if (!config) return;
+  const iniPath = path.join(config.gothicPath, 'ini');
+  ensureDirectory(iniPath);
+
+  const iniFilePath = config.filesCreated.find(file => file.includes(name));
+  if (!iniFilePath) return;
+
+  const iniFileLines = fs.readFileSync(iniFilePath, UTF8).split('\n');
+
+  sections.forEach(section => {
+    section.options.forEach(option => {
+      const foundIndex = iniFileLines.findIndex(line => line.split('=')[0].trim() == option.name);
+      let savedLine = `${option.name}=${option.value}`;
+      if (option.type.includes('arrayType')) {
+        savedLine = `${option.name}=${(option.value as Array<string>).join(';')}`;
+      }
+      iniFileLines[foundIndex] = savedLine;
+    });
+  });
+  const newName = name.split('.')[0];
+  const outputPath = path.join(iniPath, `${newName}2.ini`);
+
+  fs.promises
+    .writeFile(outputPath, iniFileLines.join('\n'), { flag: 'w+' })
+    .then(() => {
+      alert(`${name} saved`);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }

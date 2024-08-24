@@ -12,8 +12,6 @@ import FooterSection from '../components/FooterSection.vue';
 export default defineComponent({
   components: { NavBar, MainSection, FooterSection },
   setup() {
-
-
     return {};
   },
 });

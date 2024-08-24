@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
-import { LANGUAGE_SETTINGS } from '../../../../utils/constants';
+import { LANGUAGE_SETTINGS, UTF8 } from '../../../../utils/constants';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -28,7 +28,7 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
   if (!fs.existsSync(path.resolve(configurationFile))) {
     return null;
   }
-  const config = JSON.parse(fs.readFileSync(path.resolve(configurationFile), 'utf-8'));
+  const config = JSON.parse(fs.readFileSync(path.resolve(configurationFile), UTF8));
   if (!isValidConfiguration(config)) {
     return null;
   }

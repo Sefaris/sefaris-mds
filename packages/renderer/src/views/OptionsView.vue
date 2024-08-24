@@ -34,17 +34,22 @@
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import IniConfigurationRecord from '../components/IniConfigurationRecord.vue';
+import { saveIniConfiguration } from '#preload';
+import type { ConfigRecord } from '@interfaces/ConfigRecord';
 
 export default defineComponent({
   components: { IniConfigurationRecord },
   setup() {
     const route = useRoute();
     const configName = ref<string>((route.params.ini as string) || '');
-    const configRecord = ref(null);
+    const configRecord = ref<ConfigRecord>();
 
-    const saveConfig = () => {
+    const saveConfig = async () => {
       console.log(`Saving ${configName.value}`);
-      console.log(JSON.stringify(configRecord.value, null, 2));
+      if (configRecord.value) {
+        const configSectionsCopy = JSON.parse(JSON.stringify(configRecord.value.sections));
+        await saveIniConfiguration(configSectionsCopy, configName.value);
+      }
     };
 
     return { saveConfig, configName, configRecord };
