@@ -1,5 +1,5 @@
-import type { Mod } from '@interfaces/Mod';
-import type { Preset } from '@interfaces/Preset';
+import type { Mod } from '../../../../interfaces/Mod';
+import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
 import { getAllPresets, loadConfiguration, loadMods } from '#preload';

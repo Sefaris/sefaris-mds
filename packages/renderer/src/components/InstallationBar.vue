@@ -17,7 +17,7 @@
 import { computed, defineComponent, ref } from 'vue';
 import ProgressBar from './ProgressBar.vue';
 import { useModsStore } from '../stores/mods-store';
-import type { ProgressStatus } from '@interfaces/ProgressStatus';
+import type { ProgressStatus } from '../../../../interfaces/ProgressStatus';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { translate } from '../../../../plugins/i18n';
 

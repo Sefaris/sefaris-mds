@@ -10,7 +10,7 @@ import { useModsStore } from './stores/mods-store';
 import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
 import { translate } from '../../../plugins/i18n';
 import { DEFAULT_LANGUAGE } from '../../../utils/constants';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { AppConfiguration } from '../../../interfaces/AppConfiguration';
 export default defineComponent({
   components: { TitleBar },
   setup() {

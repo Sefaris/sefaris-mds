@@ -17,7 +17,7 @@
 import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import type { Mod } from '@interfaces/Mod';
+import type { Mod } from '../../../../interfaces/Mod';
 import ModCheckbox from './ModCheckbox.vue';
 export default defineComponent({
   components: { ModCheckbox },

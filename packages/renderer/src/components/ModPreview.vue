@@ -57,7 +57,7 @@
 import { computed, defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import { loadModDescription, loadImages, loadMods } from '#preload';
 import { i18n, translate } from '../../../../plugins/i18n';
-import type { Mod } from '@interfaces/Mod';
+import type { Mod } from '../../../../interfaces/Mod';
 import { useModsStore } from '../stores/mods-store';
 
 export default defineComponent({
