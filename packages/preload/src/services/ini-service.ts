@@ -103,13 +103,10 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
 
   return configSections;
 }
-
-export async function getAllIniNames() {
-  const config = await loadConfiguration();
-  if (!config) return [];
-  return config.filesCreated
-    .filter(file => file.endsWith('.ini'))
-    .map(item => path.parse(item).base);
+export async function validateIniFile(name: string) {
+  const config = await loadIniConfiguration(name);
+  // ensure there is at least one valid option to edit
+  return config && config?.length > 0;
 }
 
 export async function loadIniConfiguration(name: string) {
@@ -156,4 +153,17 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
     .catch(err => {
       console.error(err);
     });
+}
+
+export async function getAllIniNames() {
+  const config = await loadConfiguration();
+  if (!config) return [];
+
+  const iniFiles = config.filesCreated
+    .filter(file => file.endsWith('.ini'))
+    .map(item => path.parse(item).base);
+  // ensure at least one valid option exist
+  const validationResults = await Promise.all(iniFiles.map(file => validateIniFile(file)));
+
+  return iniFiles.filter((_, index) => validationResults[index]);
 }
