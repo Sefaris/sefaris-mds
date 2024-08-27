@@ -1,4 +1,4 @@
-import type { Mod } from '@interfaces/Mod';
+import type { Mod } from '../../../../interfaces/Mod';
 import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
