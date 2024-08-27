@@ -22,4 +22,9 @@ export { getAllPresets } from './services/preset-service';
 export { openWebsite } from './services/redirect-service';
 export { extractAll } from './services/pak-service';
 export { openConfigWindow } from './services/window-service';
-export { loadIniConfiguration, getAllIniNames, saveIniConfiguration } from './services/ini-service';
+export {
+  loadIniConfiguration,
+  getAllIniNames,
+  saveIniConfiguration,
+  validateIniFile,
+} from './services/ini-service';
