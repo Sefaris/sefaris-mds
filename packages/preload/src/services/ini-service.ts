@@ -7,7 +7,7 @@ import type { ConfigSection } from '../../../../interfaces/ConfigSection';
 import type { OptionType } from '../../../../types/OptionType';
 import { UTF8 } from '../../../../utils/constants';
 
-function parseConfig(configText: string, name: string): ConfigSection[] {
+export function parseConfig(configText: string, name: string): ConfigSection[] {
   const lines = configText.split('\n');
   const configSections: ConfigSection[] = [];
   let currentSection: ConfigSection | null = null;
@@ -46,7 +46,7 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
           throw `Expected type in ${name}:Line:${i}!`;
         }
         const typeString = typeLine.split(',');
-        let parsedValue: ConfigValue = value;
+        let parsedValue: ConfigValue = value.trim();
         let parsedDefaultValue: ConfigValue = typeString.at(-1)!.trim();
         let modes: string[] | undefined = undefined;
         let ranges: number[] | undefined = undefined;
@@ -58,24 +58,35 @@ function parseConfig(configText: string, name: string): ConfigSection[] {
             modes = modesLine.split('|').map(mode => mode.trim());
             break;
           case 'boolean':
+            if (parsedValue != 'true' && parsedValue != 'false')
+              throw `Value conversion failed in ${name}:Line:${i + 1}`;
+            if (parsedDefaultValue != 'true' && parsedDefaultValue != 'false')
+              throw `Default value conversion failed in ${name}:Line:${i + 2}`;
             parsedValue = value.toLowerCase() === 'true';
             parsedDefaultValue = parsedDefaultValue.toLowerCase() === 'true';
             break;
           case 'number':
             ranges = modesLine.split('|').map(range => parseFloat(range.trim()));
+            if (ranges.includes(NaN)) throw `Ranges conversion failed in ${name}:Line:${i + 4}`;
             parsedValue = parseFloat(value);
+            if (Number.isNaN(parsedValue)) throw `Value conversion failed in ${name}:Line:${i + 1}`;
             parsedDefaultValue = parseFloat(parsedDefaultValue);
+            if (Number.isNaN(parsedDefaultValue))
+              throw `Default value conversion failed in ${name}:Line:${i + 2}`;
+
             break;
           case 'array':
             parsedValue = value.split(';').filter(item => item.length);
             parsedDefaultValue = parsedDefaultValue.split(';').filter(item => item.length);
-
-            if (typeString[1].includes('arrayType:boolean')) {
-              parsedValue = parsedValue.map(item => item.toLowerCase() === 'true');
-              parsedDefaultValue = parsedDefaultValue.map(item => item.toLowerCase() === 'true');
-            } else if (typeString[1].includes('arrayType:number')) {
+            if (typeString[1].trim() === 'arrayType:number') {
               parsedValue = parsedValue.map(item => parseFloat(item));
+              if (parsedValue.includes(NaN))
+                throw `Value conversion failed in ${name}:Line:${i + 1}`;
               parsedDefaultValue = parsedDefaultValue.map(item => parseFloat(item));
+              if (parsedDefaultValue.includes(NaN))
+                throw `Default value conversion failed in ${name}:Line:${i + 1}`;
+            } else if (typeString[1].trim() !== 'arrayType:string') {
+              throw `Unsupported ${typeString[1]}`;
             }
             break;
           default:

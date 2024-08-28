@@ -63,6 +63,7 @@ export default defineComponent({
     };
 
     const addItem = (item: string) => {
+      if (!item.length) return;
       if ((setting.value.value as Array<string>).includes(item)) return;
       (setting.value.value as Array<string>).push(item);
     };
