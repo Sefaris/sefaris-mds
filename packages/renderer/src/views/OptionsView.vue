@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-182 flex-col items-center text-menu">
+  <div class="flex h-182 select-none flex-col items-center text-menu">
     <ini-configuration-record
       ref="configRecord"
       :config-name="configName"
