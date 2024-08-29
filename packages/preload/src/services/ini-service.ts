@@ -117,7 +117,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
 export async function validateIniFile(name: string) {
   const config = await loadIniConfiguration(name);
   // ensure there is at least one valid option to edit
-  return config && config?.length > 0;
+  return config && config.length > 0;
 }
 
 export async function loadIniConfiguration(name: string) {
@@ -127,19 +127,21 @@ export async function loadIniConfiguration(name: string) {
   ensureDirectory(iniPath);
 
   const iniFilePath = config.filesCreated.find(file => file.includes(name));
-  if (!iniFilePath) return;
+  if (!iniFilePath) throw `${name} wasn't found in config`;
+  if (!fs.existsSync(iniFilePath)) throw `${iniFilePath} doesn't exist`;
   const configFileContent = fs.readFileSync(iniFilePath, UTF8);
   return parseConfig(configFileContent, name);
 }
 
 export async function saveIniConfiguration(sections: ConfigSection[], name: string) {
   const config = await loadConfiguration();
-  if (!config) return;
+  if (!config) throw 'Config file not found.';
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
   const iniFilePath = config.filesCreated.find(file => file.includes(name));
-  if (!iniFilePath) return;
+  if (!iniFilePath) throw 'Ini file not found';
+  if (!sections.length) throw 'No data to save';
 
   const iniFileLines = fs.readFileSync(iniFilePath, UTF8).split('\n');
 
@@ -153,17 +155,9 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
       iniFileLines[foundIndex] = savedLine;
     });
   });
-  const newName = name.split('.')[0];
-  const outputPath = path.join(iniPath, `${newName}2.ini`);
+  const outputPath = path.join(iniPath, name);
 
-  fs.promises
-    .writeFile(outputPath, iniFileLines.join('\n'), { flag: 'w+' })
-    .then(() => {
-      alert(`${name} saved`);
-    })
-    .catch(err => {
-      console.error(err);
-    });
+  fs.writeFileSync(outputPath, iniFileLines.join('\n'), { flag: 'w+' });
 }
 
 export async function getAllIniNames() {

@@ -32,44 +32,20 @@ export default defineComponent({
     const setting = toRef(props.option);
     const isListening = ref(false);
 
-    const cleanupListeners = () => {
-      window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('mousedown', handleMousedown);
-    };
-
     const handleKeydown = (event: KeyboardEvent) => {
       isListening.value = false;
-      setting.value.value = event.key;
-      cleanupListeners();
-    };
-
-    const handleMousedown = (event: MouseEvent) => {
-      isListening.value = false;
-      switch (event.button) {
-        case 0:
-          setting.value.value = 'Left Mouse Button';
-          break;
-        case 1:
-          setting.value.value = 'Middle Mouse Button';
-          break;
-        case 2:
-          setting.value.value = 'Right Mouse Button';
-          break;
-        default:
-          setting.value.value = `Mouse Button ${event.button}`;
-      }
-      cleanupListeners();
+      setting.value.value = event.key.toUpperCase();
+      window.removeEventListener('keydown', handleKeydown);
     };
 
     const onRebind = () => {
       isListening.value = true;
 
       window.addEventListener('keydown', handleKeydown);
-      window.addEventListener('mousedown', handleMousedown);
     };
 
     onUnmounted(() => {
-      cleanupListeners();
+      window.removeEventListener('keydown', handleKeydown);
     });
 
     return { setting, isListening, onRebind };
