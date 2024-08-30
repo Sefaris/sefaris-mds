@@ -55,4 +55,7 @@ export default {
       off: 'Off',
     },
   },
+  tooltip: {
+    default: 'Default',
+  },
 };
