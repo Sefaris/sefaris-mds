@@ -55,4 +55,7 @@ export default {
       off: 'Wył.',
     },
   },
+  tooltip: {
+    default: 'Domyślne',
+  },
 };
