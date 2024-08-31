@@ -4,7 +4,9 @@
       class="min-w-50 text-left"
       @mouseenter="showTooltip"
       @mouseleave="hideTooltip"
-    >{{ $props.name }}</span>
+    >
+      {{ $props.name }}
+    </span>
     <div
       v-if="visible"
       ref="floatingElement"
