@@ -122,7 +122,7 @@ export async function validateIniFile(name: string) {
 
 export async function loadIniConfiguration(name: string) {
   const config = await loadConfiguration();
-  if (!config) return;
+  if (!config) throw 'Config file not found.';
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
