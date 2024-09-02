@@ -82,8 +82,8 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
         mergedFiles.push(files[0]);
         continue;
       }
-      await ensureDirectory(backupDirPath);
-      await ensureDirectory(mergeDirPath);
+      ensureDirectory(backupDirPath);
+      ensureDirectory(mergeDirPath);
       for (const file of files) {
         await fs.promises.rename(file, path.join(backupDirPath, path.basename(file)));
       }

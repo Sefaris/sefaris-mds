@@ -6,9 +6,9 @@ import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
 
-export async function ensureDirectory(directoryPath: string): Promise<void> {
+export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
-    fs.promises.mkdir(directoryPath, { recursive: true });
+    fs.mkdirSync(directoryPath, { recursive: true });
   }
 }
 

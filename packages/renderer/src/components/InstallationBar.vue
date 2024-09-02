@@ -38,6 +38,7 @@ export default defineComponent({
       },
     });
 
+    // TODO: use ports instead of postmessage
     window.addEventListener('message', event => {
       const data = event.data as ProgressStatus;
       stepName.value = translate(data.actionName);
