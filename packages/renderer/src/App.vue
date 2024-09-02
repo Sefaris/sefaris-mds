@@ -20,9 +20,12 @@ export default defineComponent({
       } else {
         i18n.global.locale.value = DEFAULT_LANGUAGE;
       }
-
       window.addEventListener('message', code => {
-        i18n.global.locale.value = code.data;
+        // TODO: use ports instead of postmessage
+        // temporary
+        if (code.data.includes('pl') || code.data.includes('gb') || code.data.includes('ru')) {
+          i18n.global.locale.value = code.data;
+        }
       });
     });
     return {};

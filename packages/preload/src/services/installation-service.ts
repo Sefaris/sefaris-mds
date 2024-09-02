@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as os from 'os';
+import os from 'os';
 
 import path from 'path';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
@@ -20,8 +20,6 @@ import {
 import { loadMods } from './mod-service';
 import { updateProgressBar } from './progress-service';
 import { UTF8 } from '../../../../utils/constants';
-
-const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
 
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
@@ -56,6 +54,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
       const mods = allMods.filter(mod => modIds.includes(mod.id));
 
       try {
+        if (!modIds.length) throw new Error('No mods selected!');
         const startTime = performance.now();
         await deleteMods();
         await moveSaves();
@@ -80,17 +79,13 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
           iniFiles.push(...inis);
         }
-
         appendFakeFiles(filesDictionary);
-
         for (const key in filesDictionary) {
-          {
-            await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
-          }
+          await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
         }
+
         await copyScriptsFiles(scriptsPath, scriptFiles, createdFiles);
         await copyScriptsFiles(iniPath, iniFiles, createdFiles);
-
         await buildStringTable(dataPath, mods, createdFiles);
         await buildWrldatasc(dataPath, mods, createdFiles);
         const endTime = performance.now();
@@ -100,7 +95,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         configuration.installedMods = mods.map(mod => mod.id);
         configuration.preset = preset ? preset : undefined;
-        // //Get rid of possible duplicates
+        //Get rid of possible duplicates
         configuration.filesCreated = Array.from(new Set(createdFiles));
 
         await saveConfiguration(configuration);
@@ -151,9 +146,11 @@ async function copyScriptsFiles(
 }
 
 export async function deleteMods(): Promise<void> {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-
+  const configuration = await loadConfiguration();
+  if (!configuration) throw 'Config file not found.';
   const filesCount = configuration.filesCreated.length;
+
+  if (!filesCount) return;
   for (let i = 0; i < filesCount; i++) {
     updateProgressBar('progress.delete', i, filesCount);
     fs.unlinkSync(configuration.filesCreated[i]);
@@ -165,7 +162,7 @@ export async function deleteMods(): Promise<void> {
   await saveConfiguration(configuration);
 }
 
-function appendFakeFiles(dictionary: Record<string, string[]>): void {
+export function appendFakeFiles(dictionary: Record<string, string[]>): void {
   dictionary['mod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.m0x'));
   dictionary['nod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.n0x'));
 }
@@ -192,13 +189,13 @@ async function buildStringTable(
   fs.rmSync(tempDir, { recursive: true, force: true });
 }
 
-async function mergeStringTables(
+export async function mergeStringTables(
   gothicDataPath: string,
   mods: Mod[],
   originalStringTable: string,
 ): Promise<void> {
   const tempDir = path.join(gothicDataPath, 'temp');
-  await ensureDirectory(tempDir);
+  ensureDirectory(tempDir);
   await extract(originalStringTable, [STRINGTABLE_FILENAME], tempDir);
   const stringTable = path.join(tempDir, STRINGTABLE_FILENAME);
   const locAdminRevision = '[LocAdmin_Revisions]';
@@ -234,8 +231,9 @@ async function mergeStringTables(
   });
 }
 
-async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles: string[]) {
+export async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles: string[]) {
   const wrldataPath = path.join(STATIC_FILES_PATH, WRLDATASC);
+  if (!mods.length) throw new Error('No mods selected');
   if (!fs.existsSync(wrldataPath)) throw new Error('No wrldatasc file');
   const outputFileName = await getFreeFileName(gothicDataPath, 'projects_compiled', 'mod');
   const outputFilePath = path.join(gothicDataPath, outputFileName);
@@ -245,13 +243,11 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
     'mod',
   );
   const lastExistingFileNamePath = path.join(gothicDataPath, lastExistingFileName);
-  if (fs.existsSync(outputFilePath)) fs.unlinkSync(outputFilePath);
   const tempDir = path.join(gothicDataPath, 'temp');
-  await ensureDirectory(tempDir);
-  await ensureDirectory(path.join(tempDir, 'G3_World_01'));
+  ensureDirectory(tempDir);
+  ensureDirectory(path.join(tempDir, 'G3_World_01'));
   const tempWrldataPath = path.join(tempDir, 'G3_World_01', WRLDATASC);
   fs.copyFileSync(wrldataPath, tempWrldataPath);
-
   for (let i = 0; i < mods.length; i++) {
     updateProgressBar('progress.buildStringtable', i, mods.length);
     const wrldataMod = path.join(mods[i].path, WRLDATASC);
@@ -270,20 +266,22 @@ async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles:
 
   await buildPackage(tempDir, outputFilePath);
   fs.rmSync(tempDir, { recursive: true, force: true });
-  if (path.extname(outputFilePath) == 'mod') return;
   swapFileNames(outputFilePath, lastExistingFileNamePath);
+
   createdFiles.push(outputFilePath);
 }
 
-async function moveSaves() {
+export async function moveSaves() {
   const newModsFolder = getNextSaveDirectoryName();
+  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+
   const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
   const oldFilesPaths = getOldModsFiles();
   if (oldFilesPaths.length === 0) {
     return;
   }
 
-  await ensureDirectory(newModsFolderPath);
+  ensureDirectory(newModsFolderPath);
   const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
   for (let i = 0; i < oldFilesPaths.length; i++) {
     updateProgressBar('progress.moveOldSaves', i, oldFilesPaths.length);
@@ -291,7 +289,8 @@ async function moveSaves() {
   }
 }
 
-function getOldModsFiles() {
+export function getOldModsFiles() {
+  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
   const saves = findFilesEndsWith(G3_DOCUMENTS_PATH, SAVE_EXTENSION);
   const savesDat = findFilesEndsWith(G3_DOCUMENTS_PATH, SAVEDAT_EXTENSION);
   const shader = findFilesEndsWith(G3_DOCUMENTS_PATH, 'Cache');
@@ -299,8 +298,10 @@ function getOldModsFiles() {
   return saves.concat(savesDat).concat(shader);
 }
 
-function getNextSaveDirectoryName(): string {
+export function getNextSaveDirectoryName(): string {
   let maxNumber = -1;
+  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+
   const directories = fs.readdirSync(G3_DOCUMENTS_PATH);
 
   for (const directory of directories) {
@@ -320,8 +321,10 @@ function getNextSaveDirectoryName(): string {
   return `Mods${nextNumber.toString()}`;
 }
 
-function getNewModsFilesPaths(files: string[], destDirectory: string) {
+export function getNewModsFilesPaths(files: string[], destDirectory: string) {
   const newFilesPaths: string[] = [];
+  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+
   for (const file of files) {
     const fileName = path.basename(file);
     const newFilePath = path.join(G3_DOCUMENTS_PATH, destDirectory, fileName);
@@ -330,7 +333,7 @@ function getNewModsFilesPaths(files: string[], destDirectory: string) {
   return newFilesPaths;
 }
 
-async function moveSplash(configuration: AppConfiguration, presetName?: string) {
+export async function moveSplash(configuration: AppConfiguration, presetName?: string) {
   let splash = path.join(STATIC_FILES_PATH, SPLASH);
   if (presetName && fs.existsSync(path.join(PRESET_FILES_PATH, presetName, SPLASH))) {
     splash = path.join(PRESET_FILES_PATH, presetName, SPLASH);
@@ -344,7 +347,9 @@ async function moveSplash(configuration: AppConfiguration, presetName?: string) 
   fs.copyFileSync(splash, splashDest);
 }
 
-async function moveShader(presetName?: string) {
+export async function moveShader(presetName?: string) {
+  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+
   if (!presetName) {
     return;
   }

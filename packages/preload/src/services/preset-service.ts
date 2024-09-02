@@ -9,7 +9,7 @@ const PRESETS_PATH = path.resolve('Presets');
 
 export async function getAllPresets(): Promise<Preset[]> {
   const presets: Preset[] = [];
-  await ensureDirectory(PRESETS_PATH);
+  ensureDirectory(PRESETS_PATH);
   const presetsDirs = fs.readdirSync(PRESETS_PATH);
   presetsDirs.forEach(dir => {
     const jsonPath = path.join(PRESETS_PATH, dir, PRESET_JSON);

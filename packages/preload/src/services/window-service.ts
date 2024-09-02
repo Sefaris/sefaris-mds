@@ -9,5 +9,6 @@ export function changeConfigLocale(code: string) {
 }
 
 ipcRenderer.on('update-config-locale', (_, code) => {
+  // TODO: use ports instead of postmessage
   window.postMessage(code);
 });
