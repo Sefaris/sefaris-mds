@@ -5,10 +5,14 @@ import path from 'path';
 import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
+import { loggerError, loggerInfo } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
 
 export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
+    loggerInfo(getMessage('DIRECTORY_CREATE', { path: directoryPath }));
     fs.mkdirSync(directoryPath, { recursive: true });
+    loggerInfo(getMessage('DIRECTORY_CREATED'));
   }
 }
 
@@ -28,13 +32,14 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    alert(error);
+    loggerError(error as string);
   }
 
   return files;
 }
 
 export async function startGame() {
+  // refuses to work
   try {
     const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
     const execPath = path.join(configuration.gothicPath, 'Gothic3.exe');
@@ -43,7 +48,7 @@ export async function startGame() {
       throw new Error(`Plik ${execPath} nie istnieje.`);
     }
   } catch (error) {
-    console.error('Wystąpił błąd:', error);
+    loggerError(error as string);
   }
 }
 
@@ -127,7 +132,9 @@ export async function copyFiles(
       extension,
     );
     const newFilePath = path.join(destinationPath, destinationFileName);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: filePath, dst: newFilePath }));
     await fs.promises.copyFile(filePath, newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: filePath, dst: newFilePath }));
     createdFiles.push(newFilePath);
   }
 }

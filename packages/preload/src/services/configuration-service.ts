@@ -3,6 +3,8 @@ import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { LANGUAGE_SETTINGS, UTF8 } from '../../../../utils/constants';
 import * as fs from 'fs';
 import * as path from 'path';
+import { loggerError, loggerInfo } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
 
 const configurationFile = 'config.json';
 
@@ -16,20 +18,25 @@ export async function saveConfiguration(config: AppConfiguration) {
       config.modsPath = path.join(config.gothicPath, 'Mods');
     }
     if (!isValidConfiguration(config)) {
+      loggerError(getMessage('INVALID_CONFIGURATION'));
       return;
     }
     fs.writeFileSync(path.resolve(configurationFile), JSON.stringify(config, null, 4));
+    loggerInfo(getMessage('CONFIGURATION_SAVED'));
   } catch (error) {
+    loggerError(error as string);
     alert(error);
   }
 }
 
 export async function loadConfiguration(): Promise<AppConfiguration | null> {
   if (!fs.existsSync(path.resolve(configurationFile))) {
+    loggerError(getMessage('MISSING_CONFIGURATION'));
     return null;
   }
   const config = JSON.parse(fs.readFileSync(path.resolve(configurationFile), UTF8));
   if (!isValidConfiguration(config)) {
+    loggerError(getMessage('INVALID_CONFIGURATION'));
     return null;
   }
   return config;
