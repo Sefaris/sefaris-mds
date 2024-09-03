@@ -6,6 +6,8 @@ import type { ConfigValue } from '../../../../types/ConfigValue';
 import type { ConfigSection } from '../../../../interfaces/ConfigSection';
 import type { OptionType } from '../../../../types/OptionType';
 import { UTF8 } from '../../../../utils/constants';
+import { loggerError } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
 
 export function parseConfig(configText: string, name: string): ConfigSection[] {
   const lines = configText.split('\n');
@@ -27,7 +29,13 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
       if (line.includes('=')) {
         const [option, value] = line.split('=');
         if (!lines[i + 1].includes(';') || !lines[i + 2].includes(';')) {
-          throw `Expected description and type in ${name}:Lines:${i + 1}-${i + 2}!`;
+          throw new Error(
+            getMessage('INI_MISSING_DESC_TYPE', {
+              name: name,
+              beg: (i + 2).toString(),
+              end: (i + 3).toString(),
+            }),
+          );
         }
 
         const descriptionLine = lines[i + 1].replace(/^\s*;\s*/, '').trim() || '';
@@ -40,10 +48,20 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
           }
         }
         if (!descriptionLine.length) {
-          throw `Expected non empty description in ${name}:Line:${i}!`;
+          throw new Error(
+            getMessage('INI_EMPTY_DESC', {
+              name: name,
+              line: (i + 2).toString(),
+            }),
+          );
         }
         if (!typeLine.length) {
-          throw `Expected type in ${name}:Line:${i}!`;
+          throw new Error(
+            getMessage('INI_EMPTY_TYPE', {
+              name: name,
+              line: (i + 3).toString(),
+            }),
+          );
         }
         const typeString = typeLine.split(',');
         let parsedValue: ConfigValue = value.trim();
@@ -59,20 +77,47 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             break;
           case 'boolean':
             if (parsedValue != 'true' && parsedValue != 'false')
-              throw `Value conversion failed in ${name}:Line:${i + 1}`;
+              throw new Error(
+                getMessage('INI_VALUE_CONVERSTION_FAIL', {
+                  name: name,
+                  line: (i + 1).toString(),
+                }),
+              );
             if (parsedDefaultValue != 'true' && parsedDefaultValue != 'false')
-              throw `Default value conversion failed in ${name}:Line:${i + 2}`;
+              throw new Error(
+                getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
+                  name: name,
+                  line: (i + 2).toString(),
+                }),
+              );
             parsedValue = value.toLowerCase() === 'true';
             parsedDefaultValue = parsedDefaultValue.toLowerCase() === 'true';
             break;
           case 'number':
             ranges = modesLine.split('|').map(range => parseFloat(range.trim()));
-            if (ranges.includes(NaN)) throw `Ranges conversion failed in ${name}:Line:${i + 4}`;
+            if (ranges.includes(NaN))
+              throw new Error(
+                getMessage('INI_RANGES_CONVERSTION_FAIL', {
+                  name: name,
+                  line: (i + 4).toString(),
+                }),
+              );
             parsedValue = parseFloat(value);
-            if (Number.isNaN(parsedValue)) throw `Value conversion failed in ${name}:Line:${i + 1}`;
+            if (Number.isNaN(parsedValue))
+              throw new Error(
+                getMessage('INI_VALUE_CONVERSTION_FAIL', {
+                  name: name,
+                  line: (i + 1).toString(),
+                }),
+              );
             parsedDefaultValue = parseFloat(parsedDefaultValue);
             if (Number.isNaN(parsedDefaultValue))
-              throw `Default value conversion failed in ${name}:Line:${i + 2}`;
+              throw new Error(
+                getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
+                  name: name,
+                  line: (i + 2).toString(),
+                }),
+              );
 
             break;
           case 'array':
@@ -81,16 +126,34 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             if (typeString[1].trim() === 'arrayType:number') {
               parsedValue = parsedValue.map(item => parseFloat(item));
               if (parsedValue.includes(NaN))
-                throw `Value conversion failed in ${name}:Line:${i + 1}`;
+                throw new Error(
+                  getMessage('INI_VALUE_CONVERSTION_FAIL', {
+                    name: name,
+                    line: (i + 1).toString(),
+                  }),
+                );
               parsedDefaultValue = parsedDefaultValue.map(item => parseFloat(item));
               if (parsedDefaultValue.includes(NaN))
-                throw `Default value conversion failed in ${name}:Line:${i + 1}`;
+                throw new Error(
+                  getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
+                    name: name,
+                    line: (i + 2).toString(),
+                  }),
+                );
             } else if (typeString[1].trim() !== 'arrayType:string') {
-              throw `Unsupported ${typeString[1]}`;
+              throw new Error(
+                getMessage('INI_UNSUPPORTED_ARRAY_TYPE', {
+                  type: typeString[1],
+                }),
+              );
             }
             break;
           default:
-            throw `Unsupported type ${typeString[0]}`;
+            throw new Error(
+              getMessage('INI_UNSUPPORTED_TYPE', {
+                type: typeString[0],
+              }),
+            );
         }
 
         currentSection?.options.push({
@@ -104,7 +167,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
         });
       }
     } catch (err) {
-      console.error(`Parsing error: ${err}`);
+      loggerError(err as string);
     }
   }
 
@@ -122,26 +185,31 @@ export async function validateIniFile(name: string) {
 
 export async function loadIniConfiguration(name: string) {
   const config = await loadConfiguration();
-  if (!config) throw 'Config file not found.';
+  if (!config) throw new Error(getMessage('MISSING_CONFIGURATION'));
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
   const iniFilePath = config.filesCreated.find(file => file.includes(name));
-  if (!iniFilePath) throw `${name} wasn't found in config`;
-  if (!fs.existsSync(iniFilePath)) throw `${iniFilePath} doesn't exist`;
+  if (!iniFilePath) throw new Error(`${name} wasn't found in config`);
+  if (!fs.existsSync(iniFilePath)) throw new Error(`${iniFilePath} doesn't exist`);
   const configFileContent = fs.readFileSync(iniFilePath, UTF8);
   return parseConfig(configFileContent, name);
 }
 
 export async function saveIniConfiguration(sections: ConfigSection[], name: string) {
   const config = await loadConfiguration();
-  if (!config) throw 'Config file not found.';
+  if (!config) throw new Error(getMessage('MISSING_CONFIGURATION'));
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
   const iniFilePath = config.filesCreated.find(file => file.includes(name));
-  if (!iniFilePath) throw 'Ini file not found';
-  if (!sections.length) throw 'No data to save';
+  if (!iniFilePath)
+    throw new Error(
+      getMessage('INI_NOT_FOUND', {
+        name: name,
+      }),
+    );
+  if (!sections.length) throw new Error(getMessage('INI_NO_DATA_TO_SAVE'));
 
   const iniFileLines = fs.readFileSync(iniFilePath, UTF8).split('\n');
 
@@ -162,7 +230,7 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
 
 export async function getAllIniNames() {
   const config = await loadConfiguration();
-  if (!config) return [];
+  if (!config) throw new Error(getMessage('MISSING_CONFIGURATION'));
 
   const iniFiles = config.filesCreated
     .filter(file => file.endsWith('.ini'))
