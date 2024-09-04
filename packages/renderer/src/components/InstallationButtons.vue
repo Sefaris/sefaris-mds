@@ -7,7 +7,7 @@
       {{ $t('action.cancel') }}
     </button>
     <button
-      class="mr-6 h-15 w-78.75 bg-[url('../../assets/images/install.png')]"
+      class="mr-6 h-15 w-78.75 bg-install"
       @click="startInstallation()"
     >
       <span class="font-gothic text-3xl">{{ $t('action.install') }}</span>

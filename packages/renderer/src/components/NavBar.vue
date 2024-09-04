@@ -1,5 +1,5 @@
 <template>
-  <div class="box-border flex h-28.5 flex-col border-b border-divider">
+  <div class="box-border flex h-28.5 select-none flex-col border-b border-divider">
     <div class="m-6 flex h-8 justify-between">
       <span
         class="cursor-pointer text-xl text-primary hover:text-primary-hover"

@@ -6,7 +6,7 @@
       target="_blank"
       @click="openWebsite(SEFARIS_KOFI)"
     >
-      <span class="h-5">{{ $t('nav.top.support') }}</span>
+      <span class="h-5 select-none">{{ $t('nav.top.support') }}</span>
 
       <img
         class="ml-3 h-5"
