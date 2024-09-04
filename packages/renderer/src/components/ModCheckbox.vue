@@ -1,14 +1,14 @@
 <template>
   <img
     v-if="selectedMods.includes($props.modId)"
-    class="cursor-pointer rounded bg-primary"
+    class="cursor-pointer select-none rounded bg-primary"
     :class="{ 'cursor-default bg-primary-disabled': isDependencyOfSelectedMod($props.modId) }"
     src="../../assets/svg/check-bold.svg"
     @click="deselectMod($props.modId)"
   />
   <img
     v-else
-    class="cursor-pointer rounded"
+    class="cursor-pointer select-none rounded"
     :class="{ 'cursor-default bg-disabled': isIncompatibleofSelectedMod($props.modId) }"
     src="../../assets/svg/state=unactive.svg"
     @click="selectMod($props.modId)"
