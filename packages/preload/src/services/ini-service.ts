@@ -40,11 +40,11 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
 
         const descriptionLine = lines[i + 1].replace(/^\s*;\s*/, '').trim() || '';
         const typeLine = lines[i + 2].replace(/^\s*;\s*/, '').trim() || '';
-        let modesLine: string = '';
+        let optionalLine: string = '';
         // dont throw error for optional line
         if (lines[i + 3]) {
           if (lines[i + 3].includes('|') && !lines[i + 3].includes('=')) {
-            modesLine = lines[i + 3].replace(/^\s*;\s*/, '') || '';
+            optionalLine = lines[i + 3].replace(/^\s*;\s*/, '') || '';
           }
         }
         if (!descriptionLine.length) {
@@ -73,7 +73,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
           case 'key':
             break;
           case 'mode':
-            modes = modesLine.split('|').map(mode => mode.trim());
+            modes = optionalLine.split('|').map(mode => mode.trim());
             break;
           case 'boolean':
             if (parsedValue != 'true' && parsedValue != 'false')
@@ -94,7 +94,14 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             parsedDefaultValue = parsedDefaultValue.toLowerCase() === 'true';
             break;
           case 'number':
-            ranges = modesLine.split('|').map(range => parseFloat(range.trim()));
+            if (!optionalLine.length)
+              throw new Error(
+                getMessage('INI_RANGES_NOT_FOUND', {
+                  name: name,
+                  line: (i + 4).toString(),
+                }),
+              );
+            ranges = optionalLine.split('|').map(range => parseFloat(range.trim()));
             if (ranges.includes(NaN))
               throw new Error(
                 getMessage('INI_RANGES_CONVERSTION_FAIL', {

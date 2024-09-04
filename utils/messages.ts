@@ -17,6 +17,7 @@ export const Messages = {
   INI_VALUE_CONVERSTION_FAIL: 'Value conversion failed in {{name}}:Line:{{line}}!',
   INI_DEFAULT_VALUE_CONVERSTION_FAIL: 'Default value conversion failed in {{name}}:Line:{{line}}!',
   INI_RANGES_CONVERSTION_FAIL: 'Ranges conversion failed in {{name}}:Line:{{line}}!',
+  INI_RANGES_NOT_FOUND: 'Ranges not found in {{name}}:Line:{{line}}!',
   INI_UNSUPPORTED_ARRAY_TYPE: 'Unsupported arraytype {{type}}',
   INI_UNSUPPORTED_TYPE: 'Unsupported type {{type}}',
 
