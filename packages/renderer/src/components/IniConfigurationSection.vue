@@ -32,8 +32,6 @@ export default defineComponent({
   },
   setup(props) {
     const configSection = toRef(props.section);
-    console.log(configSection.value);
-
     const getComponentType = (type: OptionType): OptionComponent | undefined => {
       switch (type) {
         case 'boolean':
