@@ -61,9 +61,7 @@ export default defineComponent({
           installationState.value = 'ready';
         })
         .catch(error => {
-          installedMods.value = [];
           installationState.value = 'edit';
-          console.error(error);
           loggerError(error);
         });
     };
