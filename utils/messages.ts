@@ -42,6 +42,7 @@ export const Messages = {
   INSTALLATION_FAIL: 'Instalation failed!',
   INSTALLATION_COMPLETE: 'Installing {{num}} mods completed!',
   REVERT_INSTALLATION_CHANGES: 'Reverting installation changes.',
+  REVERT_NOTHING_TO_DO: 'No changes to revert!',
   REVERT_COMPLETE: 'Revert complete!',
 
   COPY_FILE_FROM_TO: 'Copying {{src}} to {{dst}}',

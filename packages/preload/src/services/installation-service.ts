@@ -112,15 +112,19 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         // Remove copied files
         alert(error);
         loggerError(getMessage('INSTALLATION_FAIL'));
-        loggerError(error as string);
         loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
-        for (let i = 0; i < createdFiles.length; i++) {
-          loggerInfo(getMessage('FILE_DELETING', { path: createdFiles[i] }));
-          updateProgressBar('progress.delete', i, createdFiles.length);
-          fs.unlinkSync(createdFiles[i]);
-          loggerInfo(getMessage('FILE_DELETED', { path: createdFiles[i] }));
+        if (createdFiles.length) {
+          for (let i = 0; i < createdFiles.length; i++) {
+            loggerInfo(getMessage('FILE_DELETING', { path: createdFiles[i] }));
+            updateProgressBar('progress.delete', i, createdFiles.length);
+            fs.unlinkSync(createdFiles[i]);
+            loggerInfo(getMessage('FILE_DELETED', { path: createdFiles[i] }));
+          }
+          loggerInfo(getMessage('REVERT_COMPLETE'));
+        } else {
+          loggerInfo(getMessage('REVERT_NOTHING_TO_DO'));
         }
-        loggerInfo(getMessage('REVERT_COMPLETE'));
+
         reject(error);
       }
     })();
