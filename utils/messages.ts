@@ -6,10 +6,11 @@ export const Messages = {
   NO_MODS_SELECTED: 'No mods selected!',
   MODS_NOT_FOUND: 'No mods were found in {{path}}',
   MODS_MISSING_TITLE_ID: "Mod in {{mod}} doesn't have id or title",
+  GOTHIC_EXE_NOT_FOUND: "Gothic3.exe wasn't found.",
+  GAME_START_FAILED: 'Failed to start the game:',
 
   MODS_INSTALLED: 'Mods succesfully installed in',
   MOD_NO_README_LOCALE: 'No readme_{{locale}} for {{name}}',
-
   INI_MISSING_DESC_TYPE: 'Expected description and type in {{name}}:Lines:{{beg}}-{{end}}!',
   INI_EMPTY_DESC: 'Expected non empty description in {{name}}:Line:{{line}}!',
   INI_EMPTY_TYPE: 'Expected type in {{name}}:Line:{{line}}!',
@@ -28,6 +29,7 @@ export const Messages = {
   INVALID_CONFIGURATION: 'Invalid configuration!',
   MISSING_CONFIGURATION: 'Missing configuration file!',
 
+  FILE_DOESNT_EXIST: "File {{path}} doesn't exist.",
   FILE_DELETING: 'Deleting {{path}} file.',
   FILE_DELETED: '{{path}} deleted.',
 
