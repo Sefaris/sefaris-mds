@@ -126,7 +126,10 @@ export async function loadIniConfiguration(name: string) {
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
-  const iniFilePath = config.filesCreated.find(file => file.includes(name));
+  let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  if (name === 'ge3.ini') {
+    iniFilePath = path.join(iniPath, 'ge3.ini');
+  }
   if (!iniFilePath) throw `${name} wasn't found in config`;
   if (!fs.existsSync(iniFilePath)) throw `${iniFilePath} doesn't exist`;
   const configFileContent = fs.readFileSync(iniFilePath, UTF8);
@@ -139,7 +142,10 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
-  const iniFilePath = config.filesCreated.find(file => file.includes(name));
+  let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  if (name === 'ge3.ini') {
+    iniFilePath = path.join(iniPath, 'ge3.ini');
+  }
   if (!iniFilePath) throw 'Ini file not found';
   if (!sections.length) throw 'No data to save';
 
