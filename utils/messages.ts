@@ -10,9 +10,9 @@ export const Messages = {
   GOTHIC_EXE_NOT_FOUND: "Gothic3.exe wasn't found.",
   GAME_START_FAILED: 'Failed to start the game:',
   FILE_NOT_FOUND: '{{name}} not found!',
+
   MODS_INSTALLED: 'Mods succesfully installed in',
   MOD_NO_README_LOCALE: 'No readme_{{locale}} for {{name}}',
-
   INI_MISSING_DESC_TYPE: 'Expected description and type in {{name}}:Lines:{{beg}}-{{end}}!',
   INI_EMPTY_DESC: 'Expected non empty description in {{name}}:Line:{{line}}!',
   INI_EMPTY_TYPE: 'Expected type in {{name}}:Line:{{line}}!',
