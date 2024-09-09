@@ -196,9 +196,12 @@ export async function loadIniConfiguration(name: string) {
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
-  const iniFilePath = config.filesCreated.find(file => file.includes(name));
-  if (!iniFilePath) throw new Error(`${name} wasn't found in config`);
-  if (!fs.existsSync(iniFilePath)) throw new Error(`${iniFilePath} doesn't exist`);
+  let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  if (name === 'ge3.ini') {
+    iniFilePath = path.join(iniPath, 'ge3.ini');
+  }
+  if (!iniFilePath) throw new Error(getMessage('INI_NOT_FOUND_IN_CONFIG', { name: name }));
+  if (!fs.existsSync(iniFilePath)) throw new Error(getMessage('FILE_NOT_FOUND', { name: name }));
   const configFileContent = fs.readFileSync(iniFilePath, UTF8);
   return parseConfig(configFileContent, name);
 }
@@ -209,7 +212,10 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
-  const iniFilePath = config.filesCreated.find(file => file.includes(name));
+  let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  if (name === 'ge3.ini') {
+    iniFilePath = path.join(iniPath, 'ge3.ini');
+  }
   if (!iniFilePath)
     throw new Error(
       getMessage('INI_NOT_FOUND', {

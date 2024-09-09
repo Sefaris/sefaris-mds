@@ -1,8 +1,7 @@
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
-import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
 import { loggerError, loggerInfo } from './logger-service';
@@ -39,26 +38,32 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
 }
 
 export async function startGame() {
-  // refuses to work
   try {
-    const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+    const configuration = await loadConfiguration();
+    if (!configuration) return;
     const execPath = path.join(configuration.gothicPath, 'Gothic3.exe');
+    if (!fs.existsSync(execPath)) throw new Error(getMessage('GOTHIC_EXE_NOT_FOUND'));
 
-    if (!fs.existsSync(execPath)) {
-      throw new Error(`Plik ${execPath} nie istnieje.`);
-    }
+    // TODO: FIX, refuses to work
+    execFile(execPath, error => {
+      if (error) {
+        loggerError(`${getMessage('GAME_START_FAILED')} ${error.message}`);
+      }
+    });
   } catch (error) {
     loggerError(error as string);
   }
 }
 
 export async function openGameFolder() {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+  const configuration = await loadConfiguration();
+  if (!configuration) return;
   exec(`explorer ${configuration.gothicPath}`);
 }
 
 export async function openModsFolder() {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+  const configuration = await loadConfiguration();
+  if (!configuration) return;
   exec(`explorer ${configuration.modsPath}`);
 }
 
@@ -66,10 +71,10 @@ export function swapFileNames(filePath1: string, filePath2: string) {
   const tempFilePath = path.join(path.dirname(filePath1), 'temp_swap_file');
 
   if (!fs.existsSync(filePath1)) {
-    throw new Error(`Plik nie istnieje: ${filePath1}`);
+    throw new Error(`${getMessage('FILE_DOESNT_EXIST', { path: filePath1 })}`);
   }
   if (!fs.existsSync(filePath2)) {
-    throw new Error(`Plik nie istnieje: ${filePath2}`);
+    throw new Error(`${getMessage('FILE_DOESNT_EXIST', { path: filePath2 })}`);
   }
 
   fs.renameSync(filePath1, tempFilePath);
