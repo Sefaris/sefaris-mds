@@ -69,6 +69,8 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           await moveShader(preset);
         }
 
+        if (!fs.existsSync(dataPath)) throw new Error(getMessage('DATA_DIR_DOESNT_EXIST'));
+
         for (let i = 0; i < mods.length; i++) {
           updateProgressBar('progress.searchMods', i, mods.length);
           for (const extension of MOD_EXTENSTIONS) {

@@ -2,11 +2,14 @@ export const Messages = {
   WRONG_PATH: "Gothic3.exe wasn't found. Select correct directory.",
   CONFIG_NOT_FOUND: 'Config not found or corrupted. Select Gothic 3 directory.',
   MODJSON_NOT_FOUND: 'mod.json not found in',
+  DATA_DIR_DOESNT_EXIST: "Data folder doesn't exist!",
   WRONG_JSON_STRUCTURE: 'Wrong json structure for {{mod}}',
   NO_MODS_SELECTED: 'No mods selected!',
   MODS_NOT_FOUND: 'No mods were found in {{path}}',
   MODS_MISSING_TITLE_ID: "Mod in {{mod}} doesn't have id or title",
-
+  GOTHIC_EXE_NOT_FOUND: "Gothic3.exe wasn't found.",
+  GAME_START_FAILED: 'Failed to start the game:',
+  FILE_NOT_FOUND: '{{name}} not found!',
   MODS_INSTALLED: 'Mods succesfully installed in',
   MOD_NO_README_LOCALE: 'No readme_{{locale}} for {{name}}',
 
@@ -23,11 +26,13 @@ export const Messages = {
 
   INI_NO_DATA_TO_SAVE: 'No data to save!',
   INI_NOT_FOUND: 'Ini for {{name}} not found!',
+  INI_NOT_FOUND_IN_CONFIG: '{{name}} not found in config!',
 
   CONFIGURATION_SAVED: 'Configuration succesfully saved!',
   INVALID_CONFIGURATION: 'Invalid configuration!',
   MISSING_CONFIGURATION: 'Missing configuration file!',
 
+  FILE_DOESNT_EXIST: "File {{path}} doesn't exist.",
   FILE_DELETING: 'Deleting {{path}} file.',
   FILE_DELETED: '{{path}} deleted.',
 

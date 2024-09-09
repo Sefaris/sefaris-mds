@@ -92,7 +92,9 @@ export const useModsStore = defineStore('mods', () => {
   }
 
   function loadCategories() {
-    categories.value = [...new Set(mods.value.map(mod => mod.category))];
+    categories.value = [
+      ...new Set(mods.value.map(mod => mod.category).filter(category => category !== undefined)),
+    ];
   }
 
   function setInstallationState(state: InstallationState) {
