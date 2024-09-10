@@ -11,13 +11,13 @@
       />
       <div class="ml-auto mt-auto flex gap-2 p-px">
         <button
-          class="rounded-lg border border-divider px-2 py-1 hover:bg-disabled"
+          class="rounded-lg border-2 border-divider bg-primary px-2 py-1 text-black hover:bg-primary-hover"
           @click="addPreset"
         >
           {{ $t('modal.save') }}
         </button>
         <button
-          class="rounded-lg border border-divider px-2 py-1 hover:bg-disabled"
+          class="rounded-lg border-2 border-divider px-2 py-1 hover:bg-disabled"
           @click="$emit('close')"
         >
           {{ $t('modal.close') }}
