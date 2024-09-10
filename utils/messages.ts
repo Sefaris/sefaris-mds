@@ -36,9 +36,13 @@ export const Messages = {
   FILE_DELETING: 'Deleting {{path}} file.',
   FILE_DELETED: '{{path}} deleted.',
 
+  PRESET_CREATED: 'Preset {{name}} succesfully created.',
   PRESET_LOADED: 'Preset {{name}} loaded.',
   PRESET_NOT_FOUND: 'Preset not found: ',
   MISSING_MODS_FROM_PRESET: 'Missing mods from preset:',
+  PRESET_EMPTY_NAME: 'Missing name for preset.',
+  PRESET_EMPTY_MODS: "Can't create empty preset.",
+  PRESET_ALREADY_EXISTS: 'Preset {{name}} already exists.',
   PRESET_INVALID: 'Preset {{name}} is invalid.',
   PRESET_MISSING_JSON: 'Missing json for {{name}}.',
 
