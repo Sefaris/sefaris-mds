@@ -1,5 +1,5 @@
 <template>
-  <button href="#">
+  <button class="hover:text-primary">
     {{ $t(`nav.top.${$props.title}`) }}
   </button>
 </template>
