@@ -4,6 +4,7 @@ export const LANGUAGE_SETTINGS = [
   { code: 'pl', text: 'Polski' },
   { code: 'ru', text: 'Русский' },
   { code: 'gb', text: 'English' },
+  { code: 'de', text: 'Deutsch' },
 ] as const;
 
 export type SUPPORTED_LANGUAGES = (typeof LANGUAGE_SETTINGS)[number]['code'];
