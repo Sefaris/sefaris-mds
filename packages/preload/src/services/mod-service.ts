@@ -66,7 +66,7 @@ export async function loadModDescription(modPath: string): Promise<string | null
   const config = await loadConfiguration();
   const locale = config?.language || DEFAULT_LANGUAGE;
 
-  const file = path.join(modPath, `readme_${locale}.md`);
+  const file = path.join(modPath, 'readme', `readme_${locale}.md`);
   if (!fs.existsSync(file)) {
     loggerWarn(getMessage('MOD_NO_README_LOCALE', { name: path.basename(modPath), locale }));
     return null;
@@ -75,7 +75,7 @@ export async function loadModDescription(modPath: string): Promise<string | null
 }
 
 export function loadImages(modPath: string): string[] {
-  const imagesPath = path.join(modPath, 'Pictures');
+  const imagesPath = path.join(modPath, 'images');
   if (!fs.existsSync(imagesPath)) return [];
   const files = fs.readdirSync(imagesPath);
   const imageFiles = files.filter(file => {
