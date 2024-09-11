@@ -76,9 +76,11 @@ export default defineComponent({
       if (!mod.value) {
         return;
       }
-
+      const loadedDescription = await loadModDescription(mod.value.path);
       description.value =
-        (await loadModDescription(mod.value.path)) ?? translate('main.preview.noDescription');
+        loadedDescription && loadedDescription.length
+          ? loadedDescription
+          : translate('main.preview.noDescription');
       gallery.value = loadImages(mod.value.path);
       imgSource.value = gallery.value[0];
       currentImageIndex.value = 0;
