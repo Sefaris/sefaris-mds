@@ -4,10 +4,13 @@
     title="Preset"
   >
     <div class="m-2 flex flex-col gap-2">
-      <span> {{ $t('modal.presetName') }}</span>
+      <span>
+        {{ $t('modal.presetName') }}
+      </span>
       <input
         v-model="presetName"
         class="h-6 border-2 border-divider bg-transparent"
+        maxlength="100"
       />
       <div class="ml-auto mt-auto flex gap-2 p-px">
         <button

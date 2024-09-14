@@ -46,8 +46,10 @@ export default {
     buildStringtable: 'Baue Strings-Tabelle',
     moveOldSaves: 'Verschiebe alte Spielstände',
     searchMods: 'Suche nach Mods',
+    dontTurnOff: 'Schalten Sie das Programm nicht aus!',
   },
   config: {
+    inisNotFound: 'Keine Konfigurationsdateien gefunden.',
     nav: {
       back: 'Zurück',
       save: 'Speichern',

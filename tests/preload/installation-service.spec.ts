@@ -30,8 +30,15 @@ beforeAll(() => {
   const mockHomedir = '/user/';
   vi.spyOn(os, 'homedir').mockReturnValue(mockHomedir);
 
-  vi.mock('../../packages/preload/src/services/pak-service', () => ({
-    ...vi.importActual('../../packages/preload/src/services/pak-service'),
+  vi.mock('../../packages/preload/src/services/file-service', async () => {
+    return {
+      ...(await vi.importActual('../../packages/preload/src/services/file-service'))!,
+      getDocumentsPath: vi.fn(() => Promise.resolve('\\user\\Documents')),
+    };
+  });
+
+  vi.mock('../../packages/preload/src/services/pak-service', async () => ({
+    ...(await vi.importActual('../../packages/preload/src/services/pak-service'))!,
     extract: vi.fn(() => Promise.resolve()),
     findStrings: vi.fn(() => 'strings.pak'),
     buildPackage: vi.fn((src: string, dst: string) => fs.writeFileSync(dst, '')),
@@ -208,7 +215,7 @@ describe('getNextSaveDirectoryName', () => {
       },
       path.join('', os.homedir(), 'Documents', 'gothic3'),
     );
-    expect(getNextSaveDirectoryName()).toEqual('Mods2');
+    expect(getNextSaveDirectoryName()).resolves.toEqual('Mods2');
   });
 
   test('returns folder name Mods0', () => {
@@ -218,7 +225,7 @@ describe('getNextSaveDirectoryName', () => {
       },
       path.join(os.homedir(), 'Documents', 'gothic3'),
     );
-    expect(getNextSaveDirectoryName()).toEqual('Mods0');
+    expect(getNextSaveDirectoryName()).resolves.toEqual('Mods0');
   });
 
   test('returns folder name Mods5', () => {
@@ -229,12 +236,12 @@ describe('getNextSaveDirectoryName', () => {
       },
       path.join('', os.homedir(), 'Documents', 'gothic3'),
     );
-    expect(getNextSaveDirectoryName()).toEqual('Mods5');
+    expect(getNextSaveDirectoryName()).resolves.toEqual('Mods5');
   });
 });
 
 describe('getOldModsFiles', () => {
-  test('returns array with 11 paths', () => {
+  test('returns array with 11 paths', async () => {
     vol.fromJSON(
       {
         Mods0: '',
@@ -252,7 +259,7 @@ describe('getOldModsFiles', () => {
       },
       path.join('', os.homedir(), 'Documents', 'gothic3'),
     );
-    const oldSaveFiles = getOldModsFiles();
+    const oldSaveFiles = await getOldModsFiles();
     const expectedResult = [
       '\\user\\Documents\\gothic3\\save1.g3savcpx',
       '\\user\\Documents\\gothic3\\save2.g3savcpx',
@@ -270,7 +277,7 @@ describe('getOldModsFiles', () => {
     expect(oldSaveFiles).toEqual(expectedResult);
   });
 
-  test('returns array with 10 paths', () => {
+  test('returns array with 10 paths', async () => {
     vol.fromJSON(
       {
         Mods0: '',
@@ -287,7 +294,7 @@ describe('getOldModsFiles', () => {
       },
       path.join('', os.homedir(), 'Documents', 'gothic3'),
     );
-    const oldSaveFiles = getOldModsFiles();
+    const oldSaveFiles = await getOldModsFiles();
     const expectedResult = [
       '\\user\\Documents\\gothic3\\save1.g3savcpx',
       '\\user\\Documents\\gothic3\\save2.g3savcpx',
@@ -304,18 +311,18 @@ describe('getOldModsFiles', () => {
     expect(oldSaveFiles).toEqual(expectedResult);
   });
 
-  test('returns empty array', () => {
+  test('returns empty array', async () => {
     vol.fromJSON(
       {
         Mods0: '',
       },
       path.join('', os.homedir(), 'Documents', 'gothic3'),
     );
-    const oldSaveFiles = getOldModsFiles();
+    const oldSaveFiles = await getOldModsFiles();
     expect(oldSaveFiles).toHaveLength(0);
   });
 
-  test('returns array with 1 path', () => {
+  test('returns array with 1 path', async () => {
     vol.fromJSON(
       {
         Mods0: '',
@@ -324,7 +331,7 @@ describe('getOldModsFiles', () => {
       path.join('', os.homedir(), 'Documents', 'gothic3'),
     );
     const expectedResult = ['\\user\\Documents\\gothic3\\Shader.Cache'];
-    const oldSaveFiles = getOldModsFiles();
+    const oldSaveFiles = await getOldModsFiles();
     expect(oldSaveFiles).toHaveLength(1);
     expect(oldSaveFiles).toEqual(expectedResult);
   });
@@ -356,7 +363,7 @@ describe('getNewModsFilesPaths', () => {
       path.join(os.homedir(), 'Documents', 'gothic3', 'Mods0', 'save2.g3savcpxdat'),
       path.join(os.homedir(), 'Documents', 'gothic3', 'Mods0', 'Shader.Cache'),
     ];
-    expect(getNewModsFilesPaths(oldPaths, 'Mods0')).toEqual(expectedPaths);
+    expect(getNewModsFilesPaths(oldPaths, 'Mods0')).resolves.toEqual(expectedPaths);
   });
 });
 

@@ -3,8 +3,10 @@
     <progress-bar :progress="progress" />
     <div class="flex w-full items-center justify-between">
       <div class="flex flex-col">
-        <span>{{ stepName }}.</span>
-        <span class="text-light">Nie wyłączaj launchera!</span>
+        <span> {{ stepName }}. </span>
+        <span class="text-light">
+          {{ $t('progress.dontTurnOff') }}
+        </span>
       </div>
       <div>
         <span class="font-gothic text-5xl text-primary">{{ progress }}%</span>

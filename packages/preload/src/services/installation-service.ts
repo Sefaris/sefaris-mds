@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import os from 'os';
 
 import path from 'path';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
@@ -12,6 +11,7 @@ import {
   copyFiles,
   ensureDirectory,
   findFilesEndsWith,
+  getDocumentsPath,
   getFreeFileName,
   getLastExistingFileName,
   removeFileNameExtension,
@@ -296,11 +296,11 @@ export async function buildWrldatasc(gothicDataPath: string, mods: Mod[], create
 }
 
 export async function moveSaves() {
-  const newModsFolder = getNextSaveDirectoryName();
-  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+  const newModsFolder = await getNextSaveDirectoryName();
+  const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
 
   const newModsFolderPath = path.join(G3_DOCUMENTS_PATH, newModsFolder);
-  const oldFilesPaths = getOldModsFiles();
+  const oldFilesPaths = await getOldModsFiles();
   loggerInfo(getMessage('MOVE_SAVES_START'));
   if (oldFilesPaths.length === 0) {
     loggerInfo(getMessage('MOVE_SAVES_NOTHING_TO_MOVE'));
@@ -308,7 +308,7 @@ export async function moveSaves() {
   }
 
   ensureDirectory(newModsFolderPath);
-  const newFilesPaths = getNewModsFilesPaths(oldFilesPaths, newModsFolder);
+  const newFilesPaths = await getNewModsFilesPaths(oldFilesPaths, newModsFolder);
   for (let i = 0; i < oldFilesPaths.length; i++) {
     loggerInfo(getMessage('MOVE_SAVES_FROM_TO', { src: oldFilesPaths[i], dst: newFilesPaths[i] }));
     updateProgressBar('progress.moveOldSaves', i, oldFilesPaths.length);
@@ -320,8 +320,9 @@ export async function moveSaves() {
   loggerInfo(getMessage('MOVE_SAVES_COMPLETE'));
 }
 
-export function getOldModsFiles() {
-  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+export async function getOldModsFiles() {
+  const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
+
   const saves = findFilesEndsWith(G3_DOCUMENTS_PATH, SAVE_EXTENSION);
   const savesDat = findFilesEndsWith(G3_DOCUMENTS_PATH, SAVEDAT_EXTENSION);
   const shader = findFilesEndsWith(G3_DOCUMENTS_PATH, 'Cache');
@@ -329,9 +330,9 @@ export function getOldModsFiles() {
   return saves.concat(savesDat).concat(shader);
 }
 
-export function getNextSaveDirectoryName(): string {
+export async function getNextSaveDirectoryName(): Promise<string> {
   let maxNumber = -1;
-  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
+  const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
 
   const directories = fs.readdirSync(G3_DOCUMENTS_PATH);
 
@@ -352,10 +353,11 @@ export function getNextSaveDirectoryName(): string {
   return `Mods${nextNumber.toString()}`;
 }
 
-export function getNewModsFilesPaths(files: string[], destDirectory: string) {
+export async function getNewModsFilesPaths(files: string[], destDirectory: string) {
   const newFilesPaths: string[] = [];
-  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
-
+  const documents = await getDocumentsPath();
+  console.log(documents, 'docs path');
+  const G3_DOCUMENTS_PATH = path.join(documents, 'gothic3');
   for (const file of files) {
     const fileName = path.basename(file);
     const newFilePath = path.join(G3_DOCUMENTS_PATH, destDirectory, fileName);
@@ -381,9 +383,9 @@ export async function moveSplash(configuration: AppConfiguration, presetName: st
 }
 
 export async function moveShader(presetName: string) {
-  const G3_DOCUMENTS_PATH = path.join(os.homedir(), 'Documents', 'gothic3');
-
+  const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
   const shader = path.join(PRESET_FILES_PATH, presetName, SHADER);
+
   if (!fs.existsSync(shader)) {
     loggerInfo(getMessage('COPY_SHADER_NOT_FOUND', { preset: presetName }));
     return;

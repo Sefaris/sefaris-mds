@@ -45,8 +45,10 @@ export default {
     moveOldSaves: 'Moving saves',
     searchMods: 'Searching for mods',
     mergeArchives: 'Merging archives',
+    dontTurnOff: "Don't turn off program!",
   },
   config: {
+    inisNotFound: 'No configuration files found.',
     nav: {
       back: 'Back',
       save: 'Save',

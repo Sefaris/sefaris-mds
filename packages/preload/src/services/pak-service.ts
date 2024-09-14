@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { ensureDirectory } from './file-service';
 import { loggerError } from './logger-service';
 const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
-const G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe');
+const G3PAKDIR_PATH = `"${path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe')}"`;
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {
   const destinationPath = destPath ?? srcPath + '\\output.pak';
   return new Promise((resolve, reject) => {

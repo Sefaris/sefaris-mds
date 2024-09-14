@@ -64,7 +64,7 @@ export function isValidConfiguration(config: AppConfiguration) {
     LANGUAGE_SETTINGS.find(item => item.code === config.language) &&
     Array.isArray(config.installedMods) &&
     Array.isArray(config.filesCreated) &&
-    (config.preset === undefined || typeof config.preset === 'string') // Check if preset is either undefined or a string
+    (config.preset === undefined || typeof config.preset === 'string')
   );
 }
 export function isGothicPathValid(param: AppConfiguration | string): boolean {
