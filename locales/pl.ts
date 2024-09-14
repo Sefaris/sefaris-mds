@@ -45,8 +45,10 @@ export default {
     moveOldSaves: 'Przenoszenie zapisów',
     searchMods: 'Szukanie modów',
     mergeArchives: 'Łączenie archiwów',
+    dontTurnOff: 'Nie wyłączaj programu!',
   },
   config: {
+    inisNotFound: 'Nie znaleziono żadnych plików konfiguracyjnych.',
     nav: {
       back: 'Wróć',
       save: 'Zapisz',

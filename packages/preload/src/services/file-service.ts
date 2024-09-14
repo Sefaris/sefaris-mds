@@ -6,6 +6,7 @@ import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import Winreg from 'winreg';
 
 export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
@@ -142,4 +143,20 @@ export async function copyFiles(
     loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: filePath, dst: newFilePath }));
     createdFiles.push(newFilePath);
   }
+}
+export async function getDocumentsPath(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const regKey = new Winreg({
+      hive: Winreg.HKCU,
+      key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders',
+    });
+
+    regKey.get('Personal', (err, item) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(item.value);
+      }
+    });
+  });
 }

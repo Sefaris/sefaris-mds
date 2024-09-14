@@ -1,35 +1,68 @@
 export default {
   nav: {
-    title: 'Ваш товар',
-  },
-  main: {
-    preview: {
-      default: 'Выберите модификацию, чтобы узнать больше',
+    top: {
+      support: 'Поддержите нас',
+      options: 'Опции',
+    },
+    bottom: {
+      title: 'Ваши товары',
+      all: 'Все',
+      installed: 'Установлено',
+      categories: 'Категории',
+      presets: 'Пресеты',
     },
   },
-  common: {
-    configuration: 'конфигурация',
-    home: 'домашняя страница',
-  },
-  progress: {
-    wait: 'ждем действий...',
-    delete: 'удаление модов...',
-    moveOldSaves: 'перемещение старых сохранений...',
-    searchMods: 'поиск файлов модов...',
-    copyMods: 'копирование модов...',
-    copyScripts: 'копирование скриптов...',
-    mergeArchives: 'объединение архивов...',
-  },
-  error: {
-    presetNotFound: 'предустановка {name} не найдена!',
+  main: {
+    mods: {
+      notFound: 'Моды не найдены',
+    },
+    preview: {
+      default: 'Выберите модификацию, чтобы узнать больше',
+      author: 'Автор',
+      authors: 'Авторы',
+      noDescription: 'Описание для этого мода отсутствует.',
+    },
   },
   action: {
-    install: 'установить моды',
-    play: 'играть',
-    delete: 'удалить моды',
-    merge: 'объединить архивы',
-    selectAll: 'выбрать все моды',
-    openGameFolder: 'открыть папку с игрой',
-    openModsFolder: 'открыть папку с модами',
+    play: 'Играть',
+    install: 'Установите',
+    cancel: 'Отменить изменения',
+  },
+  alert: {
+    installed: 'Моды успешно установлены в ',
+    wrongPath: 'Gothic3.exe не найден. Выберите правильную директорию.',
+    presetNotFound: 'Предустановка не найдена: ',
+    configNotFound: 'Конфиг не найден или поврежден. Выберите каталог Gothic 3.',
+    missingModsFromPreset: 'Отсутствие модов в пресетах: ',
+    checkLog: 'Что-то пошло не так. Проверьте журнал app.log',
+  },
+  progress: {
+    saveConfiguration: 'Сохранение конфигурации',
+    copyMods: 'Копирование модов',
+    delete: 'Удаление модов',
+    copyScripts: 'Копирование скриптов',
+    buildStringtable: 'Струны для ламп',
+    moveOldSaves: 'Переезд экономит',
+    searchMods: 'Поиск модов',
+    dontTurnOff: 'Не выключайте программу!',
+  },
+  config: {
+    inisNotFound: 'Файлы конфигурации не найдены.',
+    nav: {
+      back: 'Назад',
+      save: 'Сохранить',
+    },
+    option: {
+      on: 'на',
+      off: 'выключенный',
+    },
+  },
+  tooltip: {
+    default: 'По умолчанию',
+  },
+  modal: {
+    save: 'Сохранить',
+    close: 'Закрыть',
+    presetName: 'Сохранить предустановку как',
   },
 };

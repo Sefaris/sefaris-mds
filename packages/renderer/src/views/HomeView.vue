@@ -42,7 +42,7 @@ export default defineComponent({
       }
       await modsStore.reloadMods();
       await modsStore.loadInstalledMods();
-      await modsStore.loadCategories();
+      modsStore.loadCategories();
       await modsStore.loadPresets();
     });
     return {};

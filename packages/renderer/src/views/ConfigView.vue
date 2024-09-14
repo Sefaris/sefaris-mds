@@ -1,9 +1,24 @@
 <template>
   <div class="flex h-182 flex-col items-center overflow-y-auto p-2 text-menu">
+    <h1 class="text-2xl">
+      {{ $t('nav.top.options') }}
+    </h1>
+    <div
+      v-if="!validGothicIniFile && !configFiles.length"
+      class="my-20 flex flex-col text-center"
+    >
+      <img
+        src="../../assets/images/error_500.png"
+        class="mx-auto w-max"
+      />
+      <h3 class="mt-2 text-xl">
+        {{ $t('config.inisNotFound') }}
+      </h3>
+    </div>
     <router-link
       v-if="validGothicIniFile"
       :to="{ name: 'Options', params: { ini: 'ge3.ini' } }"
-      class="text-xl hover:text-menu-hover"
+      class="mt-2 text-xl hover:text-menu-hover"
     >
       Gothic
     </router-link>

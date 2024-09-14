@@ -12,6 +12,7 @@
         <change-locale />
         <nav-item
           title="options"
+          :disabled="!modsCounter"
           @click="openConfigWindow"
         />
         <kofi-button />
