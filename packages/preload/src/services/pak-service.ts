@@ -3,9 +3,22 @@ import path from 'path';
 import * as fs from 'fs';
 import { ensureDirectory } from './file-service';
 import { loggerError } from './logger-service';
-const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
-const G3PAKDIR_PATH = `"${path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe')}"`;
+import { ipcRenderer } from 'electron';
+
+let G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
+let G3PAKDIR_PATH = `"${path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe')}"`;
+
+// check is asar is used to pack app
+async function getIsPackaged() {
+  return await ipcRenderer.invoke('get-is-packaged');
+}
+
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {
+  // change paths for packed application
+  if (await getIsPackaged()) {
+    G3PAK_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3Pak.exe');
+    G3PAKDIR_PATH = `"${path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe')}"`;
+  }
   const destinationPath = destPath ?? srcPath + '\\output.pak';
   return new Promise((resolve, reject) => {
     execFile(
@@ -33,6 +46,12 @@ export async function buildPackage(srcPath: string, destPath?: string): Promise<
 }
 
 export async function extractAll(file: string, destinationPath: string): Promise<string> {
+  // change paths for packed application
+
+  if (await getIsPackaged()) {
+    G3PAK_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3Pak.exe');
+    G3PAKDIR_PATH = `"${path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe')}"`;
+  }
   return new Promise((resolve, reject) => {
     execFile(
       G3PAK_PATH,
