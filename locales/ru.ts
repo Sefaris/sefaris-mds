@@ -3,6 +3,7 @@ export default {
     top: {
       support: 'Поддержите нас',
       options: 'Опции',
+      discord: 'Discord',
     },
     bottom: {
       title: 'Ваши товары',
@@ -26,10 +27,12 @@ export default {
   action: {
     play: 'Играть',
     install: 'Установите',
+    delete: 'удалить',
     cancel: 'Отменить изменения',
   },
   alert: {
     installed: 'Моды успешно установлены в ',
+    deleted: 'Моды успешно удалили.',
     wrongPath: 'Gothic3.exe не найден. Выберите правильную директорию.',
     presetNotFound: 'Предустановка не найдена: ',
     configNotFound: 'Конфиг не найден или поврежден. Выберите каталог Gothic 3.',

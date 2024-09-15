@@ -3,6 +3,7 @@ export default {
     top: {
       support: 'Wesprzyj',
       options: 'Opcje',
+      discord: 'Discord',
     },
     bottom: {
       title: 'Twoje towary',
@@ -26,10 +27,12 @@ export default {
   action: {
     play: 'Graj',
     install: 'Zainstaluj',
+    delete: 'Usuń',
     cancel: 'Anuluj zmiany',
   },
   alert: {
     installed: 'Modyfikacje pomyślnie zainstalowane w ',
+    deleted: 'Modyfikacje zostały pomyślnie usunięte.',
     wrongPath: 'Gothic3.exe nie znaleziony. Wybierz właściwy folder.',
     presetNotFound: 'Nie znaleziono presetu: ',
     configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',

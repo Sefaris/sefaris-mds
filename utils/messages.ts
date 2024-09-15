@@ -12,6 +12,7 @@ export const Messages = {
   FILE_NOT_FOUND: '{{name}} not found!',
 
   MODS_INSTALLED: 'Mods succesfully installed in',
+  MODS_DELETED: 'Mods succesfully deleted.',
   MOD_NO_README_LOCALE: 'No readme_{{locale}} for {{name}}',
   INI_MISSING_DESC_TYPE: 'Expected description and type in {{name}}:Lines:{{beg}}-{{end}}!',
   INI_EMPTY_DESC: 'Expected non empty description in {{name}}:Line:{{line}}!',

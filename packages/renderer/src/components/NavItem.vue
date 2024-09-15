@@ -1,5 +1,6 @@
 <template>
   <button
+    class="flex items-center gap-1.5"
     :class="{
       'cursor-default text-light hover:text-light': $props.disabled,
       'hover:text-primary': !$props.disabled,
@@ -7,6 +8,7 @@
     :disabled="$props.disabled"
   >
     {{ $t(`nav.top.${$props.title}`) }}
+    <slot />
   </button>
 </template>
 
