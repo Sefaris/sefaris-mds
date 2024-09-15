@@ -3,6 +3,7 @@ export default {
     top: {
       support: 'Support',
       options: 'Options',
+      discord: 'Discord',
     },
     bottom: {
       title: 'Your goods',
@@ -26,10 +27,12 @@ export default {
   action: {
     play: 'Play',
     install: 'Install',
+    delete: 'Delete',
     cancel: 'Cancel changes',
   },
   alert: {
     installed: 'Mods succesfully installed in ',
+    deleted: 'Mods succesfully deleted.',
     wrongPath: "Gothic3.exe wasn't found. Select correct directory.",
     presetNotFound: 'Preset not found: ',
     configNotFound: 'Config not found or corrupted. Select Gothic 3 directory.',

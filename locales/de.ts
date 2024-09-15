@@ -3,6 +3,7 @@ export default {
     top: {
       support: 'Unterstützung',
       options: 'Optionen',
+      discord: 'Discord',
     },
     bottom: {
       title: 'Deine Auswahl',
@@ -26,10 +27,12 @@ export default {
   action: {
     play: 'Starte Spiel',
     install: 'Installiere',
+    delete: 'Löschen',
     cancel: 'Breche alle Änderungen ab',
   },
   alert: {
     installed: 'Mods wurden erfolgreich installiert. Vergangene Zeit: ',
+    deleted: 'Mods erfolgreich gelöscht.',
     wrongPath:
       'Gothic3.exe konnte nicht gefunden werden. Bitte wählen Sie den richtigen Ordner aus.',
     presetNotFound: 'Voreinstellung wurde nicht gefunden: ',

@@ -15,6 +15,12 @@
           :disabled="!modsCounter"
           @click="openConfigWindow"
         />
+        <nav-item
+          title="discord"
+          @click="openWebsite('https://discord.gg/9EVFJv5Uyf')"
+        >
+          <icon-discord />
+        </nav-item>
         <kofi-button />
       </div>
     </div>
@@ -52,6 +58,7 @@ import { SEFARIS_WEBSITE } from '../../../../utils/constants';
 import CategoryButton from './CategoryButton.vue';
 import NavItem from './NavItem.vue';
 import { openConfigWindow } from '#preload';
+import IconDiscord from './IconDiscord.vue';
 export default defineComponent({
   components: {
     ChangeLocale,
@@ -60,6 +67,7 @@ export default defineComponent({
     PresetsDropdown,
     CategoryButton,
     NavItem,
+    IconDiscord,
   },
   setup() {
     const activeCategory = computed(() => modsStore.activeCategory);

@@ -1,4 +1,4 @@
-import { exec, execFile } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
@@ -45,12 +45,7 @@ export async function startGame() {
     const execPath = path.join(configuration.gothicPath, 'Gothic3.exe');
     if (!fs.existsSync(execPath)) throw new Error(getMessage('GOTHIC_EXE_NOT_FOUND'));
 
-    // TODO: FIX, refuses to work
-    execFile(execPath, error => {
-      if (error) {
-        loggerError(`${getMessage('GAME_START_FAILED')} ${error.message}`);
-      }
-    });
+    spawn(execPath, { cwd: configuration.gothicPath, detached: true });
   } catch (error) {
     loggerError(error as string);
   }

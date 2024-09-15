@@ -7,16 +7,24 @@
       {{ $t('action.cancel') }}
     </button>
     <button
+      v-if="selectedMods.length"
       class="mr-6 h-15 w-78.75 bg-install"
       @click="startInstallation()"
     >
       <span class="font-gothic text-3xl">{{ $t('action.install') }}</span>
     </button>
+    <button
+      v-else
+      class="mr-6 h-15 w-78.75 bg-install"
+      @click="startDeletion()"
+    >
+      <span class="font-gothic text-3xl">{{ $t('action.delete') }}</span>
+    </button>
   </div>
 </template>
 
 <script lang="ts">
-import { installMods, loggerError, loggerInfo } from '#preload';
+import { deleteMods, installMods, loggerError, loggerInfo } from '#preload';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import { translate } from '../../../../plugins/i18n';
@@ -65,11 +73,25 @@ export default defineComponent({
           loggerError(error);
         });
     };
+
+    const startDeletion = async () => {
+      deleteMods()
+        .then(() => {
+          alert(translate('alert.deleted'));
+          loggerInfo(getMessage('MODS_DELETED'));
+          installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
+          installationState.value = 'ready';
+        })
+        .catch(error => {
+          installationState.value = 'edit';
+          loggerError(error);
+        });
+    };
     const cancelChanges = () => {
       selectedMods.value = modsStore.installedMods.map(mod => mod.id);
     };
 
-    return { startInstallation, cancelChanges };
+    return { startInstallation, cancelChanges, startDeletion, selectedMods };
   },
 });
 </script>
