@@ -25,7 +25,7 @@ module.exports = async function () {
     extraMetadata: {
       version: getVersion(),
     },
-
+    asarUnpack: ['Tools'],
     // Specify linux target just for disabling snap compilation
     linux: {
       target: 'deb',
