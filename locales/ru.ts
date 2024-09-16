@@ -16,6 +16,10 @@ export default {
   main: {
     mods: {
       notFound: 'Моды не найдены',
+      selectAll: 'Выбрать все моды. (Игнорирует несовместимые)',
+      deselectAll: 'Отменить выбор всех модов.',
+      openGameFolder: 'Открыть папку с игрой.',
+      openModsFolder: 'Открыть папку с модами.',
     },
     preview: {
       default: 'Выберите модификацию, чтобы узнать больше',
@@ -52,6 +56,17 @@ export default {
   },
   config: {
     inisNotFound: 'Файлы конфигурации не найдены.',
+    gothicPath: 'Готический путь',
+    modsPath: 'Путь мода',
+    ignoreDependencies: 'Игнорировать зависимости',
+    ignoreIncompatibles: 'Игнорировать несовместимость',
+    starter: 'Стартовые настройки',
+    description: {
+      gothicPath: 'Путь к папке с установленной Готикой 3.',
+      modsPath: 'Путь к папке с модами.',
+      ignoreDependencies: 'Автоматически отключает выбор модов, отмеченных как необходимые.',
+      ignoreIncompatibles: 'Разрешает установку модов, помеченных как несовместимые.',
+    },
     nav: {
       back: 'Назад',
       save: 'Сохранить',

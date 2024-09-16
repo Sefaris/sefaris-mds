@@ -2,7 +2,7 @@
  * @module preload
  */
 
-export { selectGameFolder } from './services/configuration-service';
+export { selectGameFolder, selectFolder } from './services/configuration-service';
 
 export { openGameFolder, openModsFolder, startGame } from './services/file-service';
 

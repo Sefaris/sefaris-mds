@@ -9,6 +9,10 @@ import { getMessage } from '../../../../utils/messages';
 const configurationFile = 'config.json';
 
 export async function selectGameFolder(): Promise<string> {
+  return await ipcRenderer.invoke('open-folder-dialog-game');
+}
+
+export async function selectFolder(): Promise<string> {
   return await ipcRenderer.invoke('open-folder-dialog');
 }
 

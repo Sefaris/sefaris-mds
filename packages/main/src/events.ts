@@ -7,7 +7,8 @@ import { getWindows } from './mainWindow';
 
 export function addEvents() {
   const windows = getWindows();
-  ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
+
+  ipcMain.handle('open-folder-dialog-game', async (): Promise<string> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const result = await dialog.showOpenDialog({
@@ -28,6 +29,19 @@ export function addEvents() {
         message: `${translate('alert.wrongPath')}`,
         buttons: ['OK'],
       });
+    }
+  });
+
+  ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+      if (result.canceled) {
+        return '';
+      }
+      return result.filePaths[0];
     }
   });
 

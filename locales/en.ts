@@ -16,6 +16,10 @@ export default {
   main: {
     mods: {
       notFound: 'Mods not found',
+      selectAll: 'Select all mods. (Ignores incompatibles)',
+      deselectAll: 'Deselect all mods.',
+      openGameFolder: 'Open game folder.',
+      openModsFolder: 'Open mods folder',
     },
     preview: {
       default: 'Select a modification to learn more',
@@ -53,6 +57,17 @@ export default {
   },
   config: {
     inisNotFound: 'No configuration files found.',
+    gothicPath: 'Gothic path',
+    modsPath: 'Mods path',
+    ignoreDependencies: 'Ignore dependencies',
+    ignoreIncompatibles: 'Ignore incompatibles',
+    starter: 'Starter settings',
+    description: {
+      gothicPath: 'Path to folder containing installed Gothic 3.',
+      modsPath: 'Path to folder containing mods.',
+      ignoreDependencies: 'Disables automatic marking of mods marked as required.',
+      ignoreIncompatibles: 'Allows installation of mods defined as incompatible.',
+    },
     nav: {
       back: 'Back',
       save: 'Save',
