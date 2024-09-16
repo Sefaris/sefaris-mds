@@ -12,7 +12,7 @@
         <change-locale />
         <nav-item
           title="options"
-          :disabled="!modsCounter"
+          :disabled="installationState == 'noConfig'"
           @click="openConfigWindow"
         />
         <nav-item
@@ -76,6 +76,7 @@ export default defineComponent({
     const installedModsCounter = computed(() => modsStore.installedMods.length);
     const categoriesExist = computed(() => modsStore.categories.length > 0);
     const presetsExist = computed(() => modsStore.presets.length > 0);
+    const installationState = computed(() => modsStore.installationState);
 
     const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
@@ -90,6 +91,7 @@ export default defineComponent({
       selectCategory,
       presetsExist,
       SEFARIS_WEBSITE,
+      installationState,
       openConfigWindow,
     };
   },

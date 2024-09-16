@@ -16,10 +16,15 @@ export const useModsStore = defineStore('mods', () => {
   const presets = shallowRef<Preset[]>([]);
   const activePreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
-  const installationState = ref<InstallationState>('ready');
+  const installationState = ref<InstallationState>('noConfig');
+  const refreshKey = ref(0);
 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
+  }
+
+  function incrementRefreshKey() {
+    refreshKey.value++;
   }
 
   function setSelectedMod(mod: string) {
@@ -88,7 +93,7 @@ export const useModsStore = defineStore('mods', () => {
 
   async function reloadMods() {
     mods.value = await loadMods();
-    displayedMods.value = mods.value;
+    displayCategory('all');
   }
 
   function loadCategories() {
@@ -112,6 +117,8 @@ export const useModsStore = defineStore('mods', () => {
     presets,
     activePreset,
     installationState,
+    refreshKey,
+    incrementRefreshKey,
     countModsInCategory,
     setSelectedMods,
     setSelectedMod,

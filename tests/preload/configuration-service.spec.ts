@@ -35,6 +35,8 @@ describe('isValidConfiguration', () => {
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       language: 'pl',
       installedMods: [],
       filesCreated: [],
@@ -50,6 +52,8 @@ describe('isValidConfiguration', () => {
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -65,6 +69,8 @@ describe('isValidConfiguration', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -80,6 +86,8 @@ describe('isValidConfiguration', () => {
       gothicePath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -95,6 +103,8 @@ describe('isValidConfiguration', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'no',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -110,6 +120,8 @@ describe('isValidConfiguration', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'no',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: 'Mod',
       filesCreated: [],
     };
@@ -125,6 +137,8 @@ describe('isValidConfiguration', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'no',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: ['Mod'],
       filesCreated: 'Mod',
     };
@@ -139,6 +153,8 @@ describe('isGothicPathValid', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -154,6 +170,8 @@ describe('isGothicPathValid', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -170,6 +188,8 @@ describe('loadConfiguration', () => {
         gothicPath: 'E:\\Games\\Gothic 3',
         modsPath: 'E:\\Games\\Gothic 3\\mods',
         language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
         installedMods: [],
         filesCreated: [],
       }),
@@ -202,6 +222,8 @@ describe('saveConfiguration', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };
@@ -218,6 +240,8 @@ describe('saveConfiguration', () => {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
       language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
       installedMods: [],
       filesCreated: [],
     };

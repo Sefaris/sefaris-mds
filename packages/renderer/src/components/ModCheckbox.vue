@@ -16,11 +16,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import { loggerWarn } from '#preload';
+import { loadConfiguration, loggerWarn } from '#preload';
 import { getMessage } from '../../../../utils/messages';
 import { translate } from '../../../../plugins/i18n';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 export default defineComponent({
   props: {
     modId: {
@@ -29,6 +30,7 @@ export default defineComponent({
     },
   },
   setup() {
+    const config = ref<AppConfiguration | null>(null);
     const modsStore = useModsStore();
     const mods = computed(() => modsStore.mods);
     const selectedMods = computed({
@@ -41,6 +43,7 @@ export default defineComponent({
     });
 
     function selectDependencies(modId: string) {
+      if (config.value?.ignoreDependencies) return;
       const mod = mods.value.find(mod => mod.id === modId);
       try {
         if (!mod) {
@@ -75,6 +78,7 @@ export default defineComponent({
     }
 
     function isDependencyOfSelectedMod(modId: string): boolean {
+      if (config.value?.ignoreDependencies) return false;
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
         return mod?.dependencies?.includes(modId) ?? false;
@@ -82,6 +86,7 @@ export default defineComponent({
     }
 
     function isIncompatibleofSelectedMod(modId: string): boolean {
+      if (config.value?.ignoreIncompatible) return false;
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
         return mod?.incompatibles?.includes(modId) ?? false;
@@ -98,6 +103,12 @@ export default defineComponent({
       modsStore.deactivatePreset();
       selectedMods.value.splice(selectedMods.value.indexOf(modId), 1);
     }
+
+    onMounted(async () => {
+      config.value = await loadConfiguration();
+    });
+
+    onUnmounted(() => {});
 
     return {
       selectedMods,

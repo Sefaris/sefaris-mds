@@ -33,7 +33,7 @@ export async function createConfigWindow() {
 
   if (import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL !== undefined) {
     // Ładowanie URL z serwera deweloperskiego
-    await newWindow.loadURL(`${import.meta.env.VITE_DEV_SERVER_URL}#/config`);
+    await newWindow.loadURL(`${import.meta.env.VITE_DEV_SERVER_URL}#/option-list`);
   } else {
     await newWindow.loadFile(path.resolve(__dirname, '../../renderer/dist/index.html'), {
       hash: '/config',

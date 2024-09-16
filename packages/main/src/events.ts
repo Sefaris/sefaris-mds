@@ -57,6 +57,10 @@ export function addEvents() {
     windows['config']?.webContents.send('update-config-locale', code);
   });
 
+  ipcMain.on('change-config', () => {
+    windows['main']?.webContents.send('reload-config');
+  });
+
   ipcMain.handle('get-is-packaged', () => {
     return app.isPackaged;
   });

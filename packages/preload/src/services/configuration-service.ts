@@ -43,7 +43,15 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
 }
 
 export function isValidConfiguration(config: AppConfiguration) {
-  const requiredKeys = ['gothicPath', 'modsPath', 'language', 'installedMods', 'filesCreated'];
+  const requiredKeys = [
+    'gothicPath',
+    'modsPath',
+    'language',
+    'installedMods',
+    'filesCreated',
+    'ignoreDependencies',
+    'ignoreIncompatible',
+  ];
   const optionalKeys = ['preset'];
   const configKeys = Object.keys(config);
 
@@ -61,6 +69,8 @@ export function isValidConfiguration(config: AppConfiguration) {
   return (
     typeof config.gothicPath === 'string' &&
     typeof config.modsPath === 'string' &&
+    typeof config.ignoreDependencies === 'boolean' &&
+    typeof config.ignoreIncompatible === 'boolean' &&
     LANGUAGE_SETTINGS.find(item => item.code === config.language) &&
     Array.isArray(config.installedMods) &&
     Array.isArray(config.filesCreated) &&
