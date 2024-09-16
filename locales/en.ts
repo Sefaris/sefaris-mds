@@ -38,6 +38,7 @@ export default {
     configNotFound: 'Config not found or corrupted. Select Gothic 3 directory.',
     missingModsFromPreset: 'Missing mods from preset: ',
     checkLog: 'Something went wrong. Check app.log',
+    dependencyNotFound: 'Dependency not found:',
   },
   progress: {
     saveConfiguration: 'Saving configuration',

@@ -38,6 +38,7 @@ export default {
     configNotFound: 'Конфиг не найден или поврежден. Выберите каталог Gothic 3.',
     missingModsFromPreset: 'Отсутствие модов в пресетах: ',
     checkLog: 'Что-то пошло не так. Проверьте журнал app.log',
+    dependencyNotFound: 'Зависимости не найдены:',
   },
   progress: {
     saveConfiguration: 'Сохранение конфигурации',
