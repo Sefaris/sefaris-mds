@@ -16,11 +16,16 @@ export const useModsStore = defineStore('mods', () => {
   const presets = shallowRef<Preset[]>([]);
   const activePreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
-  const installationState = ref<InstallationState>('noConfig');
+  const installationState = ref<InstallationState>('ready');
+  const configExists = ref(false);
   const refreshKey = ref(0);
 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
+  }
+
+  function setConfigExists(value: boolean) {
+    configExists.value = value;
   }
 
   function incrementRefreshKey() {
@@ -118,6 +123,8 @@ export const useModsStore = defineStore('mods', () => {
     activePreset,
     installationState,
     refreshKey,
+    configExists,
+    setConfigExists,
     incrementRefreshKey,
     countModsInCategory,
     setSelectedMods,
