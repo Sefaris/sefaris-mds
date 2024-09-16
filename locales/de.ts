@@ -16,6 +16,10 @@ export default {
   main: {
     mods: {
       notFound: 'Mod wurde nicht gefunden!',
+      selectAll: 'Alle Mods auswählen. (Inkompatible Mods ignorieren)',
+      deselectAll: 'Alle Mods abwählen.',
+      openGameFolder: 'Spieleordner öffnen.',
+      openModsFolder: 'Mods-Ordner öffnen.',
     },
     preview: {
       default: 'Wähle eine Mod aus, um mehr darüber zu erfahren',
@@ -54,6 +58,18 @@ export default {
   },
   config: {
     inisNotFound: 'Keine Konfigurationsdateien gefunden.',
+    gothicPath: 'Gotischer-Pfad',
+    modsPath: 'Mods-Pfad',
+    ignoreDependencies: 'Abhängigkeiten ignorieren',
+    ignoreIncompatibles: 'Inkompatible Elemente ignorieren',
+    starter: 'Startereinstellungen',
+    description: {
+      gothicPath: 'Pfad zum Ordner mit dem installierten Gothic 3.',
+      modsPath: 'Pfad zum Ordner, der Mods enthält.',
+      ignoreDependencies:
+        'Deaktiviert die automatische Markierung von Mods, die als erforderlich markiert sind.',
+      ignoreIncompatibles: 'Ermöglicht die Installation definierter und inkompatibler Mods.',
+    },
     nav: {
       back: 'Zurück',
       save: 'Speichern',
