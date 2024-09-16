@@ -1,5 +1,8 @@
 <template>
-  <div class="flex h-126.5 justify-evenly pt-6">
+  <div
+    :key="refreshKey"
+    class="flex h-126.5 justify-evenly pt-6"
+  >
     <div class="flex w-91 flex-col overflow-y-auto">
       <no-mods v-if="!mods.length" />
       <mod-item
@@ -23,10 +26,13 @@ export default defineComponent({
   setup() {
     const modsStore = useModsStore();
     const mods = computed(() => modsStore.displayedMods);
+    const refreshKey = computed(() => modsStore.refreshKey);
 
     return {
       mods,
+      refreshKey,
     };
+
   },
 });
 </script>

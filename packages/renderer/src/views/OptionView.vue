@@ -4,29 +4,7 @@
       ref="configRecord"
       :config-name="configName"
     />
-    <div class="flex w-full justify-evenly border-t border-divider py-6">
-      <button
-        class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
-        @click="$router.back()"
-      >
-        <span
-          class="block transition-transform duration-150 ease-in-out active:translate-x-0.5 active:translate-y-0.5"
-        >
-          {{ $t('config.nav.back') }}
-        </span>
-      </button>
-
-      <button
-        class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
-        @click="saveConfig"
-      >
-        <span
-          class="block transition-transform duration-150 ease-in-out active:translate-x-0.5 active:translate-y-0.5"
-        >
-          {{ $t('config.nav.save') }}
-        </span>
-      </button>
-    </div>
+    <options-nav-buttons :save-method="saveConfig" />
   </div>
 </template>
 
@@ -36,9 +14,10 @@ import { useRoute } from 'vue-router';
 import IniConfigurationRecord from '../components/IniConfigurationRecord.vue';
 import { saveIniConfiguration } from '#preload';
 import type { ConfigRecord } from '@interfaces/ConfigRecord';
+import OptionsNavButtons from '../components/OptionsNavButtons.vue';
 
 export default defineComponent({
-  components: { IniConfigurationRecord },
+  components: { IniConfigurationRecord, OptionsNavButtons },
   setup() {
     const route = useRoute();
     const configName = ref<string>((route.params.ini as string) || '');
