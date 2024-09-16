@@ -38,6 +38,7 @@ export default {
     configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',
     missingModsFromPreset: 'Nie znaleziono modyfikacji z presetu: ',
     checkLog: 'Coś poszło nie tak. Sprawdź app.log',
+    dependencyNotFound: 'Nie znaleziono zależności:',
   },
   progress: {
     saveConfiguration: 'Zapisywanie konfiguracji',

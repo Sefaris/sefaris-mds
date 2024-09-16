@@ -11,6 +11,8 @@ export const Messages = {
   GAME_START_FAILED: 'Failed to start the game:',
   FILE_NOT_FOUND: '{{name}} not found!',
 
+  DEPENDENCY_NOT_FOUND: 'Dependency {{name}} not found!',
+  MOD_NOT_FOUND: 'Mod {{name}} not found!',
   MODS_INSTALLED: 'Mods succesfully installed in',
   MODS_DELETED: 'Mods succesfully deleted.',
   MOD_NO_README_LOCALE: 'No readme_{{locale}} for {{name}}',

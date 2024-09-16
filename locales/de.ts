@@ -40,6 +40,7 @@ export default {
       'Konfiguration konnte nicht gefunden werden oder ist beschädigt. Wähle das Gothic 3-Verzeichnis aus.',
     missingModsFromPreset: 'Fehlende Mods in der Voreinstellung: ',
     checkLog: 'Etwas is schief gelaufen. Überprüfe die app.log-Datei',
+    dependencyNotFound: 'Keine Abhängigkeiten gefunden:',
   },
   progress: {
     saveConfiguration: 'Speichere Konfiguration',

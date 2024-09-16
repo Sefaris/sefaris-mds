@@ -18,6 +18,9 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
+import { loggerWarn } from '#preload';
+import { getMessage } from '../../../../utils/messages';
+import { translate } from '../../../../plugins/i18n';
 export default defineComponent({
   props: {
     modId: {
@@ -39,15 +42,20 @@ export default defineComponent({
 
     function selectDependencies(modId: string) {
       const mod = mods.value.find(mod => mod.id === modId);
-      if (!mod) {
-        throw new Error(`Mod ${modId} not found`);
-      }
-      for (const dependency of mod.dependencies) {
-        const dependencyMod = mods.value.find(mod => mod.id === dependency);
-        if (!dependencyMod) {
-          throw new Error(`Dependency ${dependency} not found`);
+      try {
+        if (!mod) {
+          throw new Error(getMessage('MOD_NOT_FOUND', { name: modId }));
         }
-        selectMod(dependencyMod.id);
+        for (const dependency of mod.dependencies) {
+          const dependencyMod = mods.value.find(mod => mod.id === dependency);
+          if (!dependencyMod) {
+            alert(`${translate('alert.dependencyNotFound')} ${dependency}`);
+            throw new Error(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
+          }
+          selectMod(dependencyMod.id);
+        }
+      } catch (error) {
+        loggerWarn(error as string);
       }
     }
 
