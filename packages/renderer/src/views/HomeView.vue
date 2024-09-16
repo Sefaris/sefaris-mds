@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import NavBar from '../components/NavBar.vue';
 import MainSection from '../components/MainSection.vue';
 import FooterSection from '../components/FooterSection.vue';
@@ -21,19 +21,11 @@ import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
 import { translate } from '../../../../plugins/i18n';
 import { useModsStore } from '../stores/mods-store';
 import { getMessage } from '../../../../utils/messages';
-import type { InstallationState } from '../../../../types/InstallationState';
 export default defineComponent({
   components: { NavBar, MainSection, FooterSection },
   setup() {
     const modsStore = useModsStore();
-    const installationState = computed({
-      get() {
-        return modsStore.installationState;
-      },
-      set(state: InstallationState) {
-        modsStore.setInstallationState(state);
-      },
-    });
+
     onMounted(async () => {
       const config = await loadConfiguration();
       if (!config) {
@@ -51,11 +43,11 @@ export default defineComponent({
         };
         await saveConfiguration(config);
       }
+      modsStore.setConfigExists(true);
       await modsStore.reloadMods();
       await modsStore.loadInstalledMods();
       modsStore.loadCategories();
       await modsStore.loadPresets();
-      installationState.value = 'ready';
     });
 
     window.addEventListener('message', async event => {
@@ -64,9 +56,9 @@ export default defineComponent({
         await modsStore.loadInstalledMods();
         modsStore.loadCategories();
         await modsStore.loadPresets();
-        installationState.value = 'ready';
         modsStore.incrementRefreshKey();
         modsStore.setSelectedMod('');
+        modsStore.setConfigExists(true);
       }
     });
 

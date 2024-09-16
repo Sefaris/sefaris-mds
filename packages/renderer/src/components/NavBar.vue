@@ -12,7 +12,7 @@
         <change-locale />
         <nav-item
           title="options"
-          :disabled="installationState == 'noConfig'"
+          :disabled="!configExists"
           @click="openConfigWindow"
         />
         <nav-item
@@ -77,10 +77,13 @@ export default defineComponent({
     const categoriesExist = computed(() => modsStore.categories.length > 0);
     const presetsExist = computed(() => modsStore.presets.length > 0);
     const installationState = computed(() => modsStore.installationState);
+    const configExists = computed(() => modsStore.configExists);
 
     const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
     };
+
+    console.log(configExists.value);
 
     return {
       openWebsite,
@@ -90,6 +93,7 @@ export default defineComponent({
       categoriesExist,
       selectCategory,
       presetsExist,
+      configExists,
       SEFARIS_WEBSITE,
       installationState,
       openConfigWindow,

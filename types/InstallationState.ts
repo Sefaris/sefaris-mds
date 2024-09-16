@@ -1,1 +1,1 @@
-export type InstallationState = 'ready' | 'installation' | 'edit' | 'noConfig';
+export type InstallationState = 'ready' | 'installation' | 'edit';

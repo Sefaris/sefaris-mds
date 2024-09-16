@@ -36,7 +36,7 @@ export async function createConfigWindow() {
     await newWindow.loadURL(`${import.meta.env.VITE_DEV_SERVER_URL}#/option-list`);
   } else {
     await newWindow.loadFile(path.resolve(__dirname, '../../renderer/dist/index.html'), {
-      hash: '/config',
+      hash: '/option-list',
     });
   }
   windows['config'] = newWindow;
