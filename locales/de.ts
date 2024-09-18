@@ -26,6 +26,7 @@ export default {
       author: 'Author',
       authors: 'Authoren',
       noDescription: 'Für die Mod existiert noch keine Beschreibung.',
+      openModFolder: 'Mod-Ordner öffnen',
     },
   },
   action: {

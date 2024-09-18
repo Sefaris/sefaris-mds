@@ -54,13 +54,19 @@ export async function startGame() {
 export async function openGameFolder() {
   const configuration = await loadConfiguration();
   if (!configuration) return;
-  exec(`explorer ${configuration.gothicPath}`);
+  openFolder(configuration.gothicPath);
 }
 
 export async function openModsFolder() {
   const configuration = await loadConfiguration();
   if (!configuration) return;
-  exec(`explorer ${configuration.modsPath}`);
+  openFolder(configuration.modsPath);
+}
+
+export function openFolder(path?: string) {
+  if (!path) return;
+  if (!fs.existsSync(path)) return;
+  exec(`explorer ${path}`);
 }
 
 export function swapFileNames(filePath1: string, filePath2: string) {

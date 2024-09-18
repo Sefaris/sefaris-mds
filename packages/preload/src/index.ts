@@ -4,7 +4,7 @@
 
 export { selectGameFolder, selectFolder } from './services/configuration-service';
 
-export { openGameFolder, openModsFolder, startGame } from './services/file-service';
+export { openGameFolder, openModsFolder, openFolder, startGame } from './services/file-service';
 
 export { minimizeWindow, closeApplication } from './services/titlebar-service';
 

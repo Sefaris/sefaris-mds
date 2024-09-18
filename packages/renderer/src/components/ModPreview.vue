@@ -18,30 +18,42 @@
     v-else-if="mod"
     class="w-91"
   >
-    <div class="font-bold">{{ mod.title }}</div>
-    <div
-      v-if="mod.authors.length"
-      class="mb-2 border-b border-divider text-xs text-light"
-    >
-      <span
-        v-if="mod.authors.length > 1"
-        class="mr-2.5"
+    <div class="mb-2 flex justify-between border-b border-divider">
+      <div>
+        <div class="font-bold">{{ mod.title }}</div>
+        <div
+          v-if="mod.authors.length"
+          class="text-xs text-light"
+        >
+          <span
+            v-if="mod.authors.length > 1"
+            class="mr-2.5"
+          >
+            {{ $t('main.preview.authors') }}:
+          </span>
+          <span
+            v-else
+            class="mr-2.5"
+          >
+            {{ $t('main.preview.author') }}:
+          </span>
+          <span
+            v-for="(author, index) in mod.authors"
+            :key="index"
+            class="after:content-[',_'] last:after:content-['']"
+          >
+            {{ author }}
+          </span>
+        </div>
+      </div>
+
+      <button-tooltip
+        class="mr-2 text-primary"
+        icon="mdi-folder-outline"
+        @click="openFolder(mod.path)"
       >
-        {{ $t('main.preview.authors') }}:
-      </span>
-      <span
-        v-else
-        class="mr-2.5"
-      >
-        {{ $t('main.preview.author') }}:
-      </span>
-      <span
-        v-for="(author, index) in mod.authors"
-        :key="index"
-        class="after:content-[',_'] last:after:content-['']"
-      >
-        {{ author }}
-      </span>
+        {{ $t('main.preview.openModFolder') }}
+      </button-tooltip>
     </div>
     <div class="h-105 overflow-y-auto">
       <img
@@ -55,12 +67,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
-import { loadModDescription, loadImages, loadMods } from '#preload';
+import { loadModDescription, loadImages, loadMods, openFolder } from '#preload';
 import { i18n, translate } from '../../../../plugins/i18n';
 import type { Mod } from '../../../../interfaces/Mod';
 import { useModsStore } from '../stores/mods-store';
+import ButtonTooltip from './ButtonTooltip.vue';
 
 export default defineComponent({
+  components: { ButtonTooltip },
   setup() {
     const modsStore = useModsStore();
     const description = shallowRef<string>('');
@@ -110,6 +124,7 @@ export default defineComponent({
       description,
       mod,
       selectedMod,
+      openFolder,
     };
   },
 });

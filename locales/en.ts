@@ -26,6 +26,7 @@ export default {
       author: 'Author',
       authors: 'Authors',
       noDescription: 'No description for this mod.',
+      openModFolder: 'Open mod folder',
     },
   },
   action: {
