@@ -13,7 +13,7 @@
       v-if="visible"
       ref="floatingElement"
       :style="tooltipStyles"
-      class="flex w-max flex-col rounded-2xl border-2 border-solid border-divider bg-primary-bg p-2 text-white"
+      class="z-20 flex w-max flex-col rounded-2xl border-2 border-solid border-divider bg-primary-bg p-2 text-white"
     >
       <slot />
     </div>

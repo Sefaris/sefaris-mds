@@ -26,6 +26,7 @@ export default {
       author: 'Автор',
       authors: 'Авторы',
       noDescription: 'Описание для этого мода отсутствует.',
+      openModFolder: 'Открыть папку мода',
     },
   },
   action: {

@@ -26,6 +26,7 @@ export default {
       author: 'Autor',
       authors: 'Autorzy',
       noDescription: 'Brak opisu dla tej modyfikacji.',
+      openModFolder: 'Otwórz folder modyfikacji',
     },
   },
   action: {
