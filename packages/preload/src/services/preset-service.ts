@@ -20,10 +20,6 @@ export async function savePreset(modIds: string[], name: string) {
     throw new Error(getMessage('PRESET_EMPTY_NAME'));
   }
 
-  const existingPresetNames = (await getAllPresets()).map(preset => preset.name);
-  if (existingPresetNames.includes(name))
-    throw new Error(getMessage('PRESET_ALREADY_EXISTS', { name: name }));
-
   ensureDirectory(presetsDirPath);
   ensureDirectory(presetPath);
 
