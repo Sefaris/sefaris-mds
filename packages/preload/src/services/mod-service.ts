@@ -3,6 +3,7 @@ import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
+import { colorPlugin } from 'markdown-it-color-plus';
 import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
 import { loggerError, loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
@@ -62,7 +63,11 @@ export function validateMod(modPath: string): Mod | null {
 }
 
 export async function loadModDescription(modPath: string): Promise<string | null> {
-  const md = new MarkdownIt();
+  const md = new MarkdownIt({
+    breaks: true,
+  }).use(colorPlugin, {
+    inline: true,
+  });
   const config = await loadConfiguration();
   const locale = config?.language || DEFAULT_LANGUAGE;
 

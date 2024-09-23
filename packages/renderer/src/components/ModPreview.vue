@@ -18,7 +18,7 @@
     v-else-if="mod"
     class="w-91"
   >
-    <div class="mb-2 flex justify-between border-b border-divider">
+    <div class="mb-2 flex items-center justify-between border-b border-divider">
       <div>
         <div class="font-bold">{{ mod.title }}</div>
         <div
@@ -60,7 +60,10 @@
         class="mb-2.5 w-full"
         :src="imgSource"
       />
-      <div v-html="description" />
+      <div
+        class="description"
+        v-html="description"
+      />
     </div>
   </div>
 </template>
@@ -129,3 +132,69 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.description {
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 36px;
+  }
+
+  h3 {
+    font-size: 32px;
+  }
+
+  h4 {
+    font-size: 28px;
+  }
+
+  h5 {
+    font-size: 24px;
+  }
+
+  h6 {
+    font-size: 20px;
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 16px;
+    list-style-type: decimal;
+    li::marker {
+      color: #c7f148;
+    }
+  }
+
+  ul {
+    margin: 0;
+
+    li {
+      &:before {
+        color: #c7f148;
+        content: '\F0374'; // minus
+        font-family: 'Material Design Icons';
+        margin-right: 2px;
+      }
+
+      ul {
+        padding-left: 15px;
+        li {
+          &:before {
+            content: '\F0415'; // plus
+          }
+          ul {
+            li {
+              &:before {
+                content: '\F0374'; // minus
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>

@@ -8,7 +8,7 @@ import type { OptionType } from '../../../../types/OptionType';
 import { UTF8 } from '../../../../utils/constants';
 import { loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
-
+import he from 'he';
 export function parseConfig(configText: string, name: string): ConfigSection[] {
   const lines = configText.split('\n');
   const configSections: ConfigSection[] = [];
@@ -37,8 +37,9 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             }),
           );
         }
-
-        const descriptionLine = lines[i + 1].replace(/^\s*;\s*/, '').trim() || '';
+        // secure from xss attack
+        const descriptionLine =
+          he.escape(lines[i + 1].replace(/^\s*;\s*/, '').trim()).replace(/\\n/g, '<br>') || '';
         const typeLine = lines[i + 2].replace(/^\s*;\s*/, '').trim() || '';
         let optionalLine: string = '';
         // dont throw error for optional line
