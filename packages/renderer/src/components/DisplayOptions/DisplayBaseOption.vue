@@ -1,8 +1,11 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="mx-20 mt-3 flex select-none items-center justify-between">
     <config-tooltip :name="$props.option.name">
-      <span class="max-w-100">
-        {{ $props.option.description }}
+      <span
+        class="max-w-100"
+        v-html="$props.option.description"
+      >
       </span>
       <span> {{ $t('tooltip.default') }}: {{ $props.option.defaultValue }} </span>
     </config-tooltip>
