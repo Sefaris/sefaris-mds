@@ -61,6 +61,7 @@ export default {
     default: 'Standard',
   },
   modal: {
+    preset: 'Voreinstellung',
     save: 'Speichern',
     close: 'Schließen',
     presetName: 'Speichere Voreinstellung als ',
