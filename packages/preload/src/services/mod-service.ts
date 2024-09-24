@@ -3,11 +3,14 @@ import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
-import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
+import {
+  DEFAULT_LANGUAGE,
+  IMAGES_DIRECTORY,
+  README_DIRECTORY,
+  UTF8,
+} from '../../../../utils/constants';
 import { loggerError, loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
-
-const UTF8 = 'utf8';
 
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();
@@ -66,7 +69,7 @@ export async function loadModDescription(modPath: string): Promise<string | null
   const config = await loadConfiguration();
   const locale = config?.language || DEFAULT_LANGUAGE;
 
-  const file = path.join(modPath, 'readme', `readme_${locale}.md`);
+  const file = path.join(modPath, README_DIRECTORY, `readme_${locale}.md`);
   if (!fs.existsSync(file)) {
     loggerWarn(getMessage('MOD_NO_README_LOCALE', { name: path.basename(modPath), locale }));
     return null;
@@ -75,7 +78,7 @@ export async function loadModDescription(modPath: string): Promise<string | null
 }
 
 export function loadImages(modPath: string): string[] {
-  const imagesPath = path.join(modPath, 'images');
+  const imagesPath = path.join(modPath, IMAGES_DIRECTORY);
   if (!fs.existsSync(imagesPath)) return [];
   const files = fs.readdirSync(imagesPath);
   const imageFiles = files.filter(file => {
