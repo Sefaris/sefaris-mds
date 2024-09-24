@@ -21,6 +21,7 @@ export async function createConfigWindow() {
       contextIsolation: true,
       sandbox: false,
       preload: path.join(app.getAppPath(), 'packages/preload/dist/index.cjs'),
+      devTools: import.meta.env.DEV ? true : false,
     },
     autoHideMenuBar: true,
   });
