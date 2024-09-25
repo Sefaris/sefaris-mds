@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isVisible"
-    class="fixed left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col rounded-md border-2 border-solid border-divider bg-primary-bg"
+    class="modal-border fixed left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col rounded-md bg-modal"
   >
     <div class="my-1 border-b border-divider px-1">
       {{ $props.title }}
@@ -26,3 +26,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.modal-border {
+  border-image: url('@assets/images/option-button.png') 20;
+  border-width: 20px;
+}
+</style>
