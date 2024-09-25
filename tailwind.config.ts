@@ -17,6 +17,7 @@ export default {
         'menu-hover': '#ffebdc',
         slider: '#312e2c',
         close: '#b92a20',
+        modal: '#000305',
       },
       lineHeight: {
         3: '12px',
