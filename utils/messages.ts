@@ -11,6 +11,8 @@ export const Messages = {
   GAME_START_FAILED: 'Failed to start the game:',
   FILE_NOT_FOUND: '{{name}} not found!',
 
+  DEPENDENCY_NOT_FOUND: 'Dependency {{name}} not found!',
+  MOD_NOT_FOUND: 'Mod {{name}} not found!',
   MODS_INSTALLED: 'Mods succesfully installed in',
   MOD_NO_README_LOCALE: 'No readme_{{locale}} for {{name}}',
   INI_MISSING_DESC_TYPE: 'Expected description and type in {{name}}:Lines:{{beg}}-{{end}}!',
@@ -71,7 +73,7 @@ export const Messages = {
   DIRECTORY_CREATED: 'Directory created.',
 };
 
-type MessageKey = keyof typeof Messages;
+export type MessageKey = keyof typeof Messages;
 
 export function getMessage(messageKey: MessageKey, variables?: Record<string, string>) {
   let message = Messages[messageKey];
