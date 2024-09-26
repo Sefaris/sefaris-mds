@@ -1,7 +1,7 @@
 <template>
   <app-modal
     :is-visible="$props.isVisible"
-    title="Preset"
+    :title="$t('modal.preset')"
   >
     <div class="m-2 flex flex-col gap-2">
       <span>
@@ -42,7 +42,7 @@ export default defineComponent({
   props: {
     isVisible: {
       type: Boolean,
-      required: true,
+      default: false,
     },
   },
   emits: ['close'],
