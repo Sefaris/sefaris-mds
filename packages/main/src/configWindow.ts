@@ -4,7 +4,7 @@ import { getWindows } from './mainWindow';
 
 export async function createConfigWindow() {
   const windows = getWindows();
-  if (windows['config']) {
+  if (windows['config'] && !windows['config'].isDestroyed()) {
     windows['config'].restore();
     windows['config'].focus();
     return;
