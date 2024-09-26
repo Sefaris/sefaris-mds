@@ -1,4 +1,4 @@
-import { expect, test, vi, beforeEach, describe } from 'vitest';
+import { expect, test, vi, beforeEach, describe, beforeAll, afterAll } from 'vitest';
 import {
   isValidConfiguration,
   isGothicPathValid,
@@ -19,12 +19,22 @@ vi.mock('fs', async () => {
   };
 });
 
-global.alert = vi.fn();
-
 const baseDir = path.resolve();
 
 beforeEach(() => {
   vol.reset();
+});
+
+beforeAll(() => {
+  global.alert = vi.fn();
+
+  vi.mock('../../packages/preload/src/services/alert-service', async () => ({
+    showAlert: vi.fn(),
+  }));
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
 });
 
 describe('isValidConfiguration', () => {
@@ -208,7 +218,7 @@ describe('loadConfiguration', () => {
     vol.fromJSON({
       [baseDir]: '',
     });
-    await expect(loadConfiguration()).resolves.toBeNull();
+    await expect(loadConfiguration()).rejects.toThrowError();
   });
 });
 

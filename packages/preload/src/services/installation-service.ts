@@ -6,7 +6,7 @@ import type { Mod } from '../../../../interfaces/Mod';
 import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 
 import { buildPackage, extract, findStrings } from './pak-service';
-
+import { InstallationError } from '../../../../Errors/InstallationError';
 import {
   copyFiles,
   ensureDirectory,
@@ -23,6 +23,7 @@ import { UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
+import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
@@ -46,7 +47,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
   return new Promise((resolve, reject) => {
     (async () => {
       const configuration = await loadConfiguration();
-      if (!configuration) throw new Error(getMessage('CONFIG_NOT_FOUND'));
+      if (!configuration) throw new InstallationError(getMessage('CONFIG_NOT_FOUND'));
       const filesDictionary = prepareFilesDictionary();
       const scriptFiles: string[] = [];
       const iniFiles: string[] = [];
@@ -58,7 +59,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
       const mods = allMods.filter(mod => modIds.includes(mod.id));
 
       try {
-        if (!modIds.length) throw new Error(getMessage('NO_MODS_SELECTED'));
+        if (!modIds.length) throw new InstallationError(getMessage('NO_MODS_SELECTED'));
         const startTime = performance.now();
         loggerInfo(getMessage('INSTALLATION_START', { num: modIds.length.toString() }));
         loggerInfo(getMessage('INSTALLATION_MOD_LIST', { mods: modIds.join(', ') }));
@@ -70,7 +71,8 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           await moveShader(preset);
         }
 
-        if (!fs.existsSync(dataPath)) throw new Error(getMessage('DATA_DIR_DOESNT_EXIST'));
+        if (!fs.existsSync(dataPath))
+          throw new InstallationError(getMessage('DATA_DIR_DOESNT_EXIST'));
 
         for (let i = 0; i < mods.length; i++) {
           updateProgressBar('progress.searchMods', i, mods.length);
@@ -170,7 +172,7 @@ async function copyScriptsFiles(
 
 export async function deleteMods(): Promise<void> {
   const configuration = await loadConfiguration();
-  if (!configuration) throw new Error(getMessage('MISSING_CONFIGURATION'));
+  if (!configuration) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   const filesCount = configuration.filesCreated.length;
 
   if (!filesCount) return;
@@ -258,8 +260,8 @@ export async function mergeStringTables(
 
 export async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles: string[]) {
   const wrldataPath = path.join(STATIC_FILES_PATH, WRLDATASC);
-  if (!mods.length) throw new Error('No mods selected');
-  if (!fs.existsSync(wrldataPath)) throw new Error('No wrldatasc file');
+  if (!mods.length) throw new InstallationError('No mods selected');
+  if (!fs.existsSync(wrldataPath)) throw new InstallationError('No wrldatasc file');
   const outputFileName = await getFreeFileName(gothicDataPath, 'projects_compiled', 'mod');
   const outputFilePath = path.join(gothicDataPath, outputFileName);
   const lastExistingFileName = await getLastExistingFileName(

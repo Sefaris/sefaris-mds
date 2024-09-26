@@ -43,7 +43,7 @@ export default defineComponent({
   props: {
     isVisible: {
       type: Boolean,
-      required: true,
+      default: false,
     },
   },
   emits: ['close'],

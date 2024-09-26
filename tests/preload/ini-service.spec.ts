@@ -807,7 +807,7 @@ AutoLootIconPosTopX=98.500000
     await expect(saveIniConfiguration(input, 'eCDELocator.ini')).rejects.toThrowError();
   });
 
-  test('saves ini overwriting all supported types', async () => {
+  test('throws error not try to save no data', async () => {
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
