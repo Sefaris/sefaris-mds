@@ -1,4 +1,4 @@
-import { BrowserWindow, app, dialog, ipcMain } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain, Notification } from 'electron';
 import { translate } from '../../../plugins/i18n';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -78,4 +78,15 @@ export function addEvents() {
   ipcMain.handle('get-is-packaged', () => {
     return app.isPackaged;
   });
+
+  ipcMain.on(
+    'show-notification',
+    (_, notification: { window: 'config' | 'main'; title: string; body: string }) => {
+      windows[notification.window]?.flashFrame(true);
+      new Notification({
+        title: notification.title,
+        body: notification.body,
+      }).show();
+    },
+  );
 }

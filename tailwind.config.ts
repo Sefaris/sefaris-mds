@@ -18,6 +18,9 @@ export default {
         slider: '#312e2c',
         close: '#b92a20',
         modal: '#000305',
+        info: '#66c0f4',
+        error: '#ff3333',
+        warning: '#ffcc00 ',
       },
       lineHeight: {
         3: '12px',
@@ -115,6 +118,7 @@ export default {
       150: '600px',
       174.5: '698px',
       182: '728px',
+      190: '760px',
       200: '800px',
     },
   },

@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import { showAlert } from './alert-service';
 
 const configurationFile = 'config.json';
 
@@ -29,7 +30,7 @@ export async function saveConfiguration(config: AppConfiguration) {
     loggerInfo(getMessage('CONFIGURATION_SAVED'));
   } catch (error) {
     loggerError(error as string);
-    alert(error);
+    showAlert('modal.error', error as string);
   }
 }
 

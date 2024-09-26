@@ -38,3 +38,5 @@ export {
   loggerDebug,
   loggerSilly,
 } from './services/logger-service';
+
+export { showAlert, showNotification } from './services/alert-service';

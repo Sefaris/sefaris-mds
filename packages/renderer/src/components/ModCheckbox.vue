@@ -18,7 +18,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import { loadConfiguration, loggerWarn } from '#preload';
+import { loadConfiguration, loggerWarn, showAlert } from '#preload';
 import { getMessage } from '../../../../utils/messages';
 import { translate } from '../../../../plugins/i18n';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
@@ -52,7 +52,11 @@ export default defineComponent({
         for (const dependency of mod.dependencies) {
           const dependencyMod = mods.value.find(mod => mod.id === dependency);
           if (!dependencyMod) {
-            alert(`${translate('alert.dependencyNotFound')} ${dependency}`);
+            showAlert(
+              'modal.error',
+              `${translate('alert.dependencyNotFound')} ${dependency}`,
+              'error',
+            );
             throw new Error(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
           }
           selectMod(dependencyMod.id);

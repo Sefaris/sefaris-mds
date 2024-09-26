@@ -15,12 +15,13 @@ import {
   closeApplication,
   saveConfiguration,
   loggerError,
+  showAlert,
 } from '#preload';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
-import { translate } from '../../../../plugins/i18n';
 import { useModsStore } from '../stores/mods-store';
 import { getMessage } from '../../../../utils/messages';
+import { translate } from '../../../../plugins/i18n';
 export default defineComponent({
   components: { NavBar, MainSection, FooterSection },
   setup() {
@@ -29,7 +30,7 @@ export default defineComponent({
     onMounted(async () => {
       const config = await loadConfiguration();
       if (!config) {
-        alert(`${translate('alert.configNotFound')}`);
+        showAlert('modal.error', translate('alert.configNotFound'), 'error');
         loggerError(getMessage('CONFIG_NOT_FOUND'));
         const gamePath = await selectGameFolder();
         if (!gamePath) closeApplication();
