@@ -29,7 +29,7 @@ export default defineComponent({
   props: {
     isVisible: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     title: {
       type: String,

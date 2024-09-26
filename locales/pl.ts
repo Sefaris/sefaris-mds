@@ -83,6 +83,7 @@ export default {
     default: 'Domyślne',
   },
   modal: {
+    preset: 'Preset',
     save: 'Zapisz',
     close: 'Zamknij',
     presetName: 'Zapisz preset jako',

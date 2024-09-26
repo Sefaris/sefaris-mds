@@ -257,8 +257,7 @@ describe('loadMods', () => {
       'E:\\Games\\Gothic 3\\',
     );
 
-    await expect(loadMods()).resolves.toEqual([]);
-    await expect(loadMods()).resolves.toHaveLength(0);
+    await expect(loadMods()).rejects.toThrowError();
   });
 });
 

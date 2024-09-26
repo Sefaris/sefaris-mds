@@ -18,10 +18,11 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import { loadConfiguration, loggerWarn, showAlert } from '#preload';
+import { loadConfiguration, loggerWarn, showAlert, loggerError } from '#preload';
 import { getMessage } from '../../../../utils/messages';
 import { translate } from '../../../../plugins/i18n';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import { NotFoundError } from '../../../../Errors/NotFoundError';
 export default defineComponent({
   props: {
     modId: {
@@ -47,7 +48,7 @@ export default defineComponent({
       const mod = mods.value.find(mod => mod.id === modId);
       try {
         if (!mod) {
-          throw new Error(getMessage('MOD_NOT_FOUND', { name: modId }));
+          throw new NotFoundError(getMessage('MOD_NOT_FOUND', { name: modId }));
         }
         for (const dependency of mod.dependencies) {
           const dependencyMod = mods.value.find(mod => mod.id === dependency);
@@ -57,7 +58,7 @@ export default defineComponent({
               `${translate('alert.dependencyNotFound')} ${dependency}`,
               'error',
             );
-            throw new Error(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
+            throw new NotFoundError(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
           }
           selectMod(dependencyMod.id);
         }
@@ -67,18 +68,23 @@ export default defineComponent({
     }
 
     function selectMod(modId: string) {
-      if (isIncompatibleofSelectedMod(modId)) {
-        return;
+      try {
+        if (isIncompatibleofSelectedMod(modId)) {
+          return;
+        }
+        if (!selectedMods.value.includes(modId)) {
+          selectedMods.value.push(modId);
+        }
+        const mod = mods.value.find(mod => mod.id === modId);
+        modsStore.deactivatePreset();
+        if (!mod?.dependencies.length) {
+          return;
+        }
+
+        selectDependencies(modId);
+      } catch (error) {
+        loggerError(error as string);
       }
-      if (!selectedMods.value.includes(modId)) {
-        selectedMods.value.push(modId);
-      }
-      const mod = mods.value.find(mod => mod.id === modId);
-      modsStore.deactivatePreset();
-      if (!mod?.dependencies.length) {
-        return;
-      }
-      selectDependencies(modId);
     }
 
     function isDependencyOfSelectedMod(modId: string): boolean {
