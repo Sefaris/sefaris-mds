@@ -18,6 +18,7 @@ import type { PropType } from 'vue';
 import { defineComponent, onUnmounted, ref, toRef } from 'vue';
 import type { ConfigOption } from '@interfaces/ConfigOption';
 import DisplayBaseOption from './DisplayBaseOption.vue';
+import { GOTHIC_KEYS, KEY_MAP } from '../../../../../utils/constants';
 
 export default defineComponent({
   components: { DisplayBaseOption },
@@ -33,9 +34,14 @@ export default defineComponent({
     const isListening = ref(false);
 
     const handleKeydown = (event: KeyboardEvent) => {
-      isListening.value = false;
-      setting.value.value = event.key.toUpperCase();
-      window.removeEventListener('keydown', handleKeydown);
+      const key = event.key.toUpperCase();
+      const mappedKey = KEY_MAP[event.code] || key;
+
+      if (GOTHIC_KEYS.includes(mappedKey)) {
+        isListening.value = false;
+        setting.value.value = mappedKey;
+        window.removeEventListener('keydown', handleKeydown);
+      }
     };
 
     const onRebind = () => {
