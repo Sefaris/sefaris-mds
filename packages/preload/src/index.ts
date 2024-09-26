@@ -28,3 +28,13 @@ export {
   saveIniConfiguration,
   validateIniFile,
 } from './services/ini-service';
+
+export {
+  loggerInfo,
+  loggerError,
+  loggerWarn,
+  loggerHttp,
+  loggerVerbose,
+  loggerDebug,
+  loggerSilly,
+} from './services/logger-service';

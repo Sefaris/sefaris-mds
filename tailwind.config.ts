@@ -1,10 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    // Example content paths...
-    './packages/renderer/**/*.html',
-    './packages/renderer/**/*.{js,jsx,ts,tsx,vue}',
-  ],
+import type { Config } from 'tailwindcss';
+
+export default {
+  content: ['./packages/renderer/**/*.html', './packages/renderer/**/*.{js,jsx,ts,tsx,vue}'],
   theme: {
     extend: {
       colors: {
@@ -19,6 +16,7 @@ module.exports = {
         menu: '#e0c495',
         'menu-hover': '#ffebdc',
         slider: '#312e2c',
+        close: '#b92a20',
       },
       lineHeight: {
         3: '12px',
@@ -31,10 +29,11 @@ module.exports = {
         10: '40px',
       },
       backgroundImage: {
-        play: "url('/packages/renderer/assets/images/play.png')",
-        install: "url('/packages/renderer/assets/images/install.png')",
-        'checkbox-inactive': "url('../../../assets/images/checkbox-inactive.png')",
-        'checkbox-active': "url('../../../assets/images/checkbox-active.png')",
+        play: "url('@assets/images/play.png')",
+        install: "url('@assets/images/install.png')",
+        'checkbox-inactive': "url('@assets/images/checkbox-inactive.png')",
+        'checkbox-active': "url('@assets/images/checkbox-active.png')",
+        'option-button': "url('@assets/images/option-button.png')",
       },
       fontFamily: {
         lato: ['Lato', 'sans-serif'],
@@ -122,4 +121,4 @@ module.exports = {
     extend: {},
   },
   plugins: [require('tailwind-scrollbar')],
-};
+} satisfies Config;

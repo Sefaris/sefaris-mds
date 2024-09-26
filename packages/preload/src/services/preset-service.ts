@@ -3,6 +3,8 @@ import path from 'path';
 import * as fs from 'fs';
 import type { Preset } from '../../../../interfaces/Preset';
 import { UTF8 } from '../../../../utils/constants';
+import { loggerError } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
 const PRESET_JSON = 'preset.json';
 
 const PRESETS_PATH = path.resolve('Presets');
@@ -13,9 +15,15 @@ export async function getAllPresets(): Promise<Preset[]> {
   const presetsDirs = fs.readdirSync(PRESETS_PATH);
   presetsDirs.forEach(dir => {
     const jsonPath = path.join(PRESETS_PATH, dir, PRESET_JSON);
-    if (!fs.existsSync(jsonPath)) return;
+    if (!fs.existsSync(jsonPath)) {
+      loggerError(getMessage('PRESET_MISSING_JSON', { name: dir }));
+      return;
+    }
     const preset: Preset = JSON.parse(fs.readFileSync(jsonPath, UTF8));
-    if (!isPresetValid(preset)) return;
+    if (!isPresetValid(preset)) {
+      loggerError(getMessage('PRESET_INVALID', { name: dir }));
+      return;
+    }
     presets.push(preset);
   });
   return presets;

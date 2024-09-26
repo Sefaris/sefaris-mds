@@ -7,7 +7,7 @@
       {{ $t('action.cancel') }}
     </button>
     <button
-      class="mr-6 h-15 w-78.75 bg-[url('../../assets/images/install.png')]"
+      class="mr-6 h-15 w-78.75 bg-install"
       @click="startInstallation()"
     >
       <span class="font-gothic text-3xl">{{ $t('action.install') }}</span>
@@ -16,11 +16,12 @@
 </template>
 
 <script lang="ts">
-import { installMods } from '#preload';
+import { installMods, loggerError, loggerInfo } from '#preload';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import { translate } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
+import { getMessage } from '../../../../utils/messages';
 
 export default defineComponent({
   setup() {
@@ -55,13 +56,13 @@ export default defineComponent({
       installMods(JSON.parse(JSON.stringify(selectedMods.value)), activePreset.value)
         .then(time => {
           alert(`${translate('alert.installed')} ${time}s`);
+          loggerInfo(`${getMessage('MODS_INSTALLED')} ${time}s`);
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installationState.value = 'ready';
         })
-        .catch(err => {
-          installedMods.value = [];
+        .catch(error => {
           installationState.value = 'edit';
-          console.error(err);
+          loggerError(error);
         });
     };
     const cancelChanges = () => {

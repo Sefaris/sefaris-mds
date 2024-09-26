@@ -6,7 +6,7 @@
     />
     <div class="flex w-full justify-evenly border-t border-divider py-6">
       <button
-        class="h-12 w-45 bg-[url('../assets/images/option-button.png')] bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
+        class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
         @click="$router.back()"
       >
         <span
@@ -17,7 +17,7 @@
       </button>
 
       <button
-        class="h-12 w-45 bg-[url('../assets/images/option-button.png')] bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
+        class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
         @click="saveConfig"
       >
         <span
