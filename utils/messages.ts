@@ -78,7 +78,7 @@ export const Messages = {
   DIRECTORY_CREATED: 'Directory created.',
 };
 
-type MessageKey = keyof typeof Messages;
+export type MessageKey = keyof typeof Messages;
 
 export function getMessage(messageKey: MessageKey, variables?: Record<string, string>) {
   let message = Messages[messageKey];

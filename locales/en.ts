@@ -82,6 +82,7 @@ export default {
     default: 'Default',
   },
   modal: {
+    preset: 'Preset',
     save: 'Save',
     close: 'Close',
     presetName: 'Save preset as',

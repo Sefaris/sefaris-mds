@@ -208,7 +208,7 @@ describe('loadConfiguration', () => {
     vol.fromJSON({
       [baseDir]: '',
     });
-    await expect(loadConfiguration()).resolves.toBeNull();
+    await expect(loadConfiguration()).rejects.toThrowError();
   });
 });
 
