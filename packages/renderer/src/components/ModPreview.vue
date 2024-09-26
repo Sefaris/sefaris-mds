@@ -71,14 +71,16 @@ export default defineComponent({
     const mod = shallowRef<Mod>();
     const selectedMod = computed(() => modsStore.selectedMod);
 
-    watch([() => selectedMod.value, () => i18n.global.locale.value], async ([newMod, _]) => {
+    watch([selectedMod, i18n.global.locale], async ([newMod, _]) => {
       mod.value = (await loadMods()).find(mod => mod.id === newMod);
       if (!mod.value) {
         return;
       }
-
+      const loadedDescription = await loadModDescription(mod.value.path);
       description.value =
-        (await loadModDescription(mod.value.path)) ?? translate('main.preview.noDescription');
+        loadedDescription && loadedDescription.length
+          ? loadedDescription
+          : translate('main.preview.noDescription');
       gallery.value = loadImages(mod.value.path);
       imgSource.value = gallery.value[0];
       currentImageIndex.value = 0;

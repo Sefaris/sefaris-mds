@@ -7,7 +7,7 @@ import type { ConfigSection } from '../../../../interfaces/ConfigSection';
 import type { OptionType } from '../../../../types/OptionType';
 import { UTF8 } from '../../../../utils/constants';
 import { ConversionError } from '../../../../Errors/ConversionError';
-import { loggerError } from './logger-service';
+import { loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 import { NotFoundError } from '../../../../Errors/NotFoundError';
@@ -177,7 +177,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
         });
       }
     } catch (err) {
-      loggerError(err as string);
+      loggerWarn(err as string);
     }
   }
 

@@ -112,7 +112,7 @@ describe('loadModDescription', () => {
       {
         'Gothic3.exe': '',
         'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
-        'mods\\A_QuestPaket\\readme_pl.md': 'test content for readme file',
+        'mods\\A_QuestPaket\\readme\\readme_pl.md': 'test content for readme file',
         [path.join(baseDir, 'config.json')]: JSON.stringify({
           gothicPath: 'E:\\Games\\Gothic 3',
           modsPath: 'E:\\Games\\Gothic 3\\mods',
@@ -274,9 +274,9 @@ describe('loadImages', () => {
           filesCreated: [],
         }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
-        'mods\\QuestPaket\\Pictures\\back.png': '123',
-        'mods\\QuestPaket\\Pictures\\back.jpg': '1223',
-        'mods\\QuestPaket\\Pictures\\back.jpeg': '523',
+        'mods\\QuestPaket\\images\\back.png': '123',
+        'mods\\QuestPaket\\images\\back.jpg': '1223',
+        'mods\\QuestPaket\\images\\back.jpeg': '523',
       },
       'E:\\Games\\Gothic 3\\',
     );
@@ -304,7 +304,7 @@ describe('loadImages', () => {
           filesCreated: [],
         }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
-        'mods\\QuestPaket\\Pictures\\back.gif': '123',
+        'mods\\QuestPaket\\images\\back.gif': '123',
       },
       'E:\\Games\\Gothic 3\\',
     );

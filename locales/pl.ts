@@ -34,6 +34,7 @@ export default {
     presetNotFound: 'Nie znaleziono presetu: ',
     configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',
     missingModsFromPreset: 'Nie znaleziono modyfikacji z presetu: ',
+    checkLog: 'Coś poszło nie tak. Sprawdź app.log',
   },
   progress: {
     saveConfiguration: 'Zapisywanie konfiguracji',
@@ -57,5 +58,11 @@ export default {
   },
   tooltip: {
     default: 'Domyślne',
+  },
+  modal: {
+    preset: 'Preset',
+    save: 'Zapisz',
+    close: 'Zamknij',
+    presetName: 'Zapisz preset jako',
   },
 };
