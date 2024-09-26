@@ -2,7 +2,14 @@ import type { Mod } from '../../../../interfaces/Mod';
 import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
-import { getAllPresets, loadConfiguration, loadMods, loggerInfo, loggerWarn } from '#preload';
+import {
+  getAllPresets,
+  loadConfiguration,
+  loadMods,
+  loggerInfo,
+  loggerWarn,
+  showAlert,
+} from '#preload';
 import { translate } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { getMessage } from '../../../../utils/messages';
@@ -49,7 +56,11 @@ export const useModsStore = defineStore('mods', () => {
     const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
 
     if (missingMods.length > 0) {
-      alert(`${translate('alert.missingModsFromPreset')} ${missingMods.join(', ')}`);
+      showAlert(
+        'alert.warning',
+        `${translate('alert.missingModsFromPreset')} ${missingMods.join(', ')}`,
+        'warning',
+      );
       loggerWarn(`${getMessage('MISSING_MODS_FROM_PRESET')} ${missingMods.join(', ')}`);
     }
     loggerInfo(`${getMessage('PRESET_LOADED', { name: preset })}`);

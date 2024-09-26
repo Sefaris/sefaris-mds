@@ -24,7 +24,14 @@
 </template>
 
 <script lang="ts">
-import { deleteMods, installMods, loggerError, loggerInfo } from '#preload';
+import {
+  deleteMods,
+  installMods,
+  loggerError,
+  loggerInfo,
+  showAlert,
+  showNotification,
+} from '#preload';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import { translate } from '../../../../plugins/i18n';
@@ -63,7 +70,12 @@ export default defineComponent({
       installationState.value = 'installation';
       installMods(JSON.parse(JSON.stringify(selectedMods.value)), activePreset.value)
         .then(time => {
-          alert(`${translate('alert.installed')} ${time}s`);
+          showAlert('modal.info', `${translate('alert.installed')} ${time}s`, 'info');
+          showNotification({
+            window: 'main',
+            title: translate('modal.info'),
+            body: `${translate('alert.installed')} ${time}s`,
+          });
           loggerInfo(`${getMessage('MODS_INSTALLED')} ${time}s`);
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installationState.value = 'ready';
@@ -77,7 +89,7 @@ export default defineComponent({
     const startDeletion = async () => {
       deleteMods()
         .then(() => {
-          alert(translate('alert.deleted'));
+          showAlert('modal.info', translate('alert.deleted'), 'info');
           loggerInfo(getMessage('MODS_DELETED'));
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installationState.value = 'ready';

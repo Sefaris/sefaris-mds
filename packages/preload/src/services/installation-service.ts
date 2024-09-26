@@ -22,6 +22,7 @@ import { updateProgressBar } from './progress-service';
 import { UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import { showAlert } from './alert-service';
 
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
@@ -112,7 +113,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         resolve(time.toFixed(2));
       } catch (error) {
         // Remove copied files
-        alert(error);
+        showAlert('modal.error', error as string, 'error');
         loggerError(getMessage('INSTALLATION_FAIL'));
         loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
         if (createdFiles.length) {

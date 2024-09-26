@@ -1,7 +1,8 @@
 <template>
   <app-modal
     :is-visible="$props.isVisible"
-    title="Preset"
+    :title="$t('modal.preset')"
+    type="info"
   >
     <div class="m-2 flex flex-col gap-2">
       <span>
@@ -31,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { loggerError, savePreset } from '#preload';
+import { loggerError, savePreset, showAlert } from '#preload';
 import { translate } from '../../../../plugins/i18n';
 import { useModsStore } from '../stores/mods-store';
 import AppModal from './AppModal.vue';
@@ -53,7 +54,7 @@ export default defineComponent({
     const addPreset = async () => {
       const modsCopy = JSON.parse(JSON.stringify(selectedMods.value));
       await savePreset(modsCopy, presetName.value).catch(error => {
-        alert(translate('alert.checkLog'));
+        showAlert('modal.info', translate('alert.checkLog'));
         loggerError(error);
       });
       await modsStore.loadPresets();

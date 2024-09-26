@@ -36,6 +36,7 @@ export default {
     cancel: 'Cancel changes',
   },
   alert: {
+    error: 'Alert',
     installed: 'Mods succesfully installed in ',
     deleted: 'Mods succesfully deleted.',
     wrongPath: "Gothic3.exe wasn't found. Select correct directory.",
@@ -85,5 +86,8 @@ export default {
     save: 'Save',
     close: 'Close',
     presetName: 'Save preset as',
+    error: 'Error',
+    info: 'Info',
+    warning: 'Warning',
   },
 };

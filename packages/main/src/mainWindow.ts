@@ -33,7 +33,7 @@ async function createWindow() {
    */
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show();
-
+    app.setAppUserModelId('G3 ModStarter');
     if (import.meta.env.DEV) {
       mainWindow?.webContents.openDevTools();
     }
