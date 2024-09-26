@@ -22,7 +22,7 @@ export default defineComponent({
     },
     active: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     modsCount: {
       type: Number,

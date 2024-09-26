@@ -16,7 +16,7 @@
         v-if="showCaret"
         class="ml-1"
       >
-        <i class="mdi mdi-chevron-down caret" />
+        <i class="mdi mdi-chevron-down mdi-small" />
       </span>
     </button>
     <div
