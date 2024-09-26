@@ -11,14 +11,24 @@
       class="mr-6 h-15 w-78.75 bg-install"
       @click="startInstallation()"
     >
-      <span class="font-gothic text-3xl">{{ $t('action.install') }}</span>
+      <span
+        class="font-gothic text-3xl"
+        :class="{ 'font-lato': currentLanguage == 'ru' }"
+      >
+        {{ $t('action.install') }}
+      </span>
     </button>
     <button
       v-else
       class="mr-6 h-15 w-78.75 bg-install"
       @click="startDeletion()"
     >
-      <span class="font-gothic text-3xl">{{ $t('action.delete') }}</span>
+      <span
+        class="font-gothic text-3xl"
+        :class="{ 'font-lato': currentLanguage == 'ru' }"
+      >
+        {{ $t('action.delete') }}
+      </span>
     </button>
   </div>
 </template>
@@ -34,13 +44,14 @@ import {
 } from '#preload';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import { translate } from '../../../../plugins/i18n';
+import { translate, i18n } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { getMessage } from '../../../../utils/messages';
 
 export default defineComponent({
   setup() {
     const modsStore = useModsStore();
+    const currentLanguage = computed(() => i18n.global.locale.value);
     const installationState = computed({
       get() {
         return modsStore.installationState;
@@ -72,7 +83,6 @@ export default defineComponent({
         .then(time => {
           showAlert('modal.info', `${translate('alert.installed')} ${time}s`, 'info');
           showNotification({
-            window: 'main',
             title: translate('modal.info'),
             body: `${translate('alert.installed')} ${time}s`,
           });
@@ -103,7 +113,7 @@ export default defineComponent({
       selectedMods.value = modsStore.installedMods.map(mod => mod.id);
     };
 
-    return { startInstallation, cancelChanges, startDeletion, selectedMods };
+    return { startInstallation, cancelChanges, startDeletion, selectedMods, currentLanguage };
   },
 });
 </script>

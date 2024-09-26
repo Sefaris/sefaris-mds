@@ -2,6 +2,7 @@
   <div class="flex w-full justify-evenly border-t border-divider py-6">
     <button
       class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
+      :class="{ 'font-lato': currentLanguage == 'ru' }"
       @click="$router.back()"
     >
       <span
@@ -13,6 +14,7 @@
 
     <button
       class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
+      :class="{ 'font-lato': currentLanguage == 'ru' }"
       @click="$props.saveMethod()"
     >
       <span
@@ -25,7 +27,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { i18n } from '../../../../plugins/i18n';
 
 export default defineComponent({
   props: {
@@ -35,7 +38,8 @@ export default defineComponent({
     },
   },
   setup() {
-    return {};
+    const currentLanguage = computed(() => i18n.global.locale.value);
+    return { currentLanguage };
   },
 });
 </script>
