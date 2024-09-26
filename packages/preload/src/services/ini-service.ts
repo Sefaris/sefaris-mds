@@ -6,8 +6,11 @@ import type { ConfigValue } from '../../../../types/ConfigValue';
 import type { ConfigSection } from '../../../../interfaces/ConfigSection';
 import type { OptionType } from '../../../../types/OptionType';
 import { UTF8 } from '../../../../utils/constants';
+import { ConversionError } from '../../../../Errors/ConversionError';
 import { loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import { ConfigurationError } from '../../../../Errors/ConfigurationError';
+import { NotFoundError } from '../../../../Errors/NotFoundError';
 
 export function parseConfig(configText: string, name: string): ConfigSection[] {
   const lines = configText.split('\n');
@@ -29,7 +32,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
       if (line.includes('=')) {
         const [option, value] = line.split('=');
         if (!lines[i + 1].includes(';') || !lines[i + 2].includes(';')) {
-          throw new Error(
+          throw new ConversionError(
             getMessage('INI_MISSING_DESC_TYPE', {
               name: name,
               beg: (i + 2).toString(),
@@ -48,7 +51,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
           }
         }
         if (!descriptionLine.length) {
-          throw new Error(
+          throw new ConversionError(
             getMessage('INI_EMPTY_DESC', {
               name: name,
               line: (i + 2).toString(),
@@ -56,7 +59,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
           );
         }
         if (!typeLine.length) {
-          throw new Error(
+          throw new ConversionError(
             getMessage('INI_EMPTY_TYPE', {
               name: name,
               line: (i + 3).toString(),
@@ -77,14 +80,14 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             break;
           case 'boolean':
             if (parsedValue != 'true' && parsedValue != 'false')
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_VALUE_CONVERSTION_FAIL', {
                   name: name,
                   line: (i + 1).toString(),
                 }),
               );
             if (parsedDefaultValue != 'true' && parsedDefaultValue != 'false')
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
                   name: name,
                   line: (i + 2).toString(),
@@ -95,7 +98,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             break;
           case 'number':
             if (!optionalLine.length)
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_RANGES_NOT_FOUND', {
                   name: name,
                   line: (i + 4).toString(),
@@ -103,7 +106,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
               );
             ranges = optionalLine.split('|').map(range => parseFloat(range.trim()));
             if (ranges.includes(NaN))
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_RANGES_CONVERSTION_FAIL', {
                   name: name,
                   line: (i + 4).toString(),
@@ -111,7 +114,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
               );
             parsedValue = parseFloat(value);
             if (Number.isNaN(parsedValue))
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_VALUE_CONVERSTION_FAIL', {
                   name: name,
                   line: (i + 1).toString(),
@@ -119,7 +122,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
               );
             parsedDefaultValue = parseFloat(parsedDefaultValue);
             if (Number.isNaN(parsedDefaultValue))
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
                   name: name,
                   line: (i + 2).toString(),
@@ -133,7 +136,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             if (typeString[1].trim() === 'arrayType:number') {
               parsedValue = parsedValue.map(item => parseFloat(item));
               if (parsedValue.includes(NaN))
-                throw new Error(
+                throw new ConversionError(
                   getMessage('INI_VALUE_CONVERSTION_FAIL', {
                     name: name,
                     line: (i + 1).toString(),
@@ -141,14 +144,14 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
                 );
               parsedDefaultValue = parsedDefaultValue.map(item => parseFloat(item));
               if (parsedDefaultValue.includes(NaN))
-                throw new Error(
+                throw new ConversionError(
                   getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
                     name: name,
                     line: (i + 2).toString(),
                   }),
                 );
             } else if (typeString[1].trim() !== 'arrayType:string') {
-              throw new Error(
+              throw new ConversionError(
                 getMessage('INI_UNSUPPORTED_ARRAY_TYPE', {
                   type: typeString[1],
                 }),
@@ -156,7 +159,7 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
             }
             break;
           default:
-            throw new Error(
+            throw new ConversionError(
               getMessage('INI_UNSUPPORTED_TYPE', {
                 type: typeString[0],
               }),
@@ -192,7 +195,7 @@ export async function validateIniFile(name: string) {
 
 export async function loadIniConfiguration(name: string) {
   const config = await loadConfiguration();
-  if (!config) throw new Error(getMessage('MISSING_CONFIGURATION'));
+  if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
@@ -200,15 +203,16 @@ export async function loadIniConfiguration(name: string) {
   if (name === 'ge3.ini') {
     iniFilePath = path.join(iniPath, 'ge3.ini');
   }
-  if (!iniFilePath) throw new Error(getMessage('INI_NOT_FOUND_IN_CONFIG', { name: name }));
-  if (!fs.existsSync(iniFilePath)) throw new Error(getMessage('FILE_NOT_FOUND', { name: name }));
+  if (!iniFilePath) throw new NotFoundError(getMessage('INI_NOT_FOUND_IN_CONFIG', { name: name }));
+  if (!fs.existsSync(iniFilePath))
+    throw new NotFoundError(getMessage('FILE_NOT_FOUND', { name: name }));
   const configFileContent = fs.readFileSync(iniFilePath, UTF8);
   return parseConfig(configFileContent, name);
 }
 
 export async function saveIniConfiguration(sections: ConfigSection[], name: string) {
   const config = await loadConfiguration();
-  if (!config) throw new Error(getMessage('MISSING_CONFIGURATION'));
+  if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
@@ -217,12 +221,12 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
     iniFilePath = path.join(iniPath, 'ge3.ini');
   }
   if (!iniFilePath)
-    throw new Error(
+    throw new NotFoundError(
       getMessage('INI_NOT_FOUND', {
         name: name,
       }),
     );
-  if (!sections.length) throw new Error(getMessage('INI_NO_DATA_TO_SAVE'));
+  if (!sections.length) throw new NotFoundError(getMessage('INI_NO_DATA_TO_SAVE'));
 
   const iniFileLines = fs.readFileSync(iniFilePath, UTF8).split('\n');
 
@@ -243,7 +247,7 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
 
 export async function getAllIniNames() {
   const config = await loadConfiguration();
-  if (!config) throw new Error(getMessage('MISSING_CONFIGURATION'));
+  if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
 
   const iniFiles = config.filesCreated
     .filter(file => file.endsWith('.ini'))
