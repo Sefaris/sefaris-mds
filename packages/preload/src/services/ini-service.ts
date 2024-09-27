@@ -13,7 +13,7 @@ import he from 'he';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 import { NotFoundError } from '../../../../Errors/NotFoundError';
 
-export function parseConfig(configText: string, name: string): ConfigSection[] {
+export function parseConfig(configText: string, name: string, silent?: boolean): ConfigSection[] {
   const lines = configText.split('\n');
   const configSections: ConfigSection[] = [];
   let currentSection: ConfigSection | null = null;
@@ -180,7 +180,9 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
       }
     } catch (error) {
       if (error instanceof Error) {
-        loggerWarn(error.message);
+        if (!silent) {
+          loggerWarn(error.message);
+        }
       }
     }
   }
@@ -202,16 +204,17 @@ export async function loadIniConfiguration(name: string) {
   if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
-
   let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  let silent = false;
   if (name === 'ge3.ini') {
     iniFilePath = path.join(iniPath, 'ge3.ini');
+    silent = true;
   }
   if (!iniFilePath) throw new NotFoundError(getMessage('INI_NOT_FOUND_IN_CONFIG', { name: name }));
   if (!fs.existsSync(iniFilePath))
     throw new NotFoundError(getMessage('FILE_NOT_FOUND', { name: name }));
   const configFileContent = fs.readFileSync(iniFilePath, UTF8);
-  return parseConfig(configFileContent, name);
+  return parseConfig(configFileContent, name, silent);
 }
 
 export async function saveIniConfiguration(sections: ConfigSection[], name: string) {
