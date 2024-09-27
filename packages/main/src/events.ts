@@ -79,14 +79,11 @@ export function addEvents() {
     return app.isPackaged;
   });
 
-  ipcMain.on(
-    'show-notification',
-    (_, notification: { window: 'config' | 'main'; title: string; body: string }) => {
-      windows[notification.window]?.flashFrame(true);
-      new Notification({
-        title: notification.title,
-        body: notification.body,
-      }).show();
-    },
-  );
+  ipcMain.on('show-notification', (_, notification: { title: string; body: string }) => {
+    windows['main']?.flashFrame(true);
+    new Notification({
+      title: notification.title,
+      body: notification.body,
+    }).show();
+  });
 }

@@ -2,7 +2,6 @@
   <app-modal
     :is-visible="$props.isVisible"
     :title="$t('modal.preset')"
-    type="info"
   >
     <div class="m-2 flex flex-col gap-2">
       <span>
@@ -53,10 +52,14 @@ export default defineComponent({
     const presetName = ref('');
     const addPreset = async () => {
       const modsCopy = JSON.parse(JSON.stringify(selectedMods.value));
-      await savePreset(modsCopy, presetName.value).catch(error => {
-        showAlert('modal.info', translate('alert.checkLog'));
-        loggerError(error);
-      });
+      await savePreset(modsCopy, presetName.value)
+        .then(() => {
+          showAlert('modal.info', translate('alert.presetSaved'), 'info');
+        })
+        .catch(error => {
+          showAlert('modal.error', error.message, 'error');
+          loggerError(error.message);
+        });
       await modsStore.loadPresets();
       emit('close');
     };

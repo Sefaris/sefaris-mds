@@ -7,10 +7,6 @@ export function showAlert(title: string, message: string, type?: AlertType) {
   });
 }
 
-export function showNotification(notification: {
-  window: 'main' | 'cofig';
-  title: string;
-  body: string;
-}) {
+export function showNotification(notification: { title: string; body: string }) {
   ipcRenderer.send('show-notification', notification);
 }

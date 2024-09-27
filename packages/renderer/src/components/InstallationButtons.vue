@@ -92,7 +92,7 @@ export default defineComponent({
         })
         .catch(error => {
           installationState.value = 'edit';
-          loggerError(error);
+          loggerError(error.message);
         });
     };
 
@@ -106,7 +106,7 @@ export default defineComponent({
         })
         .catch(error => {
           installationState.value = 'edit';
-          loggerError(error);
+          loggerError(error.message);
         });
     };
     const cancelChanges = () => {
