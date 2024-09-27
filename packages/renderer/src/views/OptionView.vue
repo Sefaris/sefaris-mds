@@ -12,9 +12,10 @@
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import IniConfigurationRecord from '../components/IniConfigurationRecord.vue';
-import { saveIniConfiguration } from '#preload';
+import { saveIniConfiguration, showAlert } from '#preload';
 import type { ConfigRecord } from '@interfaces/ConfigRecord';
 import OptionsNavButtons from '../components/OptionsNavButtons.vue';
+import { translate } from '../../../../plugins/i18n';
 
 export default defineComponent({
   components: { IniConfigurationRecord, OptionsNavButtons },
@@ -24,10 +25,15 @@ export default defineComponent({
     const configRecord = ref<ConfigRecord>();
 
     const saveConfig = async () => {
-      console.log(`Saving ${configName.value}`);
       if (configRecord.value) {
         const configSectionsCopy = JSON.parse(JSON.stringify(configRecord.value.sections));
-        await saveIniConfiguration(configSectionsCopy, configName.value);
+        saveIniConfiguration(configSectionsCopy, configName.value)
+          .then(() => {
+            showAlert('modal.info', translate('alert.presetSaved'), 'info');
+          })
+          .catch(error => {
+            showAlert('modal.error', error.message, 'error');
+          });
       }
     };
 

@@ -29,11 +29,10 @@ export async function saveConfiguration(config: AppConfiguration) {
     fs.writeFileSync(path.resolve(configurationFile), JSON.stringify(config, null, 4));
     loggerInfo(getMessage('CONFIGURATION_SAVED'));
   } catch (error) {
-    if (error instanceof ConfigurationError) {
-      alert(error);
+    if (error instanceof Error) {
+      loggerError(error.message);
+      showAlert('modal.error', error.message, 'error');
     }
-    loggerError(error as string);
-    showAlert('modal.error', error as string);
   }
 }
 

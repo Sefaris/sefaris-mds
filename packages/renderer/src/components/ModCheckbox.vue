@@ -63,7 +63,9 @@ export default defineComponent({
           selectMod(dependencyMod.id);
         }
       } catch (error) {
-        loggerWarn(error as string);
+        if (error instanceof Error) {
+          loggerWarn(error.message);
+        }
       }
     }
 
@@ -83,7 +85,9 @@ export default defineComponent({
 
         selectDependencies(modId);
       } catch (error) {
-        loggerError(error as string);
+        if (error instanceof Error) {
+          loggerError(error.message);
+        }
       }
     }
 

@@ -34,7 +34,9 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 
   return files;
@@ -49,7 +51,9 @@ export async function startGame() {
 
     spawn(execPath, { cwd: configuration.gothicPath, detached: true });
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 }
 

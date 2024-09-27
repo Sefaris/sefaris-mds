@@ -18,9 +18,10 @@ export default {
         slider: '#312e2c',
         close: '#b92a20',
         modal: '#000305',
-        info: '#66c0f4',
-        error: '#ff3333',
-        warning: '#ffcc00 ',
+        info: '#5bc0de',
+        error: '#bb2124',
+        warning: '#f0ad4e',
+        success: '#22bb33',
       },
       lineHeight: {
         3: '12px',

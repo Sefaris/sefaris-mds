@@ -178,8 +178,10 @@ export function parseConfig(configText: string, name: string): ConfigSection[] {
           ranges: ranges,
         });
       }
-    } catch (err) {
-      loggerWarn(err as string);
+    } catch (error) {
+      if (error instanceof Error) {
+        loggerWarn(error.message);
+      }
     }
   }
 

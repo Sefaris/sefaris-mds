@@ -101,8 +101,10 @@ export async function extract(
       });
     });
   } catch (error) {
-    showAlert('modal.error', error as string, 'error');
-    loggerError(error as string);
+    if (error instanceof Error) {
+      showAlert('modal.error', error.message, 'error');
+      loggerError(error.message);
+    }
   }
 }
 

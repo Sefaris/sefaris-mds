@@ -114,22 +114,23 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         loggerInfo(getMessage('INSTALLATION_COMPLETE', { num: modIds.length.toString() }));
         resolve(time.toFixed(2));
       } catch (error) {
-        // Remove copied files
-        showAlert('modal.error', error as string, 'error');
-        loggerError(getMessage('INSTALLATION_FAIL'));
-        loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
-        if (createdFiles.length) {
-          for (let i = 0; i < createdFiles.length; i++) {
-            loggerInfo(getMessage('FILE_DELETING', { path: createdFiles[i] }));
-            updateProgressBar('progress.delete', i, createdFiles.length);
-            fs.unlinkSync(createdFiles[i]);
-            loggerInfo(getMessage('FILE_DELETED', { path: createdFiles[i] }));
+        if (error instanceof Error) {
+          showAlert('modal.error', error.message, 'error');
+          loggerError(getMessage('INSTALLATION_FAIL'));
+          loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
+          // Remove copied files
+          if (createdFiles.length) {
+            for (let i = 0; i < createdFiles.length; i++) {
+              loggerInfo(getMessage('FILE_DELETING', { path: createdFiles[i] }));
+              updateProgressBar('progress.delete', i, createdFiles.length);
+              fs.unlinkSync(createdFiles[i]);
+              loggerInfo(getMessage('FILE_DELETED', { path: createdFiles[i] }));
+            }
+            loggerInfo(getMessage('REVERT_COMPLETE'));
+          } else {
+            loggerInfo(getMessage('REVERT_NOTHING_TO_DO'));
           }
-          loggerInfo(getMessage('REVERT_COMPLETE'));
-        } else {
-          loggerInfo(getMessage('REVERT_NOTHING_TO_DO'));
         }
-
         reject(error);
       }
     })();

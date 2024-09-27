@@ -27,7 +27,7 @@ export default defineComponent({
   props: {
     type: {
       type: String,
-      default: 'info',
+      default: '',
     },
     title: {
       type: String,
