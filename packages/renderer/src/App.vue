@@ -26,7 +26,9 @@ export default defineComponent({
     const modalTitle = ref('');
     const modalMessage = ref('');
     onMounted(async () => {
-      const configuration = await loadConfiguration();
+      const configuration = await loadConfiguration().catch(error => {
+        console.error(error);
+      });
       if (configuration) {
         i18n.global.locale.value = configuration.language as SUPPORTED_LANGUAGES;
       } else {

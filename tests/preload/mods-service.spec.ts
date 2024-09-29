@@ -1,4 +1,4 @@
-import { expect, test, vi, beforeEach, describe } from 'vitest';
+import { expect, test, vi, beforeEach, describe, afterEach } from 'vitest';
 import { vol } from 'memfs';
 import {
   loadImages,
@@ -6,24 +6,44 @@ import {
   loadMods,
   validateMod,
 } from '../../packages/preload/src/services/mod-service';
-import path from 'path';
+let config;
 
-vi.mock('path', async () => {
-  return await vi.importActual('path');
-});
-
-vi.mock('fs', async () => {
-  const { fs } = await import('memfs');
-  return {
-    ...fs,
+function mockConfig(corrupted: boolean, missing?: boolean) {
+  config = {
+    gothicPath: 'E:\\Games\\Gothic 3',
+    modsPath: corrupted ? undefined : 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: [],
+    filesCreated: [],
   };
-});
-global.alert = vi.fn();
-
-const baseDir = path.resolve();
+  if (missing) config = null;
+  vi.mock('../../packages/preload/src/services/configuration-service', () => {
+    return {
+      loadConfiguration: vi.fn(() => Promise.resolve(config)),
+    };
+  });
+}
 
 beforeEach(() => {
+  mockConfig(false);
+  vi.mock('path', async () => {
+    return await vi.importActual('path');
+  });
+
+  vi.mock('fs', async () => {
+    const { fs } = await import('memfs');
+    return {
+      ...fs,
+    };
+  });
+
   vol.reset();
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
 });
 
 describe('validateMod', () => {
@@ -88,7 +108,6 @@ describe('validateMod', () => {
     };
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
         'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
       },
       'E:\\Games\\Gothic 3\\',
@@ -110,18 +129,8 @@ describe('loadModDescription', () => {
     };
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
         'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
         'mods\\A_QuestPaket\\readme\\readme_pl.md': 'test content for readme file',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
       },
       'E:\\Games\\Gothic 3\\',
     );
@@ -142,17 +151,7 @@ describe('loadModDescription', () => {
     };
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
         'mods\\A_QuestPaket\\mod.json': JSON.stringify(mod),
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
       },
       'E:\\Games\\Gothic 3\\',
     );
@@ -190,16 +189,6 @@ describe('loadMods', () => {
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
         'mods\\N_Main\\mod.json': JSON.stringify(modMain),
         'mods\\O_Pirate_Dream\\mod.json': JSON.stringify(modPD),
@@ -214,6 +203,7 @@ describe('loadMods', () => {
   });
 
   test('returns empty array for non existing modsPath in config', async () => {
+    mockConfig(true);
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -241,15 +231,6 @@ describe('loadMods', () => {
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
         'mods\\N_Main\\mod.json': JSON.stringify(modMain),
         'mods\\O_Pirate_Dream\\mod.json': JSON.stringify(modPD),
@@ -257,7 +238,46 @@ describe('loadMods', () => {
       'E:\\Games\\Gothic 3\\',
     );
 
-    await expect(loadMods()).rejects.toThrowError();
+    await expect(loadMods()).resolves.toHaveLength(0);
+  });
+
+  test('returns empty array for non existing config', async () => {
+    mockConfig(false, true);
+    const modQP = {
+      id: 'QuestPaket',
+      title: 'QuestPaket',
+      authors: ['Humanforce'],
+      dependencies: [],
+      incompatibles: [],
+      category: 'QuestPacket 4.2',
+    };
+    const modMain = {
+      id: 'Main',
+      title: 'Main',
+      authors: [],
+      dependencies: [],
+      incompatibles: [],
+      category: 'Base',
+    };
+    const modPD = {
+      id: 'Pirate Dream',
+      title: 'Pirate Dream',
+      authors: [],
+      dependencies: ['Main'],
+      incompatibles: [],
+      category: 'Story Mods',
+    };
+
+    vol.fromJSON(
+      {
+        'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
+        'mods\\N_Main\\mod.json': JSON.stringify(modMain),
+        'mods\\O_Pirate_Dream\\mod.json': JSON.stringify(modPD),
+      },
+      'E:\\Games\\Gothic 3\\',
+    );
+
+    await expect(loadMods()).resolves.toHaveLength(0);
   });
 });
 
@@ -274,15 +294,6 @@ describe('loadImages', () => {
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
         'mods\\QuestPaket\\images\\back.png': '123',
         'mods\\QuestPaket\\images\\back.jpg': '1223',
@@ -306,15 +317,6 @@ describe('loadImages', () => {
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
         'mods\\QuestPaket\\images\\back.gif': '123',
       },
@@ -335,15 +337,6 @@ describe('loadImages', () => {
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'mods\\QuestPaket\\mod.json': JSON.stringify(modQP),
         'mods\\QuestPaket\\back.png': '123',
       },
