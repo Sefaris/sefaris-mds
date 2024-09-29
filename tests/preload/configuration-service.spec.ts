@@ -1,4 +1,4 @@
-import { expect, test, vi, beforeEach, describe, beforeAll, afterAll } from 'vitest';
+import { expect, test, vi, beforeEach, describe, afterEach } from 'vitest';
 import {
   isValidConfiguration,
   isGothicPathValid,
@@ -7,34 +7,34 @@ import {
 } from '../../packages/preload/src/services/configuration-service';
 import { fs, vol } from 'memfs';
 import path from 'path';
-
-vi.mock('path', async () => {
-  return await vi.importActual('path');
-});
-
-vi.mock('fs', async () => {
-  const { fs } = await import('memfs');
-  return {
-    ...fs,
-  };
-});
-
-const baseDir = path.resolve();
+import { CONFIG_FILE } from '../../utils/constants';
 
 beforeEach(() => {
-  vol.reset();
-});
+  vi.mock('path', async () => {
+    return await vi.importActual('path');
+  });
 
-beforeAll(() => {
-  global.alert = vi.fn();
+  vi.mock('fs', async () => {
+    const { fs } = await import('memfs');
+    return {
+      ...fs,
+    };
+  });
 
   vi.mock('../../packages/preload/src/services/alert-service', async () => ({
     showAlert: vi.fn(),
   }));
+  vi.mock('../../packages/preload/src/services/file-service', async () => {
+    return {
+      ...(await vi.importActual('../../packages/preload/src/services/file-service'))!,
+      getDocumentsPath: vi.fn(() => Promise.resolve('\\user\\documents')),
+    };
+  });
+  vol.reset();
 });
 
-afterAll(() => {
-  vi.restoreAllMocks();
+afterEach(() => {
+  vi.clearAllMocks();
 });
 
 describe('isValidConfiguration', () => {
@@ -194,7 +194,7 @@ describe('loadConfiguration', () => {
   test('reads correct config file', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
-      [path.join(baseDir, 'config.json')]: JSON.stringify({
+      [path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')]: JSON.stringify({
         gothicPath: 'E:\\Games\\Gothic 3',
         modsPath: 'E:\\Games\\Gothic 3\\mods',
         language: 'pl',
@@ -207,17 +207,11 @@ describe('loadConfiguration', () => {
     await expect(loadConfiguration()).resolves.toBeInstanceOf(Object);
   });
 
-  test('resolves null when config is empty', async () => {
+  test('rejects and throw error when config is empty', async () => {
     vol.fromJSON({
-      [path.join(baseDir, 'config.json')]: '',
+      [path.join('user', 'documents', 'gothic3', 'StarterConfig.json')]: '',
     });
     await expect(loadConfiguration()).rejects.toBeDefined();
-  });
-
-  test('resolves null when there is no config file', async () => {
-    vol.fromJSON({
-      [baseDir]: '',
-    });
     await expect(loadConfiguration()).rejects.toThrowError();
   });
 });
@@ -226,7 +220,6 @@ describe('saveConfiguration', () => {
   test('creates config file with correct data', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3\\Gothic3.exe': '',
-      [baseDir]: '',
     });
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
@@ -238,13 +231,14 @@ describe('saveConfiguration', () => {
       filesCreated: [],
     };
     await saveConfiguration(config);
-    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBeTruthy();
+    expect(
+      fs.existsSync(path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')),
+    ).toBeTruthy();
   });
 
   test('doesnt create config for wrong data', async () => {
     vol.fromJSON({
       'E:\\Games\\Gothic 3': '',
-      [baseDir]: '',
     });
     const config = {
       gothicPath: 'E:\\Games\\Gothic 3',
@@ -256,6 +250,6 @@ describe('saveConfiguration', () => {
       filesCreated: [],
     };
     await saveConfiguration(config);
-    expect(fs.existsSync(path.join(baseDir, 'config.json'))).toBeFalsy();
+    expect(fs.existsSync(path.join('\\user', 'documents', 'gothic3', CONFIG_FILE))).toBeFalsy();
   });
 });

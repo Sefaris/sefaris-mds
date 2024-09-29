@@ -28,7 +28,9 @@ export default defineComponent({
     const modsStore = useModsStore();
 
     onMounted(async () => {
-      const config = await loadConfiguration();
+      const config = await loadConfiguration().catch(error => {
+        console.error(error);
+      });
       if (!config) {
         showAlert('modal.error', translate('alert.configNotFound'), 'error');
         loggerError(getMessage('CONFIG_NOT_FOUND'));

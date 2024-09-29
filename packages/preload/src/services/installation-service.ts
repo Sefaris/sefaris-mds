@@ -360,7 +360,6 @@ export async function getNextSaveDirectoryName(): Promise<string> {
 export async function getNewModsFilesPaths(files: string[], destDirectory: string) {
   const newFilesPaths: string[] = [];
   const documents = await getDocumentsPath();
-  console.log(documents, 'docs path');
   const G3_DOCUMENTS_PATH = path.join(documents, 'gothic3');
   for (const file of files) {
     const fileName = path.basename(file);

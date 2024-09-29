@@ -1,4 +1,4 @@
-import { expect, test, vi, beforeEach, describe, afterAll, beforeAll } from 'vitest';
+import { expect, test, vi, beforeEach, describe, afterEach } from 'vitest';
 import {
   buildWrldatasc,
   deleteMods,
@@ -14,15 +14,36 @@ import path from 'path';
 import { UTF8 } from '../../utils/constants';
 import os from 'os';
 import type { Mod } from '../../interfaces/Mod';
-
+let config;
 const baseDir = path.resolve();
+
+function mockConfig(files: string[], missing?: boolean) {
+  config = {
+    gothicPath: 'E:\\Games\\Gothic 3',
+    modsPath: 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: [],
+    filesCreated: files,
+  };
+  if (missing) config = null;
+  vi.mock('../../packages/preload/src/services/configuration-service', async () => {
+    return {
+      loadConfiguration: vi.fn(() => Promise.resolve(config)),
+      isValidConfiguration: vi.fn(() => true),
+      saveConfiguration: vi.fn().mockImplementation(config => {
+        const filePath = '\\user\\documents\\gothic3\\StarterConfig.json';
+        const jsonConfig = JSON.stringify(config);
+        vol.writeFileSync(filePath, jsonConfig);
+      }),
+    };
+  });
+}
 
 beforeEach(() => {
   vol.reset();
-});
-
-beforeAll(() => {
-  global.alert = vi.fn();
+  vol.fromJSON({ '\\user\\documents\\gothic3\\test': '' });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (global as any).window = {
     postMessage: vi.fn(),
@@ -54,10 +75,8 @@ beforeAll(() => {
   });
 });
 
-afterAll(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  delete (global as any).window;
-  vi.restoreAllMocks();
+afterEach(() => {
+  vi.clearAllMocks();
 });
 
 describe('deleteMods', () => {
@@ -69,20 +88,10 @@ describe('deleteMods', () => {
       'E:\\Games\\Gothic 3\\Data\\templates.mod',
       'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
     ];
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: ['mod'],
-      filesCreated: installedFiles,
-    });
+    mockConfig(installedFiles);
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: configContent,
         'Data\\gui.mod': '',
         'Data\\infos.mod': '',
         'Data\\quests.mod': '',
@@ -107,20 +116,9 @@ describe('deleteMods', () => {
       'E:\\Games\\Gothic 3\\Data\\templates.mod',
       'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
     ];
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: ['mod'],
-      filesCreated: installedFiles,
-    });
-
+    mockConfig(installedFiles);
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: configContent,
         'Data\\gui.mod': '',
         'Data\\infos.mod': '',
       },
@@ -138,30 +136,18 @@ describe('deleteMods', () => {
       'E:\\Games\\Gothic 3\\Data\\templates.mod',
       'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
     ];
-
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: ['mod'],
-      filesCreated: installedFiles,
-    });
-
+    mockConfig(installedFiles);
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: configContent,
         'Data\\gui.mod': '',
         'Data\\infos.mod': '',
         'Data\\quests.mod': '',
         'Data\\templates.mod': '',
         'Data\\_compiledanimation.mod': '',
+        '\\user\\documents\\gothic3\\test': '',
       },
       'E:\\Games\\Gothic 3',
     );
-
     const expectedConfig = {
       gothicPath: 'E:\\Games\\Gothic 3',
       modsPath: 'E:\\Games\\Gothic 3\\mods',
@@ -173,7 +159,12 @@ describe('deleteMods', () => {
     };
     await deleteMods();
     expect(
-      JSON.parse(fs.readFileSync(path.join(baseDir, 'config.json'), UTF8) as string),
+      JSON.parse(
+        fs.readFileSync(
+          path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json'),
+          UTF8,
+        ) as string,
+      ),
     ).toMatchObject(expectedConfig);
   });
 
@@ -185,21 +176,10 @@ describe('deleteMods', () => {
       'E:\\Games\\Gothic 3\\Data\\templates.mod',
       'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
     ];
-
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: [],
-      filesCreated: [],
-    });
+    mockConfig([]);
 
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: configContent,
         'Data\\gui.mod': '',
         'Data\\infos.mod': '',
         'Data\\quests.mod': '',
@@ -497,15 +477,7 @@ ATTRIB_HP=Life energy;;Energia vitale;;Énergie vitale;;Lebensenergie;;Energía 
 
 describe('installMods', () => {
   test('returns time after succesful installation', async () => {
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: [],
-      filesCreated: [],
-    });
+    mockConfig([]);
     const mods = [
       {
         id: 'Mod1',
@@ -529,8 +501,6 @@ describe('installMods', () => {
       },
     ];
     vol.fromJSON({
-      'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
-      [path.join(baseDir, 'config.json')]: configContent,
       '\\user\\Documents\\gothic3\\Mods0': '',
       [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
       [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
@@ -552,15 +522,7 @@ describe('installMods', () => {
   });
 
   test('rejects for empty modsIds list', async () => {
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: [],
-      filesCreated: [],
-    });
+    mockConfig([]);
     const mods = [
       {
         id: 'Mod1',
@@ -584,8 +546,6 @@ describe('installMods', () => {
       },
     ];
     vol.fromJSON({
-      'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
-      [path.join(baseDir, 'config.json')]: configContent,
       '\\user\\Documents\\gothic3\\Mods0': '',
       [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
       [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
@@ -607,15 +567,7 @@ describe('installMods', () => {
   });
 
   test('rejects for missing static files', async () => {
-    const configContent = JSON.stringify({
-      gothicPath: 'E:\\Games\\Gothic 3',
-      modsPath: 'E:\\Games\\Gothic 3\\mods',
-      language: 'pl',
-      ignoreDependencies: false,
-      ignoreIncompatible: false,
-      installedMods: [],
-      filesCreated: [],
-    });
+    mockConfig([]);
     const mods = [
       {
         id: 'Mod1',
@@ -639,8 +591,6 @@ describe('installMods', () => {
       },
     ];
     vol.fromJSON({
-      'E:\\Games\\Gothic 3\\Gothic3.exe': '{}',
-      [path.join(baseDir, 'config.json')]: configContent,
       '\\user\\Documents\\gothic3\\Mods0': '',
       'E:\\Games\\Gothic 3\\mods\\mod1\\mod.json': JSON.stringify(mods[0]),
       'E:\\Games\\Gothic 3\\mods\\mod1\\file1.m0x': '',

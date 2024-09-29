@@ -1,4 +1,4 @@
-import { expect, test, vi, beforeEach, describe } from 'vitest';
+import { expect, test, vi, beforeEach, describe, afterEach } from 'vitest';
 import { vol, fs } from 'memfs';
 import {
   parseConfig,
@@ -7,24 +7,43 @@ import {
   validateIniFile,
   saveIniConfiguration,
 } from '../../packages/preload/src/services/ini-service';
-import path from 'path';
 import { UTF8 } from '../../utils/constants';
+let config;
 
-vi.mock('path', async () => {
-  return await vi.importActual('path');
-});
-
-vi.mock('fs', async () => {
-  const { fs } = await import('memfs');
-  return {
-    ...fs,
+function mockConfig(values: string[] | null) {
+  config = {
+    gothicPath: 'E:\\Games\\Gothic 3',
+    modsPath: 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: [],
+    filesCreated: values,
   };
-});
-global.alert = vi.fn();
+  if (values == null) config = null;
+  vi.mock('../../packages/preload/src/services/configuration-service', () => {
+    return {
+      loadConfiguration: vi.fn(() => Promise.resolve(config)),
+    };
+  });
+}
 
-const baseDir = path.resolve();
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 beforeEach(() => {
+  vi.mock('path', async () => {
+    return await vi.importActual('path');
+  });
+
+  vi.mock('fs', async () => {
+    const { fs } = await import('memfs');
+    return {
+      ...fs,
+    };
+  });
+  global.alert = vi.fn();
   vol.reset();
 });
 
@@ -277,19 +296,13 @@ AutoLootToggleHotkey=SEMICOLON
 });
 
 describe('loadIniConfiguration', () => {
+  beforeEach(() => {
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+  });
+
   test('returns 2 sections', async () => {
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': `[Main]
 eCDELocatorToggleHotkey=Y
 ; lorem
@@ -306,18 +319,10 @@ ShowItemMeleeWeapon=false
   });
 
   test('throws an error for file not present in config', async () => {
+    mockConfig([]);
+
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'ini\\eCDELocator.ini': `[Main]
 eCDELocatorToggleHotkey=Y
 ; lorem
@@ -334,38 +339,12 @@ ShowItemMeleeWeapon=false
   });
 
   test('throws an error for non existing file', async () => {
-    vol.fromJSON(
-      {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
-      },
-      'E:\\Games\\Gothic 3',
-    );
-
     await expect(loadIniConfiguration('eCDELocator.ini')).rejects.toThrowError();
   });
 
   test('returns 1 section for option with wrong data', async () => {
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': `[Main]
 eCDELocatorToggleHotkey=Y
 ; lorem
@@ -384,22 +363,14 @@ ShowItemMeleeWeapon=false
 
 describe('getAllIniNames', () => {
   test('returns 3 ini file names', async () => {
+    mockConfig([
+      'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
+      'E:\\Games\\Gothic 3\\ini\\floatingdamage.ini',
+      'E:\\Games\\Gothic 3\\ini\\G3Fixes.ini',
+    ]);
+
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [
-            'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
-            'E:\\Games\\Gothic 3\\ini\\floatingdamage.ini',
-            'E:\\Games\\Gothic 3\\ini\\G3Fixes.ini',
-          ],
-        }),
         'ini\\eCDELocator.ini': `[Main]
 eCDELocatorToggleHotkey=Y
 ; lorem
@@ -420,21 +391,13 @@ CompanionAutoDefendHotkey=APOSTROPHE
   });
 
   test('returns 1 ini file name for one empty file', async () => {
+    mockConfig([
+      'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
+      'E:\\Games\\Gothic 3\\ini\\floatingdamage.ini',
+    ]);
+
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [
-            'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
-            'E:\\Games\\Gothic 3\\ini\\floatingdamage.ini',
-          ],
-        }),
         'ini\\eCDELocator.ini': '',
         'ini\\floatingdamage.ini': `[Main]
 ShowOnlyPlayerDamage=true
@@ -448,18 +411,10 @@ ShowOnlyPlayerDamage=true
   });
 
   test('returns empty array for missing paths in config', async () => {
+    mockConfig([]);
+
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'ini\\eCDELocator.ini': '',
         'ini\\floatingdamage.ini': `[Main]
 ShowOnlyPlayerDamage=true
@@ -474,19 +429,13 @@ ShowOnlyPlayerDamage=true
 });
 
 describe('validateIniFile', () => {
+  beforeEach(() => {
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+  });
+
   test('returns true for valid ini file', async () => {
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': `[Main]
 eCDELocatorToggleHotkey=Y
 ; lorem
@@ -505,16 +454,6 @@ ShowItemMeleeWeapon=false
   test('returns false for ini witout any sections', async () => {
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': `
 eCDELocatorToggleHotkey=Y
 ; lorem
@@ -532,16 +471,6 @@ ShowItemMeleeWeapon=false
   test('returns false for ini witout any options', async () => {
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': '[Main]',
       },
       'E:\\Games\\Gothic 3',
@@ -553,16 +482,6 @@ ShowItemMeleeWeapon=false
   test('returns false for empty ini', async () => {
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': '',
       },
       'E:\\Games\\Gothic 3',
@@ -573,7 +492,12 @@ ShowItemMeleeWeapon=false
 });
 
 describe('saveIniConfiguration', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test('saves ini overwriting all supported types', async () => {
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -611,16 +535,6 @@ AutoLootIconPosTopX=98.500000
 ; 1|300|0.5`;
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': ini,
       },
       'E:\\Games\\Gothic 3',
@@ -673,6 +587,7 @@ AutoLootIconPosTopX=92.5
   });
 
   test('throws error for missing config file', async () => {
+    mockConfig(null);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -710,7 +625,6 @@ AutoLootIconPosTopX=98.500000
 ; 1|300|0.5`;
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
         'ini\\eCDELocator.ini': ini,
       },
       'E:\\Games\\Gothic 3',
@@ -724,21 +638,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('throws error for missing ini file', async () => {
-    vol.fromJSON(
-      {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
-      },
-      'E:\\Games\\Gothic 3',
-    );
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
 
     const input = JSON.parse(
       '[{"name":"Main","options":[{"name":"FontName","description":"lorem","value":"Comic Sans MC","type":"string","defaultValue":"Comic Sans MS"},{"name":"FontSize","description":"lorem","value":26,"type":"number","defaultValue":16,"ranges":[0,60]},{"name":"FontBold","description":"lorem","value":true,"type":"boolean","defaultValue":false}]},{"name":"Mode","options":[{"name":"Mode","description":"Default - Standard threshold for STR/DEX/INT at 250 NoThreshold - Removes the threshold at 250 Hardcore - New thresholds as configured in [Thresholds]","value":"NoThreshold","type":"mode","defaultValue":"Default","modes":["Default","NoThreshold","Hardcore"]}]},{"name":"Thresholds","options":[{"name":"STR","description":"lorem","value":[200,500],"type":"arrayType:number","defaultValue":[200,300,400]}]},{"name":"QuickLoot","options":[{"name":"IgnoredItems","description":"List of ignored items","value":["It_Bradley_SlaveList","It_Item"],"type":"arrayType:string","defaultValue":["It_Bradley_SlaveList"]},{"name":"AutoLootToggleHotkey","description":"lorem ipsum","value":"G","type":"key","defaultValue":"SEMICOLON"},{"name":"AutoLootIconPosTopX","description":"lorem ipsum","value":92.5,"type":"number","defaultValue":98.5,"ranges":[1,300,0.5]}]}]',
@@ -748,6 +648,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('throws error for missing ini in config', async () => {
+    mockConfig([]);
     const ini = `[Main]
     FontName=Comic Sans MS
     ; lorem
@@ -785,16 +686,6 @@ AutoLootIconPosTopX=98.500000
     ; 1|300|0.5`;
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        }),
         'ini\\eCDELocator.ini': ini,
       },
       'E:\\Games\\Gothic 3',
@@ -808,6 +699,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('throws error not try to save no data', async () => {
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -845,16 +737,6 @@ AutoLootIconPosTopX=98.500000
 ; 1|300|0.5`;
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': ini,
       },
       'E:\\Games\\Gothic 3',
@@ -865,6 +747,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('ini stays the same for saving with no changes', async () => {
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -902,16 +785,6 @@ AutoLootIconPosTopX=98.5
 ; 1|300|0.5`;
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': ini,
       },
       'E:\\Games\\Gothic 3',
@@ -928,6 +801,7 @@ AutoLootIconPosTopX=98.5
   });
 
   test('ini doesnt overwrite commented informations', async () => {
+    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -965,16 +839,6 @@ AutoLootIconPosTopX=98.5
 ; 1|300|0.5`;
     vol.fromJSON(
       {
-        'Gothic3.exe': '{}',
-        [path.join(baseDir, 'config.json')]: JSON.stringify({
-          gothicPath: 'E:\\Games\\Gothic 3',
-          modsPath: 'E:\\Games\\Gothic 3\\mods',
-          language: 'pl',
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: ['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini'],
-        }),
         'ini\\eCDELocator.ini': ini,
       },
       'E:\\Games\\Gothic 3',
