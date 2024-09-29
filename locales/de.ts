@@ -20,6 +20,8 @@ export default {
       deselectAll: 'Alle Mods abwählen.',
       openGameFolder: 'Spieleordner öffnen.',
       openModsFolder: 'Mods-Ordner öffnen.',
+      openDocumentsFolder: 'Ordner Dokumente öffnen.',
+      openStarterFolder: 'Startordner öffnen.',
     },
     preview: {
       default: 'Wähle eine Mod aus, um mehr darüber zu erfahren',

@@ -49,6 +49,10 @@ export function addEvents() {
     return app.getAppPath();
   });
 
+  ipcMain.handle('get-exe-dir-path', async () => {
+    return path.join(app.getPath('exe'), '..');
+  });
+
   ipcMain.on('minimize-window', () => {
     BrowserWindow.getFocusedWindow()?.minimize();
   });
@@ -61,6 +65,11 @@ export function addEvents() {
       windows['config'].close();
       windows['config'] = undefined;
     }
+  });
+
+  // Ensure config windows closes when main window is closed
+  windows['main']!.on('closed', () => {
+    windows['config']?.close();
   });
 
   ipcMain.on('open-config-window', async () => {

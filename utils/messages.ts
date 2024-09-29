@@ -35,6 +35,7 @@ export const Messages = {
   INVALID_CONFIGURATION: 'Invalid configuration!',
   MISSING_CONFIGURATION: 'Missing configuration file!',
 
+  DIRECTORY_DOESNT_EXIST: "Directory {{path}} doesn't exist.",
   FILE_DOESNT_EXIST: "File {{path}} doesn't exist.",
   FILE_DELETING: 'Deleting {{path}} file.',
   FILE_DELETED: '{{path}} deleted.',

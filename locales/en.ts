@@ -19,7 +19,9 @@ export default {
       selectAll: 'Select all mods. (Ignores incompatibles)',
       deselectAll: 'Deselect all mods.',
       openGameFolder: 'Open game folder.',
-      openModsFolder: 'Open mods folder',
+      openModsFolder: 'Open mods folder.',
+      openDocumentsFolder: 'Open documents folder.',
+      openStarterFolder: 'Open starter folder.',
     },
     preview: {
       default: 'Select a modification to learn more',
