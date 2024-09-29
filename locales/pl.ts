@@ -20,13 +20,15 @@ export default {
       deselectAll: 'Odznacz wszystkie mody.',
       openGameFolder: 'Otwórz folder z grą.',
       openModsFolder: 'Otwórz folder z modami.',
+      openDocumentsFolder: 'Otwórz folder dokumentów.',
+      openStarterFolder: 'Otwórz folder startera.',
     },
     preview: {
       default: 'Wybierz modyfikację aby dowiedzieć się więcej',
       author: 'Autor',
       authors: 'Autorzy',
       noDescription: 'Brak opisu dla tej modyfikacji.',
-      openModFolder: 'Otwórz folder modyfikacji',
+      openModFolder: 'Otwórz folder modyfikacji.',
     },
   },
   action: {
