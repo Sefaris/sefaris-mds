@@ -41,6 +41,7 @@ export async function createConfigWindow() {
     });
   }
   windows['config'] = newWindow;
+  app.setAppUserModelId('G3 ModStarter');
 
   return newWindow;
 }
