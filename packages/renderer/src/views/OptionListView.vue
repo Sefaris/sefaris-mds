@@ -3,18 +3,6 @@
     <h1 class="text-2xl">
       {{ $t('nav.top.options') }}
     </h1>
-    <div
-      v-if="!validGothicIniFile && !configFiles.length"
-      class="my-20 flex flex-col text-center"
-    >
-      <img
-        src="../../assets/images/error_500.png"
-        class="mx-auto w-max"
-      />
-      <h3 class="mt-2 text-xl">
-        {{ $t('config.inisNotFound') }}
-      </h3>
-    </div>
     <router-link
       v-if="validGothicIniFile"
       :to="{ name: 'Option', params: { ini: 'ge3.ini' } }"
