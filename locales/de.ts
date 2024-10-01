@@ -49,6 +49,7 @@ export default {
     checkLog: 'Etwas is schief gelaufen. Überprüfe die app.log-Datei',
     dependencyNotFound: 'Keine Abhängigkeiten gefunden:',
     presetSaved: 'Die Voreinstellung wurde erfolgreich gespeichert..',
+    iniSaved: 'Die Konfiguration wurde erfolgreich gespeichert.',
   },
   progress: {
     saveConfiguration: 'Speichere Konfiguration',
