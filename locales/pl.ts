@@ -47,6 +47,7 @@ export default {
     checkLog: 'Coś poszło nie tak. Sprawdź app.log',
     dependencyNotFound: 'Nie znaleziono zależności:',
     presetSaved: 'Preset pomyślnie zapisany.',
+    iniSaved: 'Konfiguracja pomyślnie zapisana.',
   },
   progress: {
     saveConfiguration: 'Zapisywanie konfiguracji',

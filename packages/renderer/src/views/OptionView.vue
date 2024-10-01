@@ -29,7 +29,7 @@ export default defineComponent({
         const configSectionsCopy = JSON.parse(JSON.stringify(configRecord.value.sections));
         saveIniConfiguration(configSectionsCopy, configName.value)
           .then(() => {
-            showAlert('modal.info', translate('alert.presetSaved'), 'info');
+            showAlert('modal.success', translate('alert.iniSaved'), 'success');
           })
           .catch(error => {
             showAlert('modal.error', error.message, 'error');
