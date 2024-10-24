@@ -77,6 +77,8 @@ export const Messages = {
 
   DIRECTORY_CREATE: 'Creating directory {{path}}',
   DIRECTORY_CREATED: 'Directory created.',
+
+  CHECK_LOG_FILE: 'Something went wrong. Check App.log file.',
 };
 
 export type MessageKey = keyof typeof Messages;

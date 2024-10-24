@@ -28,11 +28,11 @@ import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
 const PRESET_FILES_PATH = path.join(APP_PATH, 'Presets');
-const STATIC_FILE_MOD_EXTENSTION = '0x';
+const STATIC_FILE_MOD_EXTENSION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
 // const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
 
-const MOD_EXTENSTIONS = ['mod', 'nod'];
+const MOD_EXTENSIONS = ['mod', 'nod'];
 const DLL_EXTENSION = 'dll';
 const INI_EXTENSION = 'ini';
 const SAVE_EXTENSION = 'g3savcpx';
@@ -76,10 +76,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         for (let i = 0; i < mods.length; i++) {
           updateProgressBar('progress.searchMods', i, mods.length);
-          for (const extension of MOD_EXTENSTIONS) {
+          for (const extension of MOD_EXTENSIONS) {
             const files = findFilesEndsWith(
               mods[i].path,
-              `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`,
+              `${extension[0]}${STATIC_FILE_MOD_EXTENSION}`,
             );
             if (!filesDictionary[extension]) {
               filesDictionary[extension] = [];
@@ -115,7 +115,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         resolve(time.toFixed(2));
       } catch (error) {
         if (error instanceof Error) {
-          showAlert('modal.error', error.message, 'error');
+          showAlert('modal.error', getMessage('CHECK_LOG_FILE'), 'error');
           loggerError(getMessage('INSTALLATION_FAIL'));
           loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
           // Remove copied files
@@ -140,7 +140,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 function prepareFilesDictionary(): Record<string, string[]> {
   const filesDictionary: Record<string, string[]> = {};
 
-  for (const extension of MOD_EXTENSTIONS) {
+  for (const extension of MOD_EXTENSIONS) {
     filesDictionary[extension] = [];
   }
   return filesDictionary;
