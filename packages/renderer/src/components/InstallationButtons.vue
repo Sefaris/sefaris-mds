@@ -81,9 +81,9 @@ export default defineComponent({
       installationState.value = 'installation';
       installMods(JSON.parse(JSON.stringify(selectedMods.value)), activePreset.value)
         .then(time => {
-          showAlert('modal.info', `${translate('alert.installed')} ${time}s`, 'info');
+          showAlert('modal.success', `${translate('alert.installed')} ${time}s`, 'success');
           showNotification({
-            title: translate('modal.info'),
+            title: translate('modal.success'),
             body: `${translate('alert.installed')} ${time}s`,
           });
           loggerInfo(`${getMessage('MODS_INSTALLED')} ${time}s`);
@@ -99,7 +99,7 @@ export default defineComponent({
     const startDeletion = async () => {
       deleteMods()
         .then(() => {
-          showAlert('modal.info', translate('alert.deleted'), 'info');
+          showAlert('modal.success', translate('alert.deleted'), 'success');
           loggerInfo(getMessage('MODS_DELETED'));
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
           installationState.value = 'ready';

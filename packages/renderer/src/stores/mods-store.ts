@@ -57,7 +57,7 @@ export const useModsStore = defineStore('mods', () => {
 
     if (missingMods.length > 0) {
       showAlert(
-        'alert.warning',
+        'modal.warning',
         `${translate('alert.missingModsFromPreset')} ${missingMods.join(', ')}`,
         'warning',
       );
