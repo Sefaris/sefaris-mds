@@ -83,14 +83,14 @@ export function parseConfig(configText: string, name: string, silent?: boolean):
           case 'boolean':
             if (parsedValue != 'true' && parsedValue != 'false')
               throw new ConversionError(
-                getMessage('INI_VALUE_CONVERSTION_FAIL', {
+                getMessage('INI_VALUE_CONVERSION_FAIL', {
                   name: name,
                   line: (i + 1).toString(),
                 }),
               );
             if (parsedDefaultValue != 'true' && parsedDefaultValue != 'false')
               throw new ConversionError(
-                getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
+                getMessage('INI_DEFAULT_VALUE_CONVERSION_FAIL', {
                   name: name,
                   line: (i + 2).toString(),
                 }),
@@ -109,7 +109,7 @@ export function parseConfig(configText: string, name: string, silent?: boolean):
             ranges = optionalLine.split('|').map(range => parseFloat(range.trim()));
             if (ranges.includes(NaN))
               throw new ConversionError(
-                getMessage('INI_RANGES_CONVERSTION_FAIL', {
+                getMessage('INI_RANGES_CONVERSION_FAIL', {
                   name: name,
                   line: (i + 4).toString(),
                 }),
@@ -117,7 +117,7 @@ export function parseConfig(configText: string, name: string, silent?: boolean):
             parsedValue = parseFloat(value);
             if (Number.isNaN(parsedValue))
               throw new ConversionError(
-                getMessage('INI_VALUE_CONVERSTION_FAIL', {
+                getMessage('INI_VALUE_CONVERSION_FAIL', {
                   name: name,
                   line: (i + 1).toString(),
                 }),
@@ -125,7 +125,7 @@ export function parseConfig(configText: string, name: string, silent?: boolean):
             parsedDefaultValue = parseFloat(parsedDefaultValue);
             if (Number.isNaN(parsedDefaultValue))
               throw new ConversionError(
-                getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
+                getMessage('INI_DEFAULT_VALUE_CONVERSION_FAIL', {
                   name: name,
                   line: (i + 2).toString(),
                 }),
@@ -139,7 +139,7 @@ export function parseConfig(configText: string, name: string, silent?: boolean):
               parsedValue = parsedValue.map(item => parseFloat(item));
               if (parsedValue.includes(NaN))
                 throw new ConversionError(
-                  getMessage('INI_VALUE_CONVERSTION_FAIL', {
+                  getMessage('INI_VALUE_CONVERSION_FAIL', {
                     name: name,
                     line: (i + 1).toString(),
                   }),
@@ -147,7 +147,7 @@ export function parseConfig(configText: string, name: string, silent?: boolean):
               parsedDefaultValue = parsedDefaultValue.map(item => parseFloat(item));
               if (parsedDefaultValue.includes(NaN))
                 throw new ConversionError(
-                  getMessage('INI_DEFAULT_VALUE_CONVERSTION_FAIL', {
+                  getMessage('INI_DEFAULT_VALUE_CONVERSION_FAIL', {
                     name: name,
                     line: (i + 2).toString(),
                   }),
