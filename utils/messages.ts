@@ -1,7 +1,7 @@
 export const Messages = {
   WRONG_PATH: "Gothic3.exe wasn't found. Select correct directory.",
   CONFIG_NOT_FOUND: 'Config not found or corrupted. Select Gothic 3 directory.',
-  MODJSON_NOT_FOUND: 'mod.json not found in',
+  MOD_JSON_NOT_FOUND: 'mod.json not found in',
   DATA_DIR_DOESNT_EXIST: "Data folder doesn't exist!",
   WRONG_JSON_STRUCTURE: 'Wrong json structure for {{mod}}',
   NO_MODS_SELECTED: 'No mods selected!',

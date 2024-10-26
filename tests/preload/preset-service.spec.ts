@@ -21,6 +21,14 @@ function mockConfig(missing?: boolean) {
       loadConfiguration: vi.fn(() => Promise.resolve(config)),
     };
   });
+
+  vi.mock('../../packages/preload/src/services/logger-service', () => {
+    return {
+      loggerInfo: vi.fn(),
+      loggerError: vi.fn(),
+      loggerWarn: vi.fn(),
+    };
+  });
 }
 
 beforeEach(() => {

@@ -37,6 +37,14 @@ beforeEach(() => {
     return await vi.importActual('path');
   });
 
+  vi.mock('../../packages/preload/src/services/logger-service', () => {
+    return {
+      loggerInfo: vi.fn(),
+      loggerError: vi.fn(),
+      loggerWarn: vi.fn(),
+    };
+  });
+
   vi.mock('fs', async () => {
     const { fs } = await import('memfs');
     return {
@@ -657,22 +665,22 @@ AutoLootIconPosTopX=98.500000
     ; lorem
     ; number, 16
     ; 0|60
-    
+
     FontBold=false
     ; lorem
     ; boolean, false
-    
+
     [Mode]
     Mode=Default
     ; Default - Standard threshold for STR/DEX/INT at 250 NoThreshold - Removes the threshold at 250 Hardcore - New thresholds as configured in [Thresholds]
     ; mode, Default
     ; Default|NoThreshold|Hardcore
-    
+
     [Thresholds]
     STR=200;300;400
     ; lorem
     ; array, arrayType:number, 200;300;400
-    
+
     [QuickLoot]
     IgnoredItems=It_Bradley_SlaveList;It_Brandon_Name
     ; List of ignored items
