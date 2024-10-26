@@ -36,7 +36,7 @@ export async function loadMods(): Promise<Mod[]> {
 
 export function validateMod(modPath: string): Mod | null {
   if (!fs.existsSync(path.join(modPath, 'mod.json'))) {
-    loggerError(`${getMessage('MODJSON_NOT_FOUND')} ${modPath}`);
+    loggerError(`${getMessage('MOD_JSON_NOT_FOUND')} ${modPath}`);
     return null;
   }
 

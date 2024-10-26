@@ -1,11 +1,11 @@
-import type {Logger} from 'winston';
+import type { Logger } from 'winston';
 import winston from 'winston';
 import { format } from 'winston';
-import {getDocumentsPath} from './file-service';
+import { getDocumentsPath } from './file-service';
 import path from 'path';
 const { printf } = format;
 
-let logger:Logger;
+let logger: Logger;
 
 const myFormat = printf(({ level, message, timestamp }) => {
   const formattedTimestamp = new Date(timestamp).toLocaleString('en-GB');
