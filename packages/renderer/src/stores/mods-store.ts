@@ -1,22 +1,46 @@
-import type { Mod } from '@interfaces/Mod';
-import type { Preset } from '@interfaces/Preset';
+import type { Mod } from '../../../../interfaces/Mod';
+import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
-import { getAllPresets, loadConfiguration, loadMods } from '#preload';
+import {
+  getAllPresets,
+  loadConfiguration,
+  loadMods,
+  loggerInfo,
+  loggerWarn,
+  showAlert,
+} from '#preload';
 import { translate } from '../../../../plugins/i18n';
-
+import type { InstallationState } from '../../../../types/InstallationState';
+import { getMessage } from '../../../../utils/messages';
 export const useModsStore = defineStore('mods', () => {
   const mods = shallowRef<Mod[]>([]);
   const displayedMods = shallowRef<Mod[]>([]);
   const installedMods = shallowRef<Mod[]>([]);
   const selectedMods = ref<string[]>([]);
+  const selectedMod = ref<string>('');
   const categories = shallowRef<string[]>([]);
   const presets = shallowRef<Preset[]>([]);
   const activePreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
+  const installationState = ref<InstallationState>('ready');
+  const configExists = ref(false);
+  const refreshKey = ref(0);
 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
+  }
+
+  function setConfigExists(value: boolean) {
+    configExists.value = value;
+  }
+
+  function incrementRefreshKey() {
+    refreshKey.value++;
+  }
+
+  function setSelectedMod(mod: string) {
+    selectedMod.value = mod;
   }
 
   function setInstalledMods(mods: Mod[]) {
@@ -32,10 +56,14 @@ export const useModsStore = defineStore('mods', () => {
     const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
 
     if (missingMods.length > 0) {
-      alert(`${translate('alert.missingModsFromPreset')} ${missingMods.join('\n')}`);
-    } else {
-      console.log('All mods from preset are available.');
+      showAlert(
+        'modal.warning',
+        `${translate('alert.missingModsFromPreset')} ${missingMods.join(', ')}`,
+        'warning',
+      );
+      loggerWarn(`${getMessage('MISSING_MODS_FROM_PRESET')} ${missingMods.join(', ')}`);
     }
+    loggerInfo(`${getMessage('PRESET_LOADED', { name: preset })}`);
   }
 
   function countModsInCategory(category: string) {
@@ -81,11 +109,17 @@ export const useModsStore = defineStore('mods', () => {
 
   async function reloadMods() {
     mods.value = await loadMods();
-    displayedMods.value = mods.value;
+    displayCategory('all');
   }
 
   function loadCategories() {
-    categories.value = [...new Set(mods.value.map(mod => mod.category))];
+    categories.value = [
+      ...new Set(mods.value.map(mod => mod.category).filter(category => category !== undefined)),
+    ];
+  }
+
+  function setInstallationState(state: InstallationState) {
+    installationState.value = state;
   }
 
   return {
@@ -93,12 +127,19 @@ export const useModsStore = defineStore('mods', () => {
     displayedMods,
     installedMods,
     selectedMods,
+    selectedMod,
     categories,
     activeCategory,
     presets,
     activePreset,
+    installationState,
+    refreshKey,
+    configExists,
+    setConfigExists,
+    incrementRefreshKey,
     countModsInCategory,
     setSelectedMods,
+    setSelectedMod,
     reloadMods,
     loadCategories,
     loadInstalledMods,
@@ -107,5 +148,6 @@ export const useModsStore = defineStore('mods', () => {
     selectPreset,
     loadPresets,
     deactivatePreset,
+    setInstallationState,
   };
 });

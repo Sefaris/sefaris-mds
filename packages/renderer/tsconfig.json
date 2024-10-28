@@ -13,13 +13,14 @@
     "paths": {
       "#preload": ["../preload/src/index"],
       "/@/*": ["./src/*"],
-      "@interfaces/*": ["../../interfaces/*"],
-      "@utils/*": ["../../utils/*"]
+      "@interfaces/*": ["../../interfaces/*"]
     },
     "lib": ["ESNext", "dom", "dom.iterable"],
     "allowSyntheticDefaultImports": true
   },
   "include": [
+    "../../interfaces/*.ts",
+    "../../utils/*.ts",
     "src/**/*.vue",
     "src/**/*.ts",
     "src/**/*.tsx",

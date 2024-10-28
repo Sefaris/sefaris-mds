@@ -2,9 +2,24 @@ const { execFile } = require('node:child_process');
 import path from 'path';
 import * as fs from 'fs';
 import { ensureDirectory } from './file-service';
-const G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
-const G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe');
+import { loggerError } from './logger-service';
+import { ipcRenderer } from 'electron';
+import { showAlert } from './alert-service';
+
+let G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
+let G3PAKDIR_PATH = `"${path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe')}"`;
+
+// check is asar is used to pack app
+async function getIsPackaged() {
+  return await ipcRenderer.invoke('get-is-packaged');
+}
+
 export async function buildPackage(srcPath: string, destPath?: string): Promise<string> {
+  // change paths for packed application
+  if (await getIsPackaged()) {
+    G3PAK_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3Pak.exe');
+    G3PAKDIR_PATH = `"${path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe')}"`;
+  }
   const destinationPath = destPath ?? srcPath + '\\output.pak';
   return new Promise((resolve, reject) => {
     execFile(
@@ -32,6 +47,12 @@ export async function buildPackage(srcPath: string, destPath?: string): Promise<
 }
 
 export async function extractAll(file: string, destinationPath: string): Promise<string> {
+  // change paths for packed application
+
+  if (await getIsPackaged()) {
+    G3PAK_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3Pak.exe');
+    G3PAKDIR_PATH = `"${path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe')}"`;
+  }
   return new Promise((resolve, reject) => {
     execFile(
       G3PAK_PATH,
@@ -62,19 +83,15 @@ export async function extract(
   destinationPath: string,
 ): Promise<void> {
   const tempDir = path.join(destinationPath, 'temp');
-  await ensureDirectory(tempDir);
+  ensureDirectory(tempDir);
   await extractAll(file, tempDir);
-  for (const fileName of fileNames) {
-    const sourceFilePath = path.join(tempDir, fileName);
-    const destinationFilePath = path.join(destinationPath, fileName);
-
-    try {
-      await fs.renameSync(sourceFilePath, destinationFilePath);
-    } catch (error) {
-      alert(error);
-    }
-  }
   try {
+    for (const fileName of fileNames) {
+      const sourceFilePath = path.join(tempDir, fileName);
+      const destinationFilePath = path.join(destinationPath, fileName);
+
+      fs.renameSync(sourceFilePath, destinationFilePath);
+    }
     fs.rm(tempDir, { recursive: true, force: true }, error => {
       return new Promise<void>((resolve, reject) => {
         if (error) {
@@ -84,7 +101,10 @@ export async function extract(
       });
     });
   } catch (error) {
-    alert(error);
+    if (error instanceof Error) {
+      showAlert('modal.error', error.message, 'error');
+      loggerError(error.message);
+    }
   }
 }
 
@@ -92,7 +112,7 @@ export async function findStrings(dataPath: string): Promise<string> {
   const files: string[] = [];
 
   const filesList = fs.readdirSync(dataPath);
-  const regex = /^strings/i; // "i" oznacza ignorowanie wielkości liter
+  const regex = /^strings/i;
 
   for (const file of filesList) {
     if (regex.test(file)) {
