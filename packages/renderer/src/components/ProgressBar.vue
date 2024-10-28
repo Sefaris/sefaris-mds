@@ -1,7 +1,7 @@
 <template>
-  <div class="progress-bar">
+  <div class="absolute left-0 top-0 h-2 w-200">
     <div
-      class="progress-bar__value"
+      class="h-2 bg-primary duration-200 ease-in"
       :style="{ width: progressValue }"
     ></div>
   </div>
@@ -20,7 +20,7 @@ export default defineComponent({
 
   setup(props) {
     const WIDTH = 800;
-    const progressValue = ref('600px');
+    const progressValue = ref('0px');
 
     watch(
       () => props.progress,
@@ -35,18 +35,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-@import '../../assets/styles/variables.scss';
-
-.progress-bar {
-  width: $app-width;
-  height: $progress-bar-height;
-
-  &__value {
-    height: $progress-bar-height;
-    background-color: $primary-color;
-    transition: width $animation-duration-short linear;
-  }
-}
-</style>

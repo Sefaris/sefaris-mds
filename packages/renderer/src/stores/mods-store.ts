@@ -1,22 +1,29 @@
-import type { Mod } from '@interfaces/Mod';
-import type { Preset } from '@interfaces/Preset';
+import type { Mod } from '../../../../interfaces/Mod';
+import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
-import { getAllPresets, loadConfiguration, loadMods } from '#preload';
+import { getAllPresets, loadConfiguration, loadMods, loggerInfo, loggerWarn } from '#preload';
 import { translate } from '../../../../plugins/i18n';
-
+import type { InstallationState } from '../../../../types/InstallationState';
+import { getMessage } from '../../../../utils/messages';
 export const useModsStore = defineStore('mods', () => {
   const mods = shallowRef<Mod[]>([]);
   const displayedMods = shallowRef<Mod[]>([]);
   const installedMods = shallowRef<Mod[]>([]);
   const selectedMods = ref<string[]>([]);
+  const selectedMod = ref<string>('');
   const categories = shallowRef<string[]>([]);
   const presets = shallowRef<Preset[]>([]);
   const activePreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
+  const installationState = ref<InstallationState>('ready');
 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
+  }
+
+  function setSelectedMod(mod: string) {
+    selectedMod.value = mod;
   }
 
   function setInstalledMods(mods: Mod[]) {
@@ -32,10 +39,10 @@ export const useModsStore = defineStore('mods', () => {
     const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
 
     if (missingMods.length > 0) {
-      alert(`${translate('alert.missingModsFromPreset')} ${missingMods.join('\n')}`);
-    } else {
-      console.log('All mods from preset are available.');
+      alert(`${translate('alert.missingModsFromPreset')} ${missingMods.join(', ')}`);
+      loggerWarn(`${getMessage('MISSING_MODS_FROM_PRESET')} ${missingMods.join(', ')}`);
     }
+    loggerInfo(`${getMessage('PRESET_LOADED', { name: preset })}`);
   }
 
   function countModsInCategory(category: string) {
@@ -85,7 +92,13 @@ export const useModsStore = defineStore('mods', () => {
   }
 
   function loadCategories() {
-    categories.value = [...new Set(mods.value.map(mod => mod.category))];
+    categories.value = [
+      ...new Set(mods.value.map(mod => mod.category).filter(category => category !== undefined)),
+    ];
+  }
+
+  function setInstallationState(state: InstallationState) {
+    installationState.value = state;
   }
 
   return {
@@ -93,12 +106,15 @@ export const useModsStore = defineStore('mods', () => {
     displayedMods,
     installedMods,
     selectedMods,
+    selectedMod,
     categories,
     activeCategory,
     presets,
     activePreset,
+    installationState,
     countModsInCategory,
     setSelectedMods,
+    setSelectedMod,
     reloadMods,
     loadCategories,
     loadInstalledMods,
@@ -107,5 +123,6 @@ export const useModsStore = defineStore('mods', () => {
     selectPreset,
     loadPresets,
     deactivatePreset,
+    setInstallationState,
   };
 });

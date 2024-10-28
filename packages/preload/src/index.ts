@@ -21,3 +21,20 @@ export { mergeModFiles } from './services/merge-service';
 export { getAllPresets } from './services/preset-service';
 export { openWebsite } from './services/redirect-service';
 export { extractAll } from './services/pak-service';
+export { openConfigWindow, changeConfigLocale } from './services/window-service';
+export {
+  loadIniConfiguration,
+  getAllIniNames,
+  saveIniConfiguration,
+  validateIniFile,
+} from './services/ini-service';
+
+export {
+  loggerInfo,
+  loggerError,
+  loggerWarn,
+  loggerHttp,
+  loggerVerbose,
+  loggerDebug,
+  loggerSilly,
+} from './services/logger-service';

@@ -1,13 +1,14 @@
 import { app, BrowserWindow } from 'electron';
 import { join, resolve } from 'node:path';
 import { addEvents } from './events';
-
+const windows: { [key: string]: BrowserWindow | undefined } = {};
 async function createWindow() {
-  const browserWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 800,
     height: 760,
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     frame: false,
+    resizable: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -17,7 +18,7 @@ async function createWindow() {
     },
     autoHideMenuBar: true,
   });
-
+  windows['main'] = mainWindow;
   //Add events to the BrowserWindow
   addEvents();
 
@@ -29,11 +30,11 @@ async function createWindow() {
    *
    * @see https://github.com/electron/electron/issues/25012 for the afford mentioned issue.
    */
-  browserWindow.on('ready-to-show', () => {
-    browserWindow?.show();
+  mainWindow.on('ready-to-show', () => {
+    mainWindow?.show();
 
     if (import.meta.env.DEV) {
-      browserWindow?.webContents.openDevTools();
+      mainWindow?.webContents.openDevTools();
     }
   });
 
@@ -44,7 +45,7 @@ async function createWindow() {
     /**
      * Load from the Vite dev server for development.
      */
-    await browserWindow.loadURL(import.meta.env.VITE_DEV_SERVER_URL);
+    await mainWindow.loadURL(import.meta.env.VITE_DEV_SERVER_URL);
   } else {
     /**
      * Load from the local file system for production and test.
@@ -55,10 +56,10 @@ async function createWindow() {
      * @see https://github.com/nodejs/node/issues/12682
      * @see https://github.com/electron/electron/issues/6869
      */
-    await browserWindow.loadFile(resolve(__dirname, '../../renderer/dist/index.html'));
+    await mainWindow.loadFile(resolve(__dirname, '../../renderer/dist/index.html'));
   }
 
-  return browserWindow;
+  return mainWindow;
 }
 
 /**
@@ -70,11 +71,14 @@ export async function restoreOrCreateWindow() {
   if (window === undefined) {
     window = await createWindow();
   }
-  window.resizable = false;
 
   if (window.isMinimized()) {
     window.restore();
   }
 
   window.focus();
+}
+
+export function getWindows() {
+  return windows;
 }

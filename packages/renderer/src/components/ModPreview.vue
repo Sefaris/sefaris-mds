@@ -2,73 +2,78 @@
 <template>
   <div
     v-if="!selectedMod"
-    class="main-preview main-preview-default"
+    class="mb-6 flex w-91 items-center justify-center rounded-lg border border-dashed border-light text-light"
   >
-    <div class="main-preview-default-content">
-      <div class="main-preview-default-content-message">
+    <div class="flex flex-col justify-center">
+      <span class="w-44 text-center">
         {{ $t('main.preview.default') }}
-      </div>
+      </span>
       <img
-        class="main-preview-default-content-icon"
+        class="m-auto mt-3 w-6"
         src="../../assets/svg/cursor-default-click.svg"
       />
     </div>
   </div>
   <div
     v-else-if="mod"
-    class="main-preview"
+    class="w-91"
   >
-    <div class="main-preview-name">{{ mod.title }}</div>
+    <div class="font-bold">{{ mod.title }}</div>
     <div
       v-if="mod.authors.length"
-      class="main-preview-author"
+      class="mb-2 border-b border-divider text-xs text-light"
     >
-      {{ $t('main.preview.author') }}:
+      <span
+        v-if="mod.authors.length > 1"
+        class="mr-2.5"
+      >
+        {{ $t('main.preview.authors') }}:
+      </span>
+      <span
+        v-else
+        class="mr-2.5"
+      >
+        {{ $t('main.preview.author') }}:
+      </span>
       <span
         v-for="(author, index) in mod.authors"
         :key="index"
-        class="main-preview-author-name"
+        class="after:content-[',_'] last:after:content-['']"
       >
         {{ author }}
       </span>
     </div>
-    <div class="main-preview-content">
-      <div class="main-preview-content-description">
-        <img
-          class="main-preview-content-description-image"
-          :src="imgSource"
-        />
-        <div v-html="description"></div>
-      </div>
+    <div class="h-105 overflow-y-auto">
+      <img
+        class="mb-2.5 w-full"
+        :src="imgSource"
+      />
+      <div v-html="description" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import { loadModDescription, loadImages, loadMods } from '#preload';
 import { i18n, translate } from '../../../../plugins/i18n';
-import type { Mod } from '@interfaces/Mod';
+import type { Mod } from '../../../../interfaces/Mod';
+import { useModsStore } from '../stores/mods-store';
 
 export default defineComponent({
-  props: {
-    selectedMod: {
-      type: String,
-      default: null,
-    },
-  },
-  setup(props) {
-    const description = shallowRef<string>('No descrioption available.');
+  setup() {
+    const modsStore = useModsStore();
+    const description = shallowRef<string>('');
     const gallery = shallowRef<string[]>();
     const imgSource = ref<string>();
     const currentImageIndex = ref(0);
     let interval = setInterval(changeImage, 2000);
     const mod = shallowRef<Mod>();
+    const selectedMod = computed(() => modsStore.selectedMod);
 
-    watch([() => props.selectedMod, () => i18n.global.locale.value], async ([newMod, _]) => {
+    watch([() => selectedMod.value, () => i18n.global.locale.value], async ([newMod, _]) => {
       mod.value = (await loadMods()).find(mod => mod.id === newMod);
       if (!mod.value) {
-        console.error(`Mod ${newMod} doesn't exist!`);
         return;
       }
 
@@ -93,7 +98,7 @@ export default defineComponent({
     });
 
     function changeImage() {
-      if (!props.selectedMod) return;
+      if (!selectedMod.value) return;
       currentImageIndex.value = (currentImageIndex.value + 1) % gallery.value!.length;
       imgSource.value = gallery.value![currentImageIndex.value];
     }
@@ -102,6 +107,7 @@ export default defineComponent({
       imgSource,
       description,
       mod,
+      selectedMod,
     };
   },
 });
