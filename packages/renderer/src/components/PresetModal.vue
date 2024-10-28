@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { loggerError, savePreset } from '#preload';
+import { loggerError, savePreset, showAlert } from '#preload';
 import { translate } from '../../../../plugins/i18n';
 import { useModsStore } from '../stores/mods-store';
 import AppModal from './AppModal.vue';
@@ -52,10 +52,14 @@ export default defineComponent({
     const presetName = ref('');
     const addPreset = async () => {
       const modsCopy = JSON.parse(JSON.stringify(selectedMods.value));
-      await savePreset(modsCopy, presetName.value).catch(error => {
-        alert(translate('alert.checkLog'));
-        loggerError(error);
-      });
+      await savePreset(modsCopy, presetName.value)
+        .then(() => {
+          showAlert('modal.info', translate('alert.presetSaved'), 'info');
+        })
+        .catch(error => {
+          showAlert('modal.error', error.message, 'error');
+          loggerError(error.message);
+        });
       await modsStore.loadPresets();
       emit('close');
     };

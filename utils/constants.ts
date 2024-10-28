@@ -11,6 +11,10 @@ export type SUPPORTED_LANGUAGES = (typeof LANGUAGE_SETTINGS)[number]['code'];
 
 export const README_DIRECTORY = 'readme';
 export const IMAGES_DIRECTORY = 'images';
+export const PRESETS_DIRECTORY = 'presets';
+export const MODS_DIRECTORY = 'mods';
+export const DOCUMENTS_GOTHIC_DIRECTORY = 'gothic3';
+export const CONFIG_FILE = 'StarterConfig.json';
 
 export const SEFARIS_WEBSITE = 'https://www.sefaris.eu/';
 export const SEFARIS_KOFI = 'https://ko-fi.com/sefaris';

@@ -1,4 +1,4 @@
-import { BrowserWindow, app, dialog, ipcMain } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain, Notification } from 'electron';
 import { translate } from '../../../plugins/i18n';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -49,6 +49,10 @@ export function addEvents() {
     return app.getAppPath();
   });
 
+  ipcMain.handle('get-exe-dir-path', async () => {
+    return path.join(app.getPath('exe'), '..');
+  });
+
   ipcMain.on('minimize-window', () => {
     BrowserWindow.getFocusedWindow()?.minimize();
   });
@@ -61,6 +65,11 @@ export function addEvents() {
       windows['config'].close();
       windows['config'] = undefined;
     }
+  });
+
+  // Ensure config windows closes when main window is closed
+  windows['main']!.on('closed', () => {
+    windows['config']?.close();
   });
 
   ipcMain.on('open-config-window', async () => {
@@ -77,5 +86,13 @@ export function addEvents() {
 
   ipcMain.handle('get-is-packaged', () => {
     return app.isPackaged;
+  });
+
+  ipcMain.on('show-notification', (_, notification: { title: string; body: string }) => {
+    windows['main']?.flashFrame(true);
+    new Notification({
+      title: notification.title,
+      body: notification.body,
+    }).show();
   });
 }

@@ -20,13 +20,15 @@ export default {
       deselectAll: 'Odznacz wszystkie mody.',
       openGameFolder: 'Otwórz folder z grą.',
       openModsFolder: 'Otwórz folder z modami.',
+      openDocumentsFolder: 'Otwórz folder dokumentów.',
+      openStarterFolder: 'Otwórz folder startera.',
     },
     preview: {
       default: 'Wybierz modyfikację aby dowiedzieć się więcej',
       author: 'Autor',
       authors: 'Autorzy',
       noDescription: 'Brak opisu dla tej modyfikacji.',
-      openModFolder: 'Otwórz folder modyfikacji',
+      openModFolder: 'Otwórz folder modyfikacji.',
     },
   },
   action: {
@@ -44,6 +46,8 @@ export default {
     missingModsFromPreset: 'Nie znaleziono modyfikacji z presetu: ',
     checkLog: 'Coś poszło nie tak. Sprawdź app.log',
     dependencyNotFound: 'Nie znaleziono zależności:',
+    presetSaved: 'Preset pomyślnie zapisany.',
+    iniSaved: 'Konfiguracja pomyślnie zapisana.',
   },
   progress: {
     saveConfiguration: 'Zapisywanie konfiguracji',
@@ -86,5 +90,9 @@ export default {
     save: 'Zapisz',
     close: 'Zamknij',
     presetName: 'Zapisz preset jako',
+    error: 'Błąd',
+    info: 'Informacja',
+    warning: 'Ostrzeżenie',
+    success: 'Sukces',
   },
 };
