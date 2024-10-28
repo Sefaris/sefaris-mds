@@ -1,14 +1,19 @@
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
+import { loggerError, loggerInfo } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
+import { InstallationError } from '../../../../Errors/InstallationError';
+import { NotFoundError } from '../../../../Errors/NotFoundError';
 
-export async function ensureDirectory(directoryPath: string): Promise<void> {
+export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
-    fs.promises.mkdir(directoryPath, { recursive: true });
+    loggerInfo(getMessage('DIRECTORY_CREATE', { path: directoryPath }));
+    fs.mkdirSync(directoryPath, { recursive: true });
+    loggerInfo(getMessage('DIRECTORY_CREATED'));
   }
 }
 
@@ -28,7 +33,7 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    alert(error);
+    loggerError(error as string);
   }
 
   return files;
@@ -36,24 +41,31 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
 
 export async function startGame() {
   try {
-    const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+    const configuration = await loadConfiguration();
+    if (!configuration) return;
     const execPath = path.join(configuration.gothicPath, 'Gothic3.exe');
+    if (!fs.existsSync(execPath)) throw new NotFoundError(getMessage('GOTHIC_EXE_NOT_FOUND'));
 
-    if (!fs.existsSync(execPath)) {
-      throw new Error(`Plik ${execPath} nie istnieje.`);
-    }
+    // TODO: FIX, refuses to work
+    execFile(execPath, error => {
+      if (error) {
+        loggerError(`${getMessage('GAME_START_FAILED')} ${error.message}`);
+      }
+    });
   } catch (error) {
-    console.error('Wystąpił błąd:', error);
+    loggerError(error as string);
   }
 }
 
 export async function openGameFolder() {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+  const configuration = await loadConfiguration();
+  if (!configuration) return;
   exec(`explorer ${configuration.gothicPath}`);
 }
 
 export async function openModsFolder() {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+  const configuration = await loadConfiguration();
+  if (!configuration) return;
   exec(`explorer ${configuration.modsPath}`);
 }
 
@@ -61,10 +73,10 @@ export function swapFileNames(filePath1: string, filePath2: string) {
   const tempFilePath = path.join(path.dirname(filePath1), 'temp_swap_file');
 
   if (!fs.existsSync(filePath1)) {
-    throw new Error(`Plik nie istnieje: ${filePath1}`);
+    throw new InstallationError(`${getMessage('FILE_DOESNT_EXIST', { path: filePath1 })}`);
   }
   if (!fs.existsSync(filePath2)) {
-    throw new Error(`Plik nie istnieje: ${filePath2}`);
+    throw new InstallationError(`${getMessage('FILE_DOESNT_EXIST', { path: filePath2 })}`);
   }
 
   fs.renameSync(filePath1, tempFilePath);
@@ -127,7 +139,9 @@ export async function copyFiles(
       extension,
     );
     const newFilePath = path.join(destinationPath, destinationFileName);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: filePath, dst: newFilePath }));
     await fs.promises.copyFile(filePath, newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: filePath, dst: newFilePath }));
     createdFiles.push(newFilePath);
   }
 }

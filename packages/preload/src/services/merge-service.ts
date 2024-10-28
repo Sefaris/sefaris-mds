@@ -3,8 +3,9 @@ import path from 'path';
 import { buildPackage, extractAll } from './pak-service';
 import { loadConfiguration, saveConfiguration } from './configuration-service';
 import { ensureDirectory } from './file-service';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import { updateProgressBar } from './progress-service';
+import { loggerError } from './logger-service';
 
 export async function mergeModFiles() {
   console.time('mergeModFiles');
@@ -82,8 +83,8 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
         mergedFiles.push(files[0]);
         continue;
       }
-      await ensureDirectory(backupDirPath);
-      await ensureDirectory(mergeDirPath);
+      ensureDirectory(backupDirPath);
+      ensureDirectory(mergeDirPath);
       for (const file of files) {
         await fs.promises.rename(file, path.join(backupDirPath, path.basename(file)));
       }
@@ -100,6 +101,6 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       await fs.promises.rmdir(mergeDirPath, { recursive: true });
     }
   } catch (error) {
-    console.error('Error:', error);
+    loggerError(error as string);
   }
 }
