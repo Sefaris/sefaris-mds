@@ -101,6 +101,8 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       await fs.promises.rmdir(mergeDirPath, { recursive: true });
     }
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 }

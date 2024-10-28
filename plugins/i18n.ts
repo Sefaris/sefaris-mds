@@ -4,6 +4,7 @@ import { DEFAULT_LANGUAGE } from '../utils/constants';
 import en from '../locales/en';
 import pl from '../locales/pl';
 import ru from '../locales/ru';
+import de from '../locales/de';
 
 export const i18n = createI18n({
   legacy: false,
@@ -13,6 +14,7 @@ export const i18n = createI18n({
     gb: en,
     pl,
     ru,
+    de,
   },
 });
 

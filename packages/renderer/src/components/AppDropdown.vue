@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col items-center"
+    class="z-10 flex flex-col items-center"
     @mouseleave="collapseDropdown"
     @focusout="onFocusOut"
   >
@@ -16,7 +16,7 @@
         v-if="showCaret"
         class="ml-1"
       >
-        <i class="mdi mdi-chevron-down caret" />
+        <i class="mdi mdi-chevron-down mdi-small" />
       </span>
     </button>
     <div
