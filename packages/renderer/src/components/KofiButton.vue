@@ -1,17 +1,14 @@
 <template>
-  <div class="ml-7">
+  <div class="kofi">
     <a
-      class="flex rounded-lg bg-primary px-3 py-1.5 text-black hover:bg-primary-hover"
+      class="kofi--cta"
       href="#"
       target="_blank"
       @click="openWebsite(SEFARIS_KOFI)"
     >
-      <span class="h-5 select-none">{{ $t('nav.top.support') }}</span>
+      {{ $t('nav.top.support') }}
 
-      <img
-        class="ml-3 h-5"
-        src="https://storage.ko-fi.com/cdn/cup-border.png"
-      />
+      <img src="https://storage.ko-fi.com/cdn/cup-border.png" />
     </a>
   </div>
 </template>
