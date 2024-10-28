@@ -19,6 +19,7 @@ async function createWindow() {
     },
     autoHideMenuBar: true,
   });
+  app.setAppUserModelId('G3 ModStarter');
   windows['main'] = mainWindow;
   //Add events to the BrowserWindow
   addEvents();
@@ -33,7 +34,6 @@ async function createWindow() {
    */
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show();
-
     if (import.meta.env.DEV) {
       mainWindow?.webContents.openDevTools();
     }

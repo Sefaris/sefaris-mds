@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { ensureDirectory } from './file-service';
 import { loggerError } from './logger-service';
 import { ipcRenderer } from 'electron';
+import { showAlert } from './alert-service';
 
 let G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
 let G3PAKDIR_PATH = `"${path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe')}"`;
@@ -100,8 +101,10 @@ export async function extract(
       });
     });
   } catch (error) {
-    alert(error);
-    loggerError(error as string);
+    if (error instanceof Error) {
+      showAlert('modal.error', error.message, 'error');
+      loggerError(error.message);
+    }
   }
 }
 

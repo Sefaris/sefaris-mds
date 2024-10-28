@@ -16,9 +16,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import type { PropType } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import { loadConfiguration, loggerWarn, loggerError } from '#preload';
+import { loggerWarn, showAlert, loggerError } from '#preload';
 import { getMessage } from '../../../../utils/messages';
 import { translate } from '../../../../plugins/i18n';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
@@ -29,9 +30,12 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    config: {
+      type: Object as PropType<AppConfiguration | null>,
+      required: true,
+    },
   },
-  setup() {
-    const config = ref<AppConfiguration | null>(null);
+  setup(props) {
     const modsStore = useModsStore();
     const mods = computed(() => modsStore.mods);
     const selectedMods = computed({
@@ -44,7 +48,7 @@ export default defineComponent({
     });
 
     function selectDependencies(modId: string) {
-      if (config.value?.ignoreDependencies) return;
+      if (props.config?.ignoreDependencies) return;
       const mod = mods.value.find(mod => mod.id === modId);
       try {
         if (!mod) {
@@ -53,13 +57,19 @@ export default defineComponent({
         for (const dependency of mod.dependencies) {
           const dependencyMod = mods.value.find(mod => mod.id === dependency);
           if (!dependencyMod) {
-            alert(`${translate('alert.dependencyNotFound')} ${dependency}`);
+            showAlert(
+              'modal.error',
+              `${translate('alert.dependencyNotFound')} ${dependency}`,
+              'error',
+            );
             throw new NotFoundError(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
           }
           selectMod(dependencyMod.id);
         }
       } catch (error) {
-        loggerWarn(error as string);
+        if (error instanceof Error) {
+          loggerWarn(error.message);
+        }
       }
     }
 
@@ -79,12 +89,14 @@ export default defineComponent({
 
         selectDependencies(modId);
       } catch (error) {
-        loggerError(error as string);
+        if (error instanceof Error) {
+          loggerError(error.message);
+        }
       }
     }
 
     function isDependencyOfSelectedMod(modId: string): boolean {
-      if (config.value?.ignoreDependencies) return false;
+      if (props.config?.ignoreDependencies) return false;
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
         return mod?.dependencies?.includes(modId) ?? false;
@@ -92,7 +104,7 @@ export default defineComponent({
     }
 
     function isIncompatibleofSelectedMod(modId: string): boolean {
-      if (config.value?.ignoreIncompatible) return false;
+      if (props.config?.ignoreIncompatible) return false;
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
         return mod?.incompatibles?.includes(modId) ?? false;
@@ -109,12 +121,6 @@ export default defineComponent({
       modsStore.deactivatePreset();
       selectedMods.value.splice(selectedMods.value.indexOf(modId), 1);
     }
-
-    onMounted(async () => {
-      config.value = await loadConfiguration();
-    });
-
-    onUnmounted(() => {});
 
     return {
       selectedMods,

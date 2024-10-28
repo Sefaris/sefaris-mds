@@ -20,6 +20,8 @@ export default {
       deselectAll: 'Alle Mods abwählen.',
       openGameFolder: 'Spieleordner öffnen.',
       openModsFolder: 'Mods-Ordner öffnen.',
+      openDocumentsFolder: 'Ordner Dokumente öffnen.',
+      openStarterFolder: 'Startordner öffnen.',
     },
     preview: {
       default: 'Wähle eine Mod aus, um mehr darüber zu erfahren',
@@ -46,6 +48,8 @@ export default {
     missingModsFromPreset: 'Fehlende Mods in der Voreinstellung: ',
     checkLog: 'Etwas is schief gelaufen. Überprüfe die app.log-Datei',
     dependencyNotFound: 'Keine Abhängigkeiten gefunden:',
+    presetSaved: 'Die Voreinstellung wurde erfolgreich gespeichert..',
+    iniSaved: 'Die Konfiguration wurde erfolgreich gespeichert.',
   },
   progress: {
     saveConfiguration: 'Speichere Konfiguration',
@@ -55,6 +59,7 @@ export default {
     buildStringtable: 'Baue Strings-Tabelle',
     moveOldSaves: 'Verschiebe alte Spielstände',
     searchMods: 'Suche nach Mods',
+    mergeArchives: 'Zusammenführung von Archiven',
     dontTurnOff: 'Schalten Sie das Programm nicht aus!',
   },
   config: {
@@ -88,5 +93,9 @@ export default {
     save: 'Speichern',
     close: 'Schließen',
     presetName: 'Speichere Voreinstellung als ',
+    error: 'Fehler',
+    info: 'Info',
+    warning: 'Warnung',
+    success: 'Erfolg',
   },
 };

@@ -19,7 +19,9 @@ export default {
       selectAll: 'Select all mods. (Ignores incompatibles)',
       deselectAll: 'Deselect all mods.',
       openGameFolder: 'Open game folder.',
-      openModsFolder: 'Open mods folder',
+      openModsFolder: 'Open mods folder.',
+      openDocumentsFolder: 'Open documents folder.',
+      openStarterFolder: 'Open starter folder.',
     },
     preview: {
       default: 'Select a modification to learn more',
@@ -44,6 +46,8 @@ export default {
     missingModsFromPreset: 'Missing mods from preset: ',
     checkLog: 'Something went wrong. Check app.log',
     dependencyNotFound: 'Dependency not found:',
+    presetSaved: 'Preset succesfully saved.',
+    iniSaved: 'Configuration succesfully saved.',
   },
   progress: {
     saveConfiguration: 'Saving configuration',
@@ -86,5 +90,9 @@ export default {
     save: 'Save',
     close: 'Close',
     presetName: 'Save preset as',
+    error: 'Error',
+    info: 'Info',
+    warning: 'Warning',
+    success: 'Success',
   },
 };

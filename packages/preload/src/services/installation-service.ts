@@ -22,16 +22,17 @@ import { updateProgressBar } from './progress-service';
 import { UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
 const PRESET_FILES_PATH = path.join(APP_PATH, 'Presets');
-const STATIC_FILE_MOD_EXTENSTION = '0x';
+const STATIC_FILE_MOD_EXTENSION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
 // const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
 
-const MOD_EXTENSTIONS = ['mod', 'nod'];
+const MOD_EXTENSIONS = ['mod', 'nod'];
 const DLL_EXTENSION = 'dll';
 const INI_EXTENSION = 'ini';
 const SAVE_EXTENSION = 'g3savcpx';
@@ -75,10 +76,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         for (let i = 0; i < mods.length; i++) {
           updateProgressBar('progress.searchMods', i, mods.length);
-          for (const extension of MOD_EXTENSTIONS) {
+          for (const extension of MOD_EXTENSIONS) {
             const files = findFilesEndsWith(
               mods[i].path,
-              `${extension[0]}${STATIC_FILE_MOD_EXTENSTION}`,
+              `${extension[0]}${STATIC_FILE_MOD_EXTENSION}`,
             );
             if (!filesDictionary[extension]) {
               filesDictionary[extension] = [];
@@ -113,22 +114,23 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         loggerInfo(getMessage('INSTALLATION_COMPLETE', { num: modIds.length.toString() }));
         resolve(time.toFixed(2));
       } catch (error) {
-        // Remove copied files
-        alert(error);
-        loggerError(getMessage('INSTALLATION_FAIL'));
-        loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
-        if (createdFiles.length) {
-          for (let i = 0; i < createdFiles.length; i++) {
-            loggerInfo(getMessage('FILE_DELETING', { path: createdFiles[i] }));
-            updateProgressBar('progress.delete', i, createdFiles.length);
-            fs.unlinkSync(createdFiles[i]);
-            loggerInfo(getMessage('FILE_DELETED', { path: createdFiles[i] }));
+        if (error instanceof Error) {
+          showAlert('modal.error', getMessage('CHECK_LOG_FILE'), 'error');
+          loggerError(getMessage('INSTALLATION_FAIL'));
+          loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
+          // Remove copied files
+          if (createdFiles.length) {
+            for (let i = 0; i < createdFiles.length; i++) {
+              loggerInfo(getMessage('FILE_DELETING', { path: createdFiles[i] }));
+              updateProgressBar('progress.delete', i, createdFiles.length);
+              fs.unlinkSync(createdFiles[i]);
+              loggerInfo(getMessage('FILE_DELETED', { path: createdFiles[i] }));
+            }
+            loggerInfo(getMessage('REVERT_COMPLETE'));
+          } else {
+            loggerInfo(getMessage('REVERT_NOTHING_TO_DO'));
           }
-          loggerInfo(getMessage('REVERT_COMPLETE'));
-        } else {
-          loggerInfo(getMessage('REVERT_NOTHING_TO_DO'));
         }
-
         reject(error);
       }
     })();
@@ -138,7 +140,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 function prepareFilesDictionary(): Record<string, string[]> {
   const filesDictionary: Record<string, string[]> = {};
 
-  for (const extension of MOD_EXTENSTIONS) {
+  for (const extension of MOD_EXTENSIONS) {
     filesDictionary[extension] = [];
   }
   return filesDictionary;
@@ -358,7 +360,6 @@ export async function getNextSaveDirectoryName(): Promise<string> {
 export async function getNewModsFilesPaths(files: string[], destDirectory: string) {
   const newFilesPaths: string[] = [];
   const documents = await getDocumentsPath();
-  console.log(documents, 'docs path');
   const G3_DOCUMENTS_PATH = path.join(documents, 'gothic3');
   for (const file of files) {
     const fileName = path.basename(file);

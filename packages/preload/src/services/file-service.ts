@@ -9,6 +9,7 @@ import { getMessage } from '../../../../utils/messages';
 import Winreg from 'winreg';
 import { InstallationError } from '../../../../Errors/InstallationError';
 import { NotFoundError } from '../../../../Errors/NotFoundError';
+import { showAlert } from './alert-service';
 
 export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
@@ -20,6 +21,10 @@ export function ensureDirectory(directoryPath: string) {
 
 export async function getAppPath(): Promise<string> {
   return await ipcRenderer.invoke('get-app-path');
+}
+
+export async function getExeDirPath(): Promise<string> {
+  return await ipcRenderer.invoke('get-exe-dir-path');
 }
 
 export function findFilesEndsWith(directoryPath: string, fileExtension: string): string[] {
@@ -34,7 +39,9 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 
   return files;
@@ -49,19 +56,51 @@ export async function startGame() {
 
     spawn(execPath, { cwd: configuration.gothicPath, detached: true });
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 }
 
 export async function openGameFolder() {
   const configuration = await loadConfiguration();
   if (!configuration) return;
+  if (!fs.existsSync(configuration.gothicPath!)) {
+    showAlert(
+      'modal.error',
+      getMessage('DIRECTORY_DOESNT_EXIST', { path: configuration.gothicPath! }),
+      'error',
+    );
+    return;
+  }
   openFolder(configuration.gothicPath);
+}
+
+export function openStarterFolder() {
+  const res = path.resolve();
+  openFolder(res);
+}
+
+export async function openDocumentsFolder() {
+  const res = path.join(await getDocumentsPath(), 'gothic3');
+  if (!fs.existsSync(res)) {
+    showAlert('modal.error', getMessage('DIRECTORY_DOESNT_EXIST', { path: res }), 'error');
+    return;
+  }
+  openFolder(res);
 }
 
 export async function openModsFolder() {
   const configuration = await loadConfiguration();
   if (!configuration) return;
+  if (!fs.existsSync(configuration.modsPath!)) {
+    showAlert(
+      'modal.error',
+      getMessage('DIRECTORY_DOESNT_EXIST', { path: configuration.modsPath! }),
+      'error',
+    );
+    return;
+  }
   openFolder(configuration.modsPath);
 }
 

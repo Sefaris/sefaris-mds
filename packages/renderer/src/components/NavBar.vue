@@ -40,7 +40,7 @@
           category="installed"
         />
         <categories-dropdown v-if="categoriesExist" />
-        <presets-dropdown v-if="presetsExist" />
+        <presets-dropdown />
       </div>
     </div>
   </div>
@@ -82,8 +82,6 @@ export default defineComponent({
     const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
     };
-
-    console.log(configExists.value);
 
     return {
       openWebsite,
