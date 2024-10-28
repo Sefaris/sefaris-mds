@@ -20,9 +20,10 @@ export default defineComponent({
       } else {
         i18n.global.locale.value = DEFAULT_LANGUAGE;
       }
-
-      window.addEventListener('message', code => {
-        i18n.global.locale.value = code.data;
+      window.addEventListener('message', event => {
+        if (event.data.channel === 'update-config') {
+          i18n.global.locale.value = event.data.code;
+        }
       });
     });
     return {};

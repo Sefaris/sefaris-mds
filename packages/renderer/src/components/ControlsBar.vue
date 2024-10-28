@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-between">
+  <div class="flex select-none items-center justify-between">
     <div class="p-6">
       <img src="../../assets/images/game-icon.png" />
     </div>

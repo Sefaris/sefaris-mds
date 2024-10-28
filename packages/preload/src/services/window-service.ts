@@ -9,5 +9,5 @@ export function changeConfigLocale(code: string) {
 }
 
 ipcRenderer.on('update-config-locale', (_, code) => {
-  window.postMessage(code);
+  window.postMessage({ channel: 'update-config', code: code });
 });
