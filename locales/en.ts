@@ -45,4 +45,17 @@ export default {
     searchMods: 'Searching for mods',
     mergeArchives: 'Merging archives',
   },
+  config: {
+    nav: {
+      back: 'Back',
+      save: 'Save',
+    },
+    option: {
+      on: 'On',
+      off: 'Off',
+    },
+  },
+  tooltip: {
+    default: 'Default',
+  },
 };

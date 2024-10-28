@@ -74,7 +74,6 @@ export default defineComponent({
     watch([() => selectedMod.value, () => i18n.global.locale.value], async ([newMod, _]) => {
       mod.value = (await loadMods()).find(mod => mod.id === newMod);
       if (!mod.value) {
-        console.error(`Mod ${newMod} doesn't exist!`);
         return;
       }
 

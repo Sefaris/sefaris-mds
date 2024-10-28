@@ -1,5 +1,5 @@
 <template>
-  <div class="box-border flex h-28.5 flex-col border-b border-divider">
+  <div class="box-border flex h-28.5 select-none flex-col border-b border-divider">
     <div class="m-6 flex h-8 justify-between">
       <span
         class="cursor-pointer text-xl text-primary hover:text-primary-hover"
@@ -10,7 +10,10 @@
 
       <div class="flex gap-3">
         <change-locale />
-        <nav-item title="options" />
+        <nav-item
+          title="options"
+          @click="openConfigWindow"
+        />
         <kofi-button />
       </div>
     </div>
@@ -47,6 +50,7 @@ import { useModsStore } from '../stores/mods-store';
 import { SEFARIS_WEBSITE } from '../../../../utils/constants';
 import CategoryButton from './CategoryButton.vue';
 import NavItem from './NavItem.vue';
+import { openConfigWindow } from '#preload';
 export default defineComponent({
   components: {
     ChangeLocale,
@@ -77,6 +81,7 @@ export default defineComponent({
       selectCategory,
       presetsExist,
       SEFARIS_WEBSITE,
+      openConfigWindow,
     };
   },
 });
