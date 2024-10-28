@@ -18,49 +18,66 @@
     v-else-if="mod"
     class="w-91"
   >
-    <div class="font-bold">{{ mod.title }}</div>
-    <div
-      v-if="mod.authors.length"
-      class="mb-2 border-b border-divider text-xs text-light"
-    >
-      <span
-        v-if="mod.authors.length > 1"
-        class="mr-2.5"
+    <div class="mb-2 flex items-center justify-between border-b border-divider">
+      <div>
+        <div class="font-bold">{{ mod.title }}</div>
+        <div
+          v-if="mod.authors.length"
+          class="text-xs text-light"
+        >
+          <span
+            v-if="mod.authors.length > 1"
+            class="mr-2.5"
+          >
+            {{ $t('main.preview.authors') }}:
+          </span>
+          <span
+            v-else
+            class="mr-2.5"
+          >
+            {{ $t('main.preview.author') }}:
+          </span>
+          <span
+            v-for="(author, index) in mod.authors"
+            :key="index"
+            class="after:content-[',_'] last:after:content-['']"
+          >
+            {{ author }}
+          </span>
+        </div>
+      </div>
+
+      <button-tooltip
+        class="mr-2 text-primary"
+        icon="mdi-folder-outline"
+        @click="openFolder(mod.path)"
       >
-        {{ $t('main.preview.authors') }}:
-      </span>
-      <span
-        v-else
-        class="mr-2.5"
-      >
-        {{ $t('main.preview.author') }}:
-      </span>
-      <span
-        v-for="(author, index) in mod.authors"
-        :key="index"
-        class="after:content-[',_'] last:after:content-['']"
-      >
-        {{ author }}
-      </span>
+        {{ $t('main.preview.openModFolder') }}
+      </button-tooltip>
     </div>
     <div class="h-105 overflow-y-auto">
       <img
         class="mb-2.5 w-full"
         :src="imgSource"
       />
-      <div v-html="description" />
+      <div
+        class="description"
+        v-html="description"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
-import { loadModDescription, loadImages, loadMods } from '#preload';
+import { loadModDescription, loadImages, loadMods, openFolder } from '#preload';
 import { i18n, translate } from '../../../../plugins/i18n';
 import type { Mod } from '../../../../interfaces/Mod';
 import { useModsStore } from '../stores/mods-store';
+import ButtonTooltip from './ButtonTooltip.vue';
 
 export default defineComponent({
+  components: { ButtonTooltip },
   setup() {
     const modsStore = useModsStore();
     const description = shallowRef<string>('');
@@ -71,14 +88,16 @@ export default defineComponent({
     const mod = shallowRef<Mod>();
     const selectedMod = computed(() => modsStore.selectedMod);
 
-    watch([() => selectedMod.value, () => i18n.global.locale.value], async ([newMod, _]) => {
+    watch([selectedMod, i18n.global.locale], async ([newMod, _]) => {
       mod.value = (await loadMods()).find(mod => mod.id === newMod);
       if (!mod.value) {
         return;
       }
-
+      const loadedDescription = await loadModDescription(mod.value.path);
       description.value =
-        (await loadModDescription(mod.value.path)) ?? translate('main.preview.noDescription');
+        loadedDescription && loadedDescription.length
+          ? loadedDescription
+          : translate('main.preview.noDescription');
       gallery.value = loadImages(mod.value.path);
       imgSource.value = gallery.value[0];
       currentImageIndex.value = 0;
@@ -108,7 +127,74 @@ export default defineComponent({
       description,
       mod,
       selectedMod,
+      openFolder,
     };
   },
 });
 </script>
+
+<style lang="scss">
+.description {
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 36px;
+  }
+
+  h3 {
+    font-size: 32px;
+  }
+
+  h4 {
+    font-size: 28px;
+  }
+
+  h5 {
+    font-size: 24px;
+  }
+
+  h6 {
+    font-size: 20px;
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 16px;
+    list-style-type: decimal;
+    li::marker {
+      color: #c7f148;
+    }
+  }
+
+  ul {
+    margin: 0;
+
+    li {
+      &:before {
+        color: #c7f148;
+        content: '\F0374'; // minus
+        font-family: 'Material Design Icons';
+        margin-right: 2px;
+      }
+
+      ul {
+        padding-left: 15px;
+        li {
+          &:before {
+            content: '\F0415'; // plus
+          }
+          ul {
+            li {
+              &:before {
+                content: '\F0374'; // minus
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>

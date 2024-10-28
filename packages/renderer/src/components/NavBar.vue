@@ -12,8 +12,15 @@
         <change-locale />
         <nav-item
           title="options"
+          :disabled="!configExists"
           @click="openConfigWindow"
         />
+        <nav-item
+          title="discord"
+          @click="openWebsite('https://discord.gg/9EVFJv5Uyf')"
+        >
+          <icon-discord />
+        </nav-item>
         <kofi-button />
       </div>
     </div>
@@ -33,7 +40,7 @@
           category="installed"
         />
         <categories-dropdown v-if="categoriesExist" />
-        <presets-dropdown v-if="presetsExist" />
+        <presets-dropdown />
       </div>
     </div>
   </div>
@@ -51,6 +58,7 @@ import { SEFARIS_WEBSITE } from '../../../../utils/constants';
 import CategoryButton from './CategoryButton.vue';
 import NavItem from './NavItem.vue';
 import { openConfigWindow } from '#preload';
+import IconDiscord from './IconDiscord.vue';
 export default defineComponent({
   components: {
     ChangeLocale,
@@ -59,6 +67,7 @@ export default defineComponent({
     PresetsDropdown,
     CategoryButton,
     NavItem,
+    IconDiscord,
   },
   setup() {
     const activeCategory = computed(() => modsStore.activeCategory);
@@ -67,6 +76,8 @@ export default defineComponent({
     const installedModsCounter = computed(() => modsStore.installedMods.length);
     const categoriesExist = computed(() => modsStore.categories.length > 0);
     const presetsExist = computed(() => modsStore.presets.length > 0);
+    const installationState = computed(() => modsStore.installationState);
+    const configExists = computed(() => modsStore.configExists);
 
     const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
@@ -80,7 +91,9 @@ export default defineComponent({
       categoriesExist,
       selectCategory,
       presetsExist,
+      configExists,
       SEFARIS_WEBSITE,
+      installationState,
       openConfigWindow,
     };
   },
