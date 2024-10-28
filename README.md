@@ -16,7 +16,7 @@ Mod manager for Gothic 3.
 
 ### Development
 
-- Using the npm script `watch`: Application is started in `development mode` with access to debug window and is automaticly hot-reloaded for the `Main` and `Renderer` processes.
+- Using the npm script `watch`: Application is started in `development mode` with access to debug window and is automatically hot-reloaded for the `Main` and `Renderer` processes.
 - Using the npm script `compile`: This script is configured to compile the application as quickly as possible. It is not ready for distribution, it is compiled only for debugging.
 - Using GitHub Actions: The application is compiled and ready-to-distribute files are automatically added as a draft to the GitHub releases page.
 
