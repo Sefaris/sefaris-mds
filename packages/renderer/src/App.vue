@@ -1,55 +1,32 @@
 <template>
   <title-bar />
-  <nav-bar />
-  <main-section />
-  <footer-section />
+  <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
 import TitleBar from './components/TitleBar.vue';
-import NavBar from './components/NavBar.vue';
-import MainSection from './components/MainSection.vue';
-import FooterSection from './components/FooterSection.vue';
-import { useModsStore } from './stores/mods-store';
-import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
-import { translate } from '../../../plugins/i18n';
+import { i18n } from '../../../plugins/i18n';
+import { loadConfiguration } from '#preload';
+import type { SUPPORTED_LANGUAGES } from '../../../utils/constants';
 import { DEFAULT_LANGUAGE } from '../../../utils/constants';
-import type { AppConfiguration } from '../../../interfaces/AppConfiguration';
 export default defineComponent({
-  components: { TitleBar, NavBar, MainSection, FooterSection },
+  components: { TitleBar },
   setup() {
-    const modsStore = useModsStore();
     onMounted(async () => {
-      const config = await loadConfiguration();
-      if (!config) {
-        alert(`${translate('alert.configNotFound')}`);
-        const gamePath = await selectGameFolder();
-        if (!gamePath) closeApplication();
-        const config: AppConfiguration = {
-          gothicPath: gamePath,
-          language: DEFAULT_LANGUAGE,
-          installedMods: [],
-          filesCreated: [],
-        };
-        await saveConfiguration(config);
+      const configuration = await loadConfiguration();
+      if (configuration) {
+        i18n.global.locale.value = configuration.language as SUPPORTED_LANGUAGES;
+      } else {
+        i18n.global.locale.value = DEFAULT_LANGUAGE;
       }
-      await modsStore.reloadMods();
-      await modsStore.loadInstalledMods();
-      await modsStore.loadCategories();
-      await modsStore.loadPresets();
+      window.addEventListener('message', event => {
+        if (event.data.channel === 'update-config') {
+          i18n.global.locale.value = event.data.code;
+        }
+      });
     });
-
     return {};
   },
 });
 </script>
-
-<style>
-#app {
-  height: 760px;
-  width: 800px;
-  background-image: url('./../assets/images/background.png');
-  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
-}
-</style>

@@ -39,7 +39,8 @@ export default defineComponent({
     });
 
     window.addEventListener('message', event => {
-      const data = event.data as ProgressStatus;
+      if (event.data.channel !== 'update-progress') return;
+      const data = event.data.progress as ProgressStatus;
       stepName.value = translate(data.actionName);
       progress.value = Number((((data.step + 1) / data.maxSteps) * 100).toFixed(0));
       progressStyle.value = `${progress.value}%`;

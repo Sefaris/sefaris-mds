@@ -1,10 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    // Example content paths...
-    './packages/renderer/**/*.html',
-    './packages/renderer/**/*.{js,jsx,ts,tsx,vue}',
-  ],
+import type { Config } from 'tailwindcss';
+
+export default {
+  content: ['./packages/renderer/**/*.html', './packages/renderer/**/*.{js,jsx,ts,tsx,vue}'],
   theme: {
     extend: {
       colors: {
@@ -16,6 +13,10 @@ module.exports = {
         divider: '#30303b',
         light: '#c3c1c1',
         disabled: '#ffffff33',
+        menu: '#e0c495',
+        'menu-hover': '#ffebdc',
+        slider: '#312e2c',
+        close: '#b92a20',
       },
       lineHeight: {
         3: '12px',
@@ -28,8 +29,11 @@ module.exports = {
         10: '40px',
       },
       backgroundImage: {
-        play: "url('/packages/renderer/assets/images/play.png')",
-        install: "url('/packages/renderer/assets/images/install.png')",
+        play: "url('@assets/images/play.png')",
+        install: "url('@assets/images/install.png')",
+        'checkbox-inactive': "url('@assets/images/checkbox-inactive.png')",
+        'checkbox-active': "url('@assets/images/checkbox-active.png')",
+        'option-button': "url('@assets/images/option-button.png')",
       },
       fontFamily: {
         lato: ['Lato', 'sans-serif'],
@@ -63,6 +67,7 @@ module.exports = {
       4.5: '18px',
       5: '20px',
       6: '24px',
+      6.5: '26px',
       7: '28px',
       8: '32px',
       8.5: '34px',
@@ -73,23 +78,29 @@ module.exports = {
       14: '56px',
       15: '60px',
       16: '64px',
+      18: '72px',
       20: '80px',
       24: '96px',
       27: '108px',
       28: '112px',
       28.5: '114px',
+      30: '120px',
       32: '128px',
       36: '144px',
       40: '160px',
       44: '176px',
+      45: '181px',
       48: '192px',
+      50: '200px',
       52: '208px',
       56: '224px',
       60: '240px',
       64: '256px',
+      68: '272px',
       72: '288px',
       78.75: '315px',
       80: '320px',
+      83: '332px',
       87: '348px',
       91: '364px',
       96: '384px',
@@ -101,6 +112,8 @@ module.exports = {
       130: '520px',
       140: '560px',
       150: '600px',
+      174.5: '698px',
+      182: '728px',
       200: '800px',
     },
   },
@@ -108,4 +121,4 @@ module.exports = {
     extend: {},
   },
   plugins: [require('tailwind-scrollbar')],
-};
+} satisfies Config;
