@@ -1,11 +1,17 @@
-import type { Mod } from '@interfaces/Mod';
+import type { Mod } from '../../../../interfaces/Mod';
 import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
-import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
-
-const UTF8 = 'utf8';
+import { colorPlugin } from 'markdown-it-color-plus';
+import {
+  DEFAULT_LANGUAGE,
+  IMAGES_DIRECTORY,
+  README_DIRECTORY,
+  UTF8,
+} from '../../../../utils/constants';
+import { loggerError, loggerWarn } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
 
 export async function loadMods(): Promise<Mod[]> {
   const configuration = await loadConfiguration();
@@ -22,12 +28,15 @@ export async function loadMods(): Promise<Mod[]> {
       mods.push(mod);
     }
   });
+  if (!mods.length) {
+    loggerWarn(getMessage('MODS_NOT_FOUND', { path: configuration.modsPath }));
+  }
   return mods;
 }
 
 export function validateMod(modPath: string): Mod | null {
   if (!fs.existsSync(path.join(modPath, 'mod.json'))) {
-    console.error('mod.json not found in ' + modPath);
+    loggerError(`${getMessage('MOD_JSON_NOT_FOUND')} ${modPath}`);
     return null;
   }
 
@@ -42,11 +51,12 @@ export function validateMod(modPath: string): Mod | null {
       Array.isArray(mod.incompatibles)
     )
   ) {
-    console.error(`Wrong json structure for ${path.basename(modPath)}`);
+    loggerError(`${getMessage('WRONG_JSON_STRUCTURE', { mod: path.basename(modPath) })}`);
     return null;
   }
 
   if (!mod.id || !mod.title) {
+    loggerError(getMessage('MODS_MISSING_TITLE_ID', { mod: path.basename(modPath) }));
     return null;
   }
 
@@ -56,19 +66,24 @@ export function validateMod(modPath: string): Mod | null {
 }
 
 export async function loadModDescription(modPath: string): Promise<string | null> {
-  const md = new MarkdownIt();
+  const md = new MarkdownIt({
+    breaks: true,
+  }).use(colorPlugin, {
+    inline: true,
+  });
   const config = await loadConfiguration();
   const locale = config?.language || DEFAULT_LANGUAGE;
 
-  const file = path.join(modPath, `readme_${locale}.md`);
+  const file = path.join(modPath, README_DIRECTORY, `readme_${locale}.md`);
   if (!fs.existsSync(file)) {
+    loggerWarn(getMessage('MOD_NO_README_LOCALE', { name: path.basename(modPath), locale }));
     return null;
   }
   return md.render(fs.readFileSync(file, UTF8));
 }
 
 export function loadImages(modPath: string): string[] {
-  const imagesPath = path.join(modPath, 'Pictures');
+  const imagesPath = path.join(modPath, IMAGES_DIRECTORY);
   if (!fs.existsSync(imagesPath)) return [];
   const files = fs.readdirSync(imagesPath);
   const imageFiles = files.filter(file => {

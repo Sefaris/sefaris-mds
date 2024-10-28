@@ -1,56 +1,89 @@
 <template>
-  <div class="main">
-    <div class="main-mods">
-      <div
-        v-if="!mods.length"
-        class="main-mods-nomods"
-      >
-        <img src="../../assets/images/error_404.webp" />
-        {{ $t('main.mods.notFound') }}
-      </div>
-      <div
-        v-for="(mod, index) in mods"
-        :key="index"
-        class="main-mods-mod"
-      >
-        <div class="main-mods-mod-checkbox">
-          <img
-            v-if="selectedMods.includes(mod.id)"
-            class="main-mods-mod-checkbox-active"
-            :class="{ 'main-mods-mod-checkbox-dependency': isDependencyOfSelectedMod(mod.id) }"
-            src="../../assets/svg/check-bold.svg"
-            @click="deselectMod(mod.id)"
-          />
-          <img
-            v-else
-            class="main-mods-mod-checkbox-inactive"
-            :class="{ 'main-mods-mod-checkbox-incompatible': isIncompatibleofSelectedMod(mod.id) }"
-            src="../../assets/svg/state=unactive.svg"
-            @click="selectMod(mod.id)"
-          />
-        </div>
-        <div
-          class="main-mods-mod-name"
-          :class="{ 'main-mods-mod-name-active': selectedMod === mod.id }"
-          @click="selectedMod = mod.id"
+  <div
+    :key="refreshKey"
+    class="flex h-126.5 justify-evenly pt-6"
+  >
+    <div class="flex w-91 flex-col overflow-y-auto">
+      <div class="sticky top-0 flex justify-end gap-2 border-b border-divider bg-transparent px-4">
+        <button-tooltip
+          class="text-primary"
+          icon="mdi-select-all"
+          @click="selectAll"
         >
-          {{ mod.id }}
-        </div>
+          {{ $t('main.mods.selectAll') }}
+        </button-tooltip>
+        <button-tooltip
+          class="text-primary"
+          icon="mdi-select-off"
+          @click="deselectAll"
+        >
+          {{ $t('main.mods.deselectAll') }}
+        </button-tooltip>
+        <button-tooltip
+          class="text-primary"
+          icon="mdi-folder-home-outline"
+          @click="openGameFolder"
+        >
+          {{ $t('main.mods.openGameFolder') }}
+        </button-tooltip>
+        <button-tooltip
+          class="text-primary"
+          icon="mdi-folder-table-outline"
+          @click="openModsFolder"
+        >
+          {{ $t('main.mods.openModsFolder') }}
+        </button-tooltip>
+        <button-tooltip
+          class="text-primary"
+          icon="mdi-folder-cog-outline"
+          @click="openStarterFolder"
+        >
+          {{ $t('main.mods.openStarterFolder') }}
+        </button-tooltip>
+        <button-tooltip
+          class="text-primary"
+          icon="mdi-folder-account-outline"
+          @click="openDocumentsFolder"
+        >
+          {{ $t('main.mods.openDocumentsFolder') }}
+        </button-tooltip>
+      </div>
+      <div class="flex w-91 flex-col overflow-y-auto">
+        <no-mods v-if="!mods.length" />
+        <mod-item
+          v-for="(mod, index) in mods"
+          :key="index"
+          :config="config"
+          :mod="mod"
+        />
       </div>
     </div>
-    <mod-preview :selected-mod="selectedMod" />
+    <mod-preview />
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, onMounted, shallowRef, watch } from 'vue';
 import ModPreview from './ModPreview.vue';
 import { useModsStore } from '../stores/mods-store';
+import NoMods from './NoMods.vue';
+import ModItem from './ModItem.vue';
+import ButtonTooltip from './ButtonTooltip.vue';
+import {
+  openModsFolder,
+  openGameFolder,
+  loadConfiguration,
+  openStarterFolder,
+  openDocumentsFolder,
+} from '#preload';
+import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 export default defineComponent({
-  components: { ModPreview },
+  components: { ModPreview, NoMods, ModItem, ButtonTooltip },
   setup() {
     const modsStore = useModsStore();
     const mods = computed(() => modsStore.displayedMods);
+    const refreshKey = computed(() => modsStore.refreshKey);
+    const config = shallowRef<AppConfiguration | null>(null);
     const selectedMods = computed({
       get() {
         return modsStore.selectedMods;
@@ -59,193 +92,34 @@ export default defineComponent({
         modsStore.setSelectedMods(mods);
       },
     });
-    const installedMods = ref<string[]>([]);
-    const selectedMod = ref<string>();
 
-    function selectDependencies(modId: string) {
-      const mod = mods.value.find(mod => mod.id === modId);
-      if (!mod) {
-        throw new Error(`Mod ${modId} not found`);
-      }
-      for (const dependency of mod.dependencies) {
-        const dependencyMod = mods.value.find(mod => mod.id === dependency);
-        if (!dependencyMod) {
-          throw new Error(`Dependency ${dependency} not found`);
-        }
-        selectMod(dependencyMod.id);
-      }
-    }
+    const selectAll = () => {
+      selectedMods.value = mods.value.map(mod => mod.id);
+    };
 
-    function selectMod(modId: string) {
-      if (isIncompatibleofSelectedMod(modId)) {
-        return;
-      }
-      if (!selectedMods.value.includes(modId)) {
-        selectedMods.value.push(modId);
-      }
-      const mod = mods.value.find(mod => mod.id === modId);
-      modsStore.deactivatePreset();
-      if (!mod?.dependencies.length) {
-        return;
-      }
-      selectDependencies(modId);
-    }
+    const deselectAll = () => {
+      selectedMods.value = [];
+    };
 
-    function isDependencyOfSelectedMod(modId: string): boolean {
-      return selectedMods.value.some(selectedModId => {
-        const mod = mods.value.find(mod => mod.id === selectedModId);
-        return mod?.dependencies?.includes(modId) ?? false;
-      });
-    }
+    watch(refreshKey, async () => {
+      config.value = await loadConfiguration();
+    });
 
-    function isIncompatibleofSelectedMod(modId: string): boolean {
-      return selectedMods.value.some(selectedModId => {
-        const mod = mods.value.find(mod => mod.id === selectedModId);
-        return mod?.incompatibles?.includes(modId) ?? false;
-      });
-    }
-
-    function deselectMod(modId: string) {
-      if (!selectedMods.value.includes(modId)) {
-        return;
-      }
-      if (isDependencyOfSelectedMod(modId)) {
-        return;
-      }
-      modsStore.deactivatePreset();
-      selectedMods.value.splice(selectedMods.value.indexOf(modId), 1);
-    }
-
-    function checkDetails(modId: string) {
-      selectedMod.value = modId;
-    }
+    onMounted(async () => {
+      config.value = await loadConfiguration();
+    });
 
     return {
       mods,
-      selectedMods,
-      installedMods,
-      selectedMod,
-      selectMod,
-      deselectMod,
-      isDependencyOfSelectedMod,
-      isIncompatibleofSelectedMod,
-      checkDetails,
+      refreshKey,
+      config,
+      openModsFolder,
+      openGameFolder,
+      openStarterFolder,
+      openDocumentsFolder,
+      selectAll,
+      deselectAll,
     };
   },
 });
 </script>
-
-<style lang="scss">
-@import '../../assets/styles/variables.scss';
-@import '../../assets/styles/mixins.scss';
-
-.main {
-  display: flex;
-  justify-content: space-evenly;
-  height: $main-height;
-  padding-top: $padding-big;
-
-  &-mods {
-    width: $main-sections-width;
-    overflow-y: auto;
-
-    &-nomods {
-      @include center;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    &-mod {
-      @include center-vertically;
-
-      &-checkbox {
-        cursor: pointer;
-
-        &-dependency {
-          background-color: rgba($primary-color, 0.5) !important;
-        }
-
-        &-incompatible {
-          border-radius: $border-radius-small;
-          background-color: $color-incompatible !important;
-          cursor: default;
-        }
-
-        &-active {
-          background-color: $primary-color;
-          border-radius: $border-radius-small;
-        }
-      }
-
-      &-name {
-        @include center-vertically;
-        height: 36px;
-        cursor: pointer;
-        margin-left: $margin-regular;
-        margin-right: $margin-between;
-        width: 100%;
-
-        &-active {
-          border-right: $border-width-regular solid $primary-color;
-        }
-      }
-    }
-  }
-
-  &-preview {
-    width: $main-sections-width;
-    border-radius: $border-radius-medium;
-    margin-bottom: $padding-big;
-    height: 506px;
-
-    &-default {
-      @include center;
-      border: 1px dashed $text-light;
-      height: 458px !important;
-      overflow-y: none;
-      &-content {
-        width: 170px;
-        color: $text-light;
-        text-align: center;
-
-        &-message {
-          margin-bottom: $margin-regular;
-        }
-      }
-    }
-
-    &-author {
-      font-size: $font-size-small;
-      color: $text-light;
-      margin-top: $margin-minimal;
-
-      &-name {
-        &:first-child {
-          margin-left: $margin-small;
-        }
-
-        &::after {
-          content: ', ';
-        }
-
-        &:last-child::after {
-          content: '';
-        }
-      }
-    }
-
-    &-content {
-      &-description {
-        height: 434px;
-        margin-top: $margin-regular;
-        overflow-y: auto;
-
-        &-image {
-          margin-bottom: $margin-small;
-          max-width: 348px;
-        }
-      }
-    }
-  }
-}
-</style>

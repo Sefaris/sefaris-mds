@@ -1,19 +1,30 @@
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
+import { loggerError, loggerInfo } from './logger-service';
+import { getMessage } from '../../../../utils/messages';
+import Winreg from 'winreg';
+import { InstallationError } from '../../../../Errors/InstallationError';
+import { NotFoundError } from '../../../../Errors/NotFoundError';
+import { showAlert } from './alert-service';
 
-export async function ensureDirectory(directoryPath: string): Promise<void> {
+export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
-    fs.promises.mkdir(directoryPath, { recursive: true });
+    loggerInfo(getMessage('DIRECTORY_CREATE', { path: directoryPath }));
+    fs.mkdirSync(directoryPath, { recursive: true });
+    loggerInfo(getMessage('DIRECTORY_CREATED'));
   }
 }
 
 export async function getAppPath(): Promise<string> {
   return await ipcRenderer.invoke('get-app-path');
+}
+
+export async function getExeDirPath(): Promise<string> {
+  return await ipcRenderer.invoke('get-exe-dir-path');
 }
 
 export function findFilesEndsWith(directoryPath: string, fileExtension: string): string[] {
@@ -28,7 +39,9 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    alert(error);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 
   return files;
@@ -36,35 +49,75 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
 
 export async function startGame() {
   try {
-    const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
+    const configuration = await loadConfiguration();
+    if (!configuration) return;
     const execPath = path.join(configuration.gothicPath, 'Gothic3.exe');
+    if (!fs.existsSync(execPath)) throw new NotFoundError(getMessage('GOTHIC_EXE_NOT_FOUND'));
 
-    if (!fs.existsSync(execPath)) {
-      throw new Error(`Plik ${execPath} nie istnieje.`);
-    }
+    spawn(execPath, { cwd: configuration.gothicPath, detached: true });
   } catch (error) {
-    console.error('Wystąpił błąd:', error);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 }
 
 export async function openGameFolder() {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-  exec(`explorer ${configuration.gothicPath}`);
+  const configuration = await loadConfiguration();
+  if (!configuration) return;
+  if (!fs.existsSync(configuration.gothicPath!)) {
+    showAlert(
+      'modal.error',
+      getMessage('DIRECTORY_DOESNT_EXIST', { path: configuration.gothicPath! }),
+      'error',
+    );
+    return;
+  }
+  openFolder(configuration.gothicPath);
+}
+
+export function openStarterFolder() {
+  const res = path.resolve();
+  openFolder(res);
+}
+
+export async function openDocumentsFolder() {
+  const res = path.join(await getDocumentsPath(), 'gothic3');
+  if (!fs.existsSync(res)) {
+    showAlert('modal.error', getMessage('DIRECTORY_DOESNT_EXIST', { path: res }), 'error');
+    return;
+  }
+  openFolder(res);
 }
 
 export async function openModsFolder() {
-  const configuration: AppConfiguration = (await loadConfiguration()) as AppConfiguration;
-  exec(`explorer ${configuration.modsPath}`);
+  const configuration = await loadConfiguration();
+  if (!configuration) return;
+  if (!fs.existsSync(configuration.modsPath!)) {
+    showAlert(
+      'modal.error',
+      getMessage('DIRECTORY_DOESNT_EXIST', { path: configuration.modsPath! }),
+      'error',
+    );
+    return;
+  }
+  openFolder(configuration.modsPath);
+}
+
+export function openFolder(path?: string) {
+  if (!path) return;
+  if (!fs.existsSync(path)) return;
+  exec(`explorer ${path}`);
 }
 
 export function swapFileNames(filePath1: string, filePath2: string) {
   const tempFilePath = path.join(path.dirname(filePath1), 'temp_swap_file');
 
   if (!fs.existsSync(filePath1)) {
-    throw new Error(`Plik nie istnieje: ${filePath1}`);
+    throw new InstallationError(`${getMessage('FILE_DOESNT_EXIST', { path: filePath1 })}`);
   }
   if (!fs.existsSync(filePath2)) {
-    throw new Error(`Plik nie istnieje: ${filePath2}`);
+    throw new InstallationError(`${getMessage('FILE_DOESNT_EXIST', { path: filePath2 })}`);
   }
 
   fs.renameSync(filePath1, tempFilePath);
@@ -127,7 +180,25 @@ export async function copyFiles(
       extension,
     );
     const newFilePath = path.join(destinationPath, destinationFileName);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: filePath, dst: newFilePath }));
     await fs.promises.copyFile(filePath, newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: filePath, dst: newFilePath }));
     createdFiles.push(newFilePath);
   }
+}
+export async function getDocumentsPath(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const regKey = new Winreg({
+      hive: Winreg.HKCU,
+      key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders',
+    });
+
+    regKey.get('Personal', (err, item) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(item.value);
+      }
+    });
+  });
 }
