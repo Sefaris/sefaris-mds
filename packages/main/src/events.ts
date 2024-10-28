@@ -2,11 +2,8 @@ import { BrowserWindow, app, dialog, ipcMain } from 'electron';
 import { translate } from '../../../plugins/i18n';
 import * as path from 'path';
 import * as fs from 'fs';
-import { createConfigWindow } from './configWindow';
-import { getWindows } from './mainWindow';
 
 export function addEvents() {
-  const windows = getWindows();
   ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -36,24 +33,12 @@ export function addEvents() {
   });
 
   ipcMain.on('minimize-window', () => {
-    BrowserWindow.getFocusedWindow()?.minimize();
+    BrowserWindow.getAllWindows()
+      .find(w => !w.isDestroyed())
+      ?.minimize();
   });
 
   ipcMain.on('close-application', () => {
-    if (BrowserWindow.getFocusedWindow() == windows['main']) {
-      app.exit();
-      return;
-    } else if (BrowserWindow.getFocusedWindow() == windows['config']) {
-      windows['config'].close();
-      windows['config'] = undefined;
-    }
-  });
-
-  ipcMain.on('open-config-window', async () => {
-    createConfigWindow();
-  });
-
-  ipcMain.on('change-config-locale', (_, code) => {
-    windows['config']?.webContents.send('update-config-locale', code);
+    app.quit();
   });
 }

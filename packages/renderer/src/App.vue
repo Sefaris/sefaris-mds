@@ -1,32 +1,57 @@
 <template>
   <title-bar />
-  <router-view />
+  <nav-bar />
+  <main-section />
+  <footer-section />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
 import TitleBar from './components/TitleBar.vue';
-import { i18n } from '../../../plugins/i18n';
-import { loadConfiguration } from '#preload';
-import type { SUPPORTED_LANGUAGES } from '../../../utils/constants';
+import NavBar from './components/NavBar.vue';
+import MainSection from './components/MainSection.vue';
+import FooterSection from './components/FooterSection.vue';
+import { useModsStore } from './stores/mods-store';
+import { closeApplication, loadConfiguration, saveConfiguration, selectGameFolder } from '#preload';
+import { translate } from '../../../plugins/i18n';
 import { DEFAULT_LANGUAGE } from '../../../utils/constants';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 export default defineComponent({
-  components: { TitleBar },
+  components: { TitleBar, NavBar, MainSection, FooterSection },
   setup() {
+    const modsStore = useModsStore();
     onMounted(async () => {
-      const configuration = await loadConfiguration();
-      if (configuration) {
-        i18n.global.locale.value = configuration.language as SUPPORTED_LANGUAGES;
-      } else {
-        i18n.global.locale.value = DEFAULT_LANGUAGE;
+      const config = await loadConfiguration();
+      if (!config) {
+        alert(`${translate('alert.configNotFound')}`);
+        const gamePath = await selectGameFolder();
+        if (!gamePath) closeApplication();
+        const config: AppConfiguration = {
+          gothicPath: gamePath,
+          language: DEFAULT_LANGUAGE,
+          installedMods: [],
+          filesCreated: [],
+        };
+        await saveConfiguration(config);
       }
-      window.addEventListener('message', event => {
-        if (event.data.channel === 'update-config') {
-          i18n.global.locale.value = event.data.code;
-        }
-      });
+      await modsStore.reloadMods();
+      await modsStore.loadInstalledMods();
+      await modsStore.loadCategories();
+      await modsStore.loadPresets();
     });
+
     return {};
   },
 });
 </script>
+
+<style lang="scss">
+@import '../assets/styles/main.scss';
+
+#app {
+  height: 100vh;
+  max-width: 100vw;
+  background-image: url('./../assets/images/background.png');
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
+}
+</style>
