@@ -88,10 +88,7 @@ FontSize=16
       '[{"name":"Main","options":[{"name":"FontName","description":"lorem","value":"Comic Sans MS","type":"string","defaultValue":"Comic Sans MS"},{"name":"FontSize","description":"lorem","value":16,"type":"number","defaultValue":16,"ranges":[0,60]}]}]',
     );
 
-    const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(parseConfig(ini, 'Config')).toMatchObject(expectedOutput);
-    expect(consoleErrorMock).toHaveBeenCalled();
-    consoleErrorMock.mockRestore();
   });
 
   test('returns empty array for missing section', () => {
@@ -129,10 +126,7 @@ Autor=Fyryny
 FontName=Comic Sans MS
 FontSize=16`;
 
-    const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(parseConfig(ini, 'Config')).toMatchObject([]);
-    expect(consoleErrorMock).toHaveBeenCalled();
-    consoleErrorMock.mockRestore();
   });
 
   test('returns object option with min 0, max 60, step 2', () => {
@@ -165,10 +159,7 @@ FontSize=16
 ; lorem
 ; number, 16`;
 
-    const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(parseConfig(ini, 'Config')).toHaveLength(0);
-    expect(consoleErrorMock).toHaveBeenCalled();
-    consoleErrorMock.mockRestore();
   });
 
   test('returns object with 3 values in array', () => {
@@ -788,7 +779,7 @@ AutoLootIconPosTopX=98.500000
     await expect(saveIniConfiguration(input, 'eCDELocator.ini')).rejects.toThrowError();
   });
 
-  test('saves ini overwriting all supported types', async () => {
+  test('throws error not try to save no data', async () => {
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem

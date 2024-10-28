@@ -61,3 +61,4 @@ thumbs.db
 # MDS files
 config.json
 Presets/*
+app.log

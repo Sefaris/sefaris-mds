@@ -1,6 +1,6 @@
 <template>
   <button
-    class="mr-6 h-15 w-78.75 bg-[url('../../assets/images/play.png')]"
+    class="mr-6 h-15 w-78.75 bg-play"
     @click="play()"
   >
     <span class="font-gothic text-3xl">
