@@ -10,16 +10,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 export default defineComponent({
   props: {
     min: {
       type: Number,
-      required: true,
+      default: 0,
     },
     max: {
       type: Number,
-      required: true,
+      default: 1,
     },
     value: {
       type: Boolean,
@@ -34,6 +34,14 @@ export default defineComponent({
       sliderValue.value = Number(target.value);
       emit.emit('slide', Boolean(sliderValue.value));
     };
+
+    watch(
+      () => props.value,
+      newValue => {
+        sliderValue.value = newValue ? 1 : 0;
+      },
+    );
+
     return { onSlide, sliderValue };
   },
 });

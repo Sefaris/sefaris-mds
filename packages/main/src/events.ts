@@ -1,4 +1,4 @@
-import { BrowserWindow, app, dialog, ipcMain } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain, Notification } from 'electron';
 import { translate } from '../../../plugins/i18n';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -7,7 +7,8 @@ import { getWindows } from './mainWindow';
 
 export function addEvents() {
   const windows = getWindows();
-  ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
+
+  ipcMain.handle('open-folder-dialog-game', async (): Promise<string> => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const result = await dialog.showOpenDialog({
@@ -31,8 +32,25 @@ export function addEvents() {
     }
   });
 
+  ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      });
+      if (result.canceled) {
+        return '';
+      }
+      return result.filePaths[0];
+    }
+  });
+
   ipcMain.handle('get-app-path', async () => {
     return app.getAppPath();
+  });
+
+  ipcMain.handle('get-exe-dir-path', async () => {
+    return path.join(app.getPath('exe'), '..');
   });
 
   ipcMain.on('minimize-window', () => {
@@ -49,11 +67,32 @@ export function addEvents() {
     }
   });
 
+  // Ensure config windows closes when main window is closed
+  windows['main']!.on('closed', () => {
+    windows['config']?.close();
+  });
+
   ipcMain.on('open-config-window', async () => {
     createConfigWindow();
   });
 
   ipcMain.on('change-config-locale', (_, code) => {
     windows['config']?.webContents.send('update-config-locale', code);
+  });
+
+  ipcMain.on('change-config', () => {
+    windows['main']?.webContents.send('reload-config');
+  });
+
+  ipcMain.handle('get-is-packaged', () => {
+    return app.isPackaged;
+  });
+
+  ipcMain.on('show-notification', (_, notification: { title: string; body: string }) => {
+    windows['main']?.flashFrame(true);
+    new Notification({
+      title: notification.title,
+      body: notification.body,
+    }).show();
   });
 }

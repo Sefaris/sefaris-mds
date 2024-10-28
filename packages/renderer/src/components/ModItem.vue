@@ -3,7 +3,10 @@
     class="mr-2 flex items-center gap-3 py-1.5"
     :class="{ 'border-r-4 border-primary': isActive }"
   >
-    <mod-checkbox :mod-id="mod.id" />
+    <mod-checkbox
+      :mod-id="mod.id"
+      :config="config"
+    />
     <span
       class="cursor-pointer"
       @click="selectedMod = mod.id"
@@ -19,11 +22,16 @@ import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import type { Mod } from '../../../../interfaces/Mod';
 import ModCheckbox from './ModCheckbox.vue';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 export default defineComponent({
   components: { ModCheckbox },
   props: {
     mod: {
       type: Object as PropType<Mod>,
+      required: true,
+    },
+    config: {
+      type: Object as PropType<AppConfiguration | null>,
       required: true,
     },
   },

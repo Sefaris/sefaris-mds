@@ -4,7 +4,7 @@ import { getWindows } from './mainWindow';
 
 export async function createConfigWindow() {
   const windows = getWindows();
-  if (windows['config']) {
+  if (windows['config'] && !windows['config'].isDestroyed()) {
     windows['config'].restore();
     windows['config'].focus();
     return;
@@ -21,6 +21,7 @@ export async function createConfigWindow() {
       contextIsolation: true,
       sandbox: false,
       preload: path.join(app.getAppPath(), 'packages/preload/dist/index.cjs'),
+      devTools: import.meta.env.DEV ? true : false,
     },
     autoHideMenuBar: true,
   });
@@ -33,13 +34,14 @@ export async function createConfigWindow() {
 
   if (import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL !== undefined) {
     // Ładowanie URL z serwera deweloperskiego
-    await newWindow.loadURL(`${import.meta.env.VITE_DEV_SERVER_URL}#/config`);
+    await newWindow.loadURL(`${import.meta.env.VITE_DEV_SERVER_URL}#/option-list`);
   } else {
     await newWindow.loadFile(path.resolve(__dirname, '../../renderer/dist/index.html'), {
-      hash: '/config',
+      hash: '/option-list',
     });
   }
   windows['config'] = newWindow;
+  app.setAppUserModelId('G3 ModStarter');
 
   return newWindow;
 }

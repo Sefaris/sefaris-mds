@@ -3,6 +3,7 @@ import { loadConfiguration } from './configuration-service';
 import * as fs from 'fs';
 import * as path from 'path';
 import MarkdownIt from 'markdown-it';
+import { colorPlugin } from 'markdown-it-color-plus';
 import {
   DEFAULT_LANGUAGE,
   IMAGES_DIRECTORY,
@@ -35,7 +36,7 @@ export async function loadMods(): Promise<Mod[]> {
 
 export function validateMod(modPath: string): Mod | null {
   if (!fs.existsSync(path.join(modPath, 'mod.json'))) {
-    loggerError(`${getMessage('MODJSON_NOT_FOUND')} ${modPath}`);
+    loggerError(`${getMessage('MOD_JSON_NOT_FOUND')} ${modPath}`);
     return null;
   }
 
@@ -65,7 +66,11 @@ export function validateMod(modPath: string): Mod | null {
 }
 
 export async function loadModDescription(modPath: string): Promise<string | null> {
-  const md = new MarkdownIt();
+  const md = new MarkdownIt({
+    breaks: true,
+  }).use(colorPlugin, {
+    inline: true,
+  });
   const config = await loadConfiguration();
   const locale = config?.language || DEFAULT_LANGUAGE;
 

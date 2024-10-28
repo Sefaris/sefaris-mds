@@ -16,10 +16,13 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
-import { loggerError } from '#preload';
+import { loggerWarn, showAlert, loggerError } from '#preload';
 import { getMessage } from '../../../../utils/messages';
+import { translate } from '../../../../plugins/i18n';
+import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { NotFoundError } from '../../../../Errors/NotFoundError';
 export default defineComponent({
   props: {
@@ -27,8 +30,12 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    config: {
+      type: Object as PropType<AppConfiguration | null>,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
     const modsStore = useModsStore();
     const mods = computed(() => modsStore.mods);
     const selectedMods = computed({
@@ -41,16 +48,28 @@ export default defineComponent({
     });
 
     function selectDependencies(modId: string) {
+      if (props.config?.ignoreDependencies) return;
       const mod = mods.value.find(mod => mod.id === modId);
-      if (!mod) {
-        throw new NotFoundError(getMessage('MOD_NOT_FOUND', { name: modId }));
-      }
-      for (const dependency of mod.dependencies) {
-        const dependencyMod = mods.value.find(mod => mod.id === dependency);
-        if (!dependencyMod) {
-          throw new NotFoundError(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
+      try {
+        if (!mod) {
+          throw new NotFoundError(getMessage('MOD_NOT_FOUND', { name: modId }));
         }
-        selectMod(dependencyMod.id);
+        for (const dependency of mod.dependencies) {
+          const dependencyMod = mods.value.find(mod => mod.id === dependency);
+          if (!dependencyMod) {
+            showAlert(
+              'modal.error',
+              `${translate('alert.dependencyNotFound')} ${dependency}`,
+              'error',
+            );
+            throw new NotFoundError(getMessage('DEPENDENCY_NOT_FOUND', { name: dependency }));
+          }
+          selectMod(dependencyMod.id);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          loggerWarn(error.message);
+        }
       }
     }
 
@@ -70,11 +89,14 @@ export default defineComponent({
 
         selectDependencies(modId);
       } catch (error) {
-        loggerError(error as string);
+        if (error instanceof Error) {
+          loggerError(error.message);
+        }
       }
     }
 
     function isDependencyOfSelectedMod(modId: string): boolean {
+      if (props.config?.ignoreDependencies) return false;
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
         return mod?.dependencies?.includes(modId) ?? false;
@@ -82,6 +104,7 @@ export default defineComponent({
     }
 
     function isIncompatibleofSelectedMod(modId: string): boolean {
+      if (props.config?.ignoreIncompatible) return false;
       return selectedMods.value.some(selectedModId => {
         const mod = mods.value.find(mod => mod.id === selectedModId);
         return mod?.incompatibles?.includes(modId) ?? false;

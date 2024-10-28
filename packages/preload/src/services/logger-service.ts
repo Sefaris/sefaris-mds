@@ -1,19 +1,26 @@
+import type { Logger } from 'winston';
 import winston from 'winston';
 import { format } from 'winston';
+import { getDocumentsPath } from './file-service';
+import path from 'path';
 const { printf } = format;
+
+let logger: Logger;
 
 const myFormat = printf(({ level, message, timestamp }) => {
   const formattedTimestamp = new Date(timestamp).toLocaleString('en-GB');
   return `${formattedTimestamp} [${level}]: ${message}`;
 });
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(winston.format.timestamp(), myFormat),
-  transports: [
-    new winston.transports.File({ filename: 'app.log' }),
-    new winston.transports.Console(),
-  ],
+getDocumentsPath().then(documentsPath => {
+  logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(winston.format.timestamp(), myFormat),
+    transports: [
+      new winston.transports.File({ filename: path.join(documentsPath, 'gothic3', 'Starter.log') }),
+      new winston.transports.Console(),
+    ],
+  });
 });
 
 export function loggerInfo(msg: string) {

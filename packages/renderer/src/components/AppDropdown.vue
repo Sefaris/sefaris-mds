@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col items-center"
+    class="z-10 flex flex-col items-center"
     @mouseleave="collapseDropdown"
     @focusout="onFocusOut"
   >

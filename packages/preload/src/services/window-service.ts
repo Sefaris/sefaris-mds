@@ -11,3 +11,11 @@ export function changeConfigLocale(code: string) {
 ipcRenderer.on('update-config-locale', (_, code) => {
   window.postMessage({ channel: 'update-config', code: code });
 });
+
+export function forceReloadConfig() {
+  ipcRenderer.send('change-config');
+}
+
+ipcRenderer.on('reload-config', () => {
+  window.postMessage({ channel: 'reload-configuration' });
+});

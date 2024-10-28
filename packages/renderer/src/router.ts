@@ -2,8 +2,9 @@ import type { RouteRecordRaw, Router } from 'vue-router';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
 import HomeView from './views/HomeView.vue';
-import ConfigView from './views/ConfigView.vue';
-import OptionsView from './views/OptionsView.vue';
+import OptionListView from './views/OptionListView.vue';
+import OptionView from './views/OptionView.vue';
+import StarterOptionsView from './views/StarterOptionsView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -12,14 +13,19 @@ const routes: RouteRecordRaw[] = [
     component: HomeView,
   },
   {
-    path: '/config',
-    name: 'Config',
-    component: ConfigView,
+    path: '/option-list',
+    name: 'OptionList',
+    component: OptionListView,
   },
   {
-    path: '/options/:ini',
-    name: 'Options',
-    component: OptionsView,
+    path: '/starter-options',
+    name: 'StarterOptions',
+    component: StarterOptionsView,
+  },
+  {
+    path: '/option/:ini',
+    name: 'Option',
+    component: OptionView,
   },
 ];
 

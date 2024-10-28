@@ -1,4 +1,4 @@
-import { exec, execFile } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
@@ -6,8 +6,10 @@ import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import Winreg from 'winreg';
 import { InstallationError } from '../../../../Errors/InstallationError';
 import { NotFoundError } from '../../../../Errors/NotFoundError';
+import { showAlert } from './alert-service';
 
 export function ensureDirectory(directoryPath: string) {
   if (!fs.existsSync(directoryPath)) {
@@ -19,6 +21,10 @@ export function ensureDirectory(directoryPath: string) {
 
 export async function getAppPath(): Promise<string> {
   return await ipcRenderer.invoke('get-app-path');
+}
+
+export async function getExeDirPath(): Promise<string> {
+  return await ipcRenderer.invoke('get-exe-dir-path');
 }
 
 export function findFilesEndsWith(directoryPath: string, fileExtension: string): string[] {
@@ -33,7 +39,9 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
       }
     }
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 
   return files;
@@ -46,27 +54,60 @@ export async function startGame() {
     const execPath = path.join(configuration.gothicPath, 'Gothic3.exe');
     if (!fs.existsSync(execPath)) throw new NotFoundError(getMessage('GOTHIC_EXE_NOT_FOUND'));
 
-    // TODO: FIX, refuses to work
-    execFile(execPath, error => {
-      if (error) {
-        loggerError(`${getMessage('GAME_START_FAILED')} ${error.message}`);
-      }
-    });
+    spawn(execPath, { cwd: configuration.gothicPath, detached: true });
   } catch (error) {
-    loggerError(error as string);
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
   }
 }
 
 export async function openGameFolder() {
   const configuration = await loadConfiguration();
   if (!configuration) return;
-  exec(`explorer ${configuration.gothicPath}`);
+  if (!fs.existsSync(configuration.gothicPath!)) {
+    showAlert(
+      'modal.error',
+      getMessage('DIRECTORY_DOESNT_EXIST', { path: configuration.gothicPath! }),
+      'error',
+    );
+    return;
+  }
+  openFolder(configuration.gothicPath);
+}
+
+export function openStarterFolder() {
+  const res = path.resolve();
+  openFolder(res);
+}
+
+export async function openDocumentsFolder() {
+  const res = path.join(await getDocumentsPath(), 'gothic3');
+  if (!fs.existsSync(res)) {
+    showAlert('modal.error', getMessage('DIRECTORY_DOESNT_EXIST', { path: res }), 'error');
+    return;
+  }
+  openFolder(res);
 }
 
 export async function openModsFolder() {
   const configuration = await loadConfiguration();
   if (!configuration) return;
-  exec(`explorer ${configuration.modsPath}`);
+  if (!fs.existsSync(configuration.modsPath!)) {
+    showAlert(
+      'modal.error',
+      getMessage('DIRECTORY_DOESNT_EXIST', { path: configuration.modsPath! }),
+      'error',
+    );
+    return;
+  }
+  openFolder(configuration.modsPath);
+}
+
+export function openFolder(path?: string) {
+  if (!path) return;
+  if (!fs.existsSync(path)) return;
+  exec(`explorer ${path}`);
 }
 
 export function swapFileNames(filePath1: string, filePath2: string) {
@@ -144,4 +185,20 @@ export async function copyFiles(
     loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: filePath, dst: newFilePath }));
     createdFiles.push(newFilePath);
   }
+}
+export async function getDocumentsPath(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const regKey = new Winreg({
+      hive: Winreg.HKCU,
+      key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders',
+    });
+
+    regKey.get('Personal', (err, item) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(item.value);
+      }
+    });
+  });
 }

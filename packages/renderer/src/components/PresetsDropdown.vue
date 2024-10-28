@@ -1,7 +1,7 @@
 <template>
   <app-dropdown>
     <template #activator>{{ $t('nav.bottom.presets') }}</template>
-    <div class="max-h-110 overflow-y-auto">
+    <div class="max-h-110 min-w-50 overflow-y-auto">
       <div class="mr-2 flex flex-col gap-1">
         <preset-dropdown-button
           v-for="(preset, index) in presets"
