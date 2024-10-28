@@ -2,9 +2,16 @@
  * @module preload
  */
 
-export { selectGameFolder } from './services/configuration-service';
+export { selectGameFolder, selectFolder } from './services/configuration-service';
 
-export { openGameFolder, openModsFolder, startGame } from './services/file-service';
+export {
+  openGameFolder,
+  openStarterFolder,
+  openDocumentsFolder,
+  openModsFolder,
+  openFolder,
+  startGame,
+} from './services/file-service';
 
 export { minimizeWindow, closeApplication } from './services/titlebar-service';
 
@@ -21,7 +28,7 @@ export { mergeModFiles } from './services/merge-service';
 export { getAllPresets, savePreset } from './services/preset-service';
 export { openWebsite } from './services/redirect-service';
 export { extractAll } from './services/pak-service';
-export { openConfigWindow, changeConfigLocale } from './services/window-service';
+export { openConfigWindow, changeConfigLocale, forceReloadConfig } from './services/window-service';
 export {
   loadIniConfiguration,
   getAllIniNames,
@@ -38,3 +45,5 @@ export {
   loggerDebug,
   loggerSilly,
 } from './services/logger-service';
+
+export { showAlert, showNotification } from './services/alert-service';

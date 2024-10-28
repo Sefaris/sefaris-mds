@@ -3,11 +3,18 @@
     <progress-bar :progress="progress" />
     <div class="flex w-full items-center justify-between">
       <div class="flex flex-col">
-        <span>{{ stepName }}.</span>
-        <span class="text-light">Nie wyłączaj launchera!</span>
+        <span> {{ stepName }}. </span>
+        <span class="text-light">
+          {{ $t('progress.dontTurnOff') }}
+        </span>
       </div>
       <div>
-        <span class="font-gothic text-5xl text-primary">{{ progress }}%</span>
+        <span
+          class="font-gothic text-5xl text-primary"
+          :class="{ 'font-lato': currentLanguage == 'ru' }"
+        >
+          {{ progress }}%
+        </span>
       </div>
     </div>
   </div>
@@ -19,8 +26,7 @@ import ProgressBar from './ProgressBar.vue';
 import { useModsStore } from '../stores/mods-store';
 import type { ProgressStatus } from '../../../../interfaces/ProgressStatus';
 import type { InstallationState } from '../../../../types/InstallationState';
-import { translate } from '../../../../plugins/i18n';
-
+import { translate, i18n } from '../../../../plugins/i18n';
 export default defineComponent({
   components: { ProgressBar },
   setup() {
@@ -28,7 +34,7 @@ export default defineComponent({
     const progressStyle = ref('0%');
     const modsStore = useModsStore();
     const stepName = ref('');
-
+    const currentLanguage = computed(() => i18n.global.locale.value);
     const installationState = computed({
       get() {
         return modsStore.installationState;
@@ -46,7 +52,12 @@ export default defineComponent({
       progressStyle.value = `${progress.value}%`;
     });
 
-    return { progress, installationState, stepName };
+    return {
+      progress,
+      installationState,
+      stepName,
+      currentLanguage,
+    };
   },
 });
 </script>

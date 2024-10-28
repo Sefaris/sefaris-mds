@@ -1,16 +1,25 @@
 <template>
-  <div class="flex h-182 flex-col items-center overflow-y-auto p-2 text-menu">
+  <div class="flex h-182 flex-col items-center gap-2 overflow-y-auto p-2 text-menu">
+    <h1 class="text-2xl">
+      {{ $t('nav.top.options') }}
+    </h1>
     <router-link
       v-if="validGothicIniFile"
-      :to="{ name: 'Options', params: { ini: 'ge3.ini' } }"
+      :to="{ name: 'Option', params: { ini: 'ge3.ini' } }"
       class="text-xl hover:text-menu-hover"
     >
       Gothic
     </router-link>
     <router-link
+      :to="{ name: 'StarterOptions' }"
+      class="text-xl hover:text-menu-hover"
+    >
+      Starter
+    </router-link>
+    <router-link
       v-for="(name, index) in configFiles"
       :key="index"
-      :to="{ name: 'Options', params: { ini: name } }"
+      :to="{ name: 'Option', params: { ini: name } }"
       class="text-xl hover:text-menu-hover"
     >
       {{ getName(name) }}

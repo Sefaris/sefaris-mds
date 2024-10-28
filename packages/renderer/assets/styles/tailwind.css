@@ -53,6 +53,10 @@
   font-size: 16px !important;
 }
 
+.mdi-medium {
+  font-size: 20px !important;
+}
+
 .title-bar {
   -webkit-app-region: drag;
 }
