@@ -22,8 +22,6 @@ const config = {
   resolve: {
     alias: {
       '/@/': join(PACKAGE_ROOT, 'src') + '/',
-      '@assets': resolve(__dirname, 'assets'),
-      '@public': resolve(__dirname, 'public'),
     },
   },
   base: '',

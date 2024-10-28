@@ -1,18 +1,22 @@
 <template>
-  <app-dropdown>
-    <template #activator>{{ $t('nav.bottom.categories') }}</template>
-    <div class="max-h-110 overflow-y-auto">
-      <div class="mr-2 flex flex-col gap-1">
-        <category-dropdown-button
+  <div>
+    <app-dropdown btn-class="nav-bottom-links-container-tab">
+      <template #activator>{{ $t('nav.bottom.categories') }}</template>
+      <div class="nav-bottom-links-container-tab-items">
+        <button
           v-for="(category, index) in categories"
           :key="index"
-          :category="category"
-          :active="category === activeCategory"
-          :mods-count="countModsInCategory(category)"
-        />
+          class="nav-bottom-links-container-tab-items-item"
+          :class="{
+            'nav-bottom-links-container-tab-items-item-active': category === activeCategory,
+          }"
+          @click="selectCategory(category)"
+        >
+          {{ category }} ({{ countModsInCategory(category) }})
+        </button>
       </div>
-    </div>
-  </app-dropdown>
+    </app-dropdown>
+  </div>
 </template>
 
 <script lang="ts">
@@ -20,10 +24,9 @@ import { defineComponent, computed } from 'vue';
 
 import AppDropdown from './AppDropdown.vue';
 import { useModsStore } from '../stores/mods-store';
-import CategoryDropdownButton from './CategoryDropdownButton.vue';
 
 export default defineComponent({
-  components: { AppDropdown, CategoryDropdownButton },
+  components: { AppDropdown },
   setup() {
     const modsStore = useModsStore();
     const categories = computed(() => modsStore.categories);
