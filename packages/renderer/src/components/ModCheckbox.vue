@@ -10,7 +10,7 @@
     v-else
     class="cursor-pointer select-none rounded"
     :class="{ 'cursor-default bg-disabled': isIncompatibleofSelectedMod($props.modId) }"
-    src="../../assets/svg/state=unactive.svg"
+    src="../../assets/svg/state=inactive.svg"
     @click="selectMod($props.modId)"
   />
 </template>
