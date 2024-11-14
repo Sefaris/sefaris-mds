@@ -57,7 +57,7 @@ export default {
     buildStringtable: 'Создание файлов строк',
     moveOldSaves: 'Перемещение сохранений',
     searchMods: 'Поиск модов',
-mergeArchives: 'Объединение архивов',
+    mergeArchives: 'Объединение архивов',
     dontTurnOff: 'Не выключайте программу!',
   },
   config: {
