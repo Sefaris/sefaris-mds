@@ -1,6 +1,6 @@
 <template>
   <div class="title-bar flex h-8 select-none justify-between pl-2">
-    <div class="py-1">G3 ModStarter 0.8</div>
+    <div class="py-1">G3 ModStarter 1.0</div>
     <div class="controls flex align-middle">
       <div
         class="px-1.5 hover:cursor-pointer hover:bg-primary-bg"
