@@ -20,7 +20,7 @@ export async function loadMods(): Promise<Mod[]> {
   if (!configuration?.modsPath) {
     return [];
   }
-
+  if (!fs.existsSync(configuration.modsPath)) return [];
   fs.readdirSync(configuration.modsPath).forEach(file => {
     const filePath = path.join(configuration.modsPath!, file);
     const mod = validateMod(filePath);

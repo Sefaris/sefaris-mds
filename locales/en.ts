@@ -29,6 +29,8 @@ export default {
       authors: 'Authors',
       noDescription: 'No description for this mod.',
       openModFolder: 'Open mod folder',
+      dependencies: 'Dependencies: ',
+      incompatibles: 'Incompatibles: ',
     },
   },
   action: {
@@ -43,11 +45,16 @@ export default {
     wrongPath: "Gothic3.exe wasn't found. Select correct directory.",
     presetNotFound: 'Preset not found: ',
     configNotFound: 'Config not found or corrupted. Select Gothic 3 directory.',
+    foundAlreadyInstalledFiles: 'Found mod files. Install mods on clear Gothic instance!',
+    modFilesNotFound:
+      "Can't find installed mods. Seems like you deleted mods manually. Clearing configuration.",
     missingModsFromPreset: 'Missing mods from preset: ',
     checkLog: 'Something went wrong. Check app.log',
     dependencyNotFound: 'Dependency not found:',
     presetSaved: 'Preset successfully saved.',
     iniSaved: 'Configuration successfully saved.',
+    resolveIncompatibility: 'Problem with dependencies, resolve incompatibility of',
+    with: 'with',
   },
   progress: {
     saveConfiguration: 'Saving configuration',
@@ -84,6 +91,8 @@ export default {
   },
   tooltip: {
     default: 'Default',
+    dependencyOf: 'Dependency of',
+    incompatibleWith: 'Incompatible with',
   },
   modal: {
     preset: 'Preset',
@@ -94,5 +103,6 @@ export default {
     info: 'Info',
     warning: 'Warning',
     success: 'Success',
+    openDocuments: 'Open log directory',
   },
 };
