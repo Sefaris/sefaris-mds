@@ -1,7 +1,7 @@
 {
-  "name": "g3-modstarter",
-  "description": "Mod manager for Gothic 3",
-  "version": "1.0.1",
+  "name": "g3-sefaris-modmanager",
+  "description": "Mod manager for Gothic 3 by Sefaris",
+  "version": "1.0.2",
   "private": true,
   "author": {
     "email": "gothicsefaris@gmail.com",

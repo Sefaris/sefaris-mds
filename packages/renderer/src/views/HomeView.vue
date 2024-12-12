@@ -16,6 +16,7 @@ import {
   saveConfiguration,
   loggerError,
   showAlert,
+  getAlreadyInstalledFiles,
 } from '#preload';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import { DEFAULT_LANGUAGE } from '../../../../utils/constants';
@@ -51,6 +52,18 @@ export default defineComponent({
       await modsStore.loadInstalledMods();
       modsStore.loadCategories();
       await modsStore.loadPresets();
+
+      if ((await getAlreadyInstalledFiles()).length && !config?.filesCreated.length) {
+        showAlert('modal.warning', translate('alert.foundAlreadyInstalledFiles'), 'warning');
+      }
+
+      if (!(await getAlreadyInstalledFiles()).length && config?.filesCreated.length) {
+        showAlert('modal.warning', translate('alert.modFilesNotFound'), 'warning');
+        config.filesCreated = [];
+        config.installedMods = [];
+        await saveConfiguration(config);
+        await modsStore.loadInstalledMods();
+      }
     });
 
     window.addEventListener('message', async event => {

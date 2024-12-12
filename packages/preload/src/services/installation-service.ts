@@ -27,7 +27,6 @@ import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 
 const APP_PATH = path.resolve();
 const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
-const PRESET_FILES_PATH = path.join(APP_PATH, 'Presets');
 const STATIC_FILE_MOD_EXTENSION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
 // const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
@@ -67,8 +66,9 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         await moveSaves();
 
         if (preset) {
+          console.log('Preset');
           await moveSplash(configuration, preset);
-          await moveShader(preset);
+          await moveShader(configuration, preset);
         }
 
         if (!fs.existsSync(dataPath))
@@ -115,7 +115,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         resolve(time.toFixed(2));
       } catch (error) {
         if (error instanceof Error) {
-          showAlert('modal.error', getMessage('CHECK_LOG_FILE'), 'error');
+          showAlert('modal.error', getMessage('CHECK_LOG_FILE'), 'error', true);
           loggerError(getMessage('INSTALLATION_FAIL'));
           loggerInfo(getMessage('REVERT_INSTALLATION_CHANGES'));
           // Remove copied files
@@ -180,8 +180,12 @@ export async function deleteMods(): Promise<void> {
   for (let i = 0; i < filesCount; i++) {
     updateProgressBar('progress.delete', i, filesCount);
     loggerInfo(getMessage('FILE_DELETING', { path: configuration.filesCreated[i] }));
-    fs.unlinkSync(configuration.filesCreated[i]);
-    loggerInfo(getMessage('FILE_DELETED', { path: configuration.filesCreated[i] }));
+    if (fs.existsSync(configuration.filesCreated[i])) {
+      fs.unlinkSync(configuration.filesCreated[i]);
+      loggerInfo(getMessage('FILE_DELETED', { path: configuration.filesCreated[i] }));
+    } else {
+      loggerInfo(getMessage('FILE_SKIPPED', { path: configuration.filesCreated[i] }));
+    }
   }
 
   configuration.installedMods = [];
@@ -371,8 +375,9 @@ export async function getNewModsFilesPaths(files: string[], destDirectory: strin
 
 export async function moveSplash(configuration: AppConfiguration, presetName: string) {
   let splash = path.join(STATIC_FILES_PATH, SPLASH);
-  if (presetName && fs.existsSync(path.join(PRESET_FILES_PATH, presetName, SPLASH))) {
-    splash = path.join(PRESET_FILES_PATH, presetName, SPLASH);
+  const presetFilesPath = path.join(configuration.gothicPath, 'presets');
+  if (presetName && fs.existsSync(path.join(presetFilesPath, presetName, SPLASH))) {
+    splash = path.join(presetFilesPath, presetName, SPLASH);
   }
 
   if (!fs.existsSync(splash)) {
@@ -385,9 +390,11 @@ export async function moveSplash(configuration: AppConfiguration, presetName: st
   loggerInfo(getMessage('COPY_SPLASH_COMPLETE'));
 }
 
-export async function moveShader(presetName: string) {
+export async function moveShader(configuration: AppConfiguration, presetName: string) {
   const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
-  const shader = path.join(PRESET_FILES_PATH, presetName, SHADER);
+  const presetFilesPath = path.join(configuration.gothicPath, 'presets');
+
+  const shader = path.join(presetFilesPath, presetName, SHADER);
 
   if (!fs.existsSync(shader)) {
     loggerInfo(getMessage('COPY_SHADER_NOT_FOUND', { preset: presetName }));

@@ -29,6 +29,8 @@ export default {
       authors: 'Autorzy',
       noDescription: 'Brak opisu dla tej modyfikacji.',
       openModFolder: 'Otwórz folder modyfikacji.',
+      dependencies: 'Zależności: ',
+      incompatibles: 'Niekompatybilne: ',
     },
   },
   action: {
@@ -43,11 +45,17 @@ export default {
     wrongPath: 'Gothic3.exe nie znaleziony. Wybierz właściwy folder.',
     presetNotFound: 'Nie znaleziono presetu: ',
     configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',
+    foundAlreadyInstalledFiles: 'Znaleziono pliki modów. Instaluj mody na czystą instancję gry!',
+    modFilesNotFound:
+      'Zainstalowane mody nie znalezione. Usunąłeś mody ręcznie? Resetuje plik konfiguracyjny.',
     missingModsFromPreset: 'Nie znaleziono modyfikacji z presetu: ',
     checkLog: 'Coś poszło nie tak. Sprawdź app.log',
     dependencyNotFound: 'Nie znaleziono zależności:',
     presetSaved: 'Preset pomyślnie zapisany.',
     iniSaved: 'Konfiguracja pomyślnie zapisana.',
+    resolveIncompatibility:
+      'Zaznaczenie zależności zakończone niepowodzeniem z powodu niekompatybilności:',
+    with: 'z',
   },
   progress: {
     saveConfiguration: 'Zapisywanie konfiguracji',
@@ -84,6 +92,8 @@ export default {
   },
   tooltip: {
     default: 'Domyślne',
+    dependencyOf: 'Zależne od',
+    incompatibleWith: 'Zablokowane przez',
   },
   modal: {
     preset: 'Preset',
@@ -94,5 +104,6 @@ export default {
     info: 'Informacja',
     warning: 'Ostrzeżenie',
     success: 'Sukces',
+    openDocuments: 'Otwórz lokaliację logów',
   },
 };

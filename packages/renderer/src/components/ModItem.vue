@@ -3,7 +3,7 @@
     class="mr-2 flex items-center gap-3 py-1.5"
     :class="{ 'border-r-4 border-primary': isActive }"
   >
-    <mod-checkbox
+    <mod-checkbox-tooltip
       :mod-id="mod.id"
       :config="config"
     />
@@ -21,10 +21,10 @@ import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 import { useModsStore } from '../stores/mods-store';
 import type { Mod } from '../../../../interfaces/Mod';
-import ModCheckbox from './ModCheckbox.vue';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import ModCheckboxTooltip from '/@/components/ModCheckboxTooltip.vue';
 export default defineComponent({
-  components: { ModCheckbox },
+  components: { ModCheckboxTooltip },
   props: {
     mod: {
       type: Object as PropType<Mod>,
