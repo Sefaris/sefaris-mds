@@ -13,7 +13,7 @@ import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
-import { ensureDirectory, getDocumentsPath } from './file-service';
+import { ensureDirectory, findInstalledModFiles, getDocumentsPath } from './file-service';
 
 export async function selectGameFolder(): Promise<string> {
   return await ipcRenderer.invoke('open-folder-dialog-game');
@@ -98,4 +98,21 @@ export function isGothicPathValid(param: AppConfiguration | string): boolean {
   } else {
     return fs.existsSync(path.join(param.gothicPath, 'Gothic3.exe'));
   }
+}
+
+export async function getAlreadyInstalledFiles() {
+  const config = await loadConfiguration();
+  if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
+  const dataPath = path.join(config.gothicPath, 'Data');
+  return findInstalledModFiles(dataPath);
+}
+
+export async function installedFilesExist() {
+  const config = await loadConfiguration();
+  if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
+  if (!config.filesCreated.length) return true;
+  config.filesCreated.forEach(file => {
+    if (!fs.existsSync(file)) return false;
+  });
+  return true;
 }

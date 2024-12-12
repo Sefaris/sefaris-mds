@@ -6,6 +6,7 @@
     :type="modalType"
     :title="modalTitle"
     :message="modalMessage"
+    :show-log-button="showLogButton"
     @close="isModalVisible = false"
   />
 </template>
@@ -25,6 +26,7 @@ export default defineComponent({
     const modalType = ref<string>();
     const modalTitle = ref('');
     const modalMessage = ref('');
+    const showLogButton = ref(false);
     onMounted(async () => {
       const configuration = await loadConfiguration().catch(error => {
         console.error(error);
@@ -42,6 +44,7 @@ export default defineComponent({
           modalTitle.value = event.data.alert.title;
           modalType.value = event.data.alert.type;
           modalMessage.value = event.data.alert.message;
+          showLogButton.value = event.data.alert.showLogButton;
           isModalVisible.value = true;
         }
       });
@@ -51,6 +54,7 @@ export default defineComponent({
       modalType,
       modalMessage,
       modalTitle,
+      showLogButton,
     };
   },
 });
