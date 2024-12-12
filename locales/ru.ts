@@ -29,6 +29,8 @@ export default {
       authors: 'Авторы',
       noDescription: 'Описание для этого мода отсутствует.',
       openModFolder: 'Открыть папку мода',
+      dependencies: 'Отношения',
+      incompatibles: 'несовместимые',
     },
   },
   action: {
@@ -43,11 +45,16 @@ export default {
     wrongPath: 'Gothic3.exe не найден. Выберите правильную директорию.',
     presetNotFound: 'Пресет не найден: ',
     configNotFound: 'Конфиг не найден или поврежден. Выберите директорию Gothic 3.',
+    foundAlreadyInstalledFiles: 'Найдены файлы модов. Установите мод на чистый экземпляр Готики!',
+    modFilesNotFound:
+      'Не удается найти установленные моды. Похоже, что вы удалили моды вручную. Очистите конфигурацию.',
     missingModsFromPreset: 'Отсутствующие моды в пресете: ',
     checkLog: 'Что-то пошло не так. Проверьте app.log',
     dependencyNotFound: 'Зависимости не найдены:',
     presetSaved: 'Пресет успешно сохранен.',
     iniSaved: 'Конфигурация успешно сохранена.',
+    resolveIncompatibility: 'Проблема с зависимостями, устранение несовместимости',
+    with: 'с',
   },
   progress: {
     saveConfiguration: 'Сохранение конфигурации',
@@ -84,6 +91,8 @@ export default {
   },
   tooltip: {
     default: 'По умолчанию',
+    dependencyOf: 'Зависимость от',
+    incompatibleWith: 'Несовместимо с',
   },
   modal: {
     preset: 'Пресет',
@@ -94,5 +103,6 @@ export default {
     info: 'Информация',
     warning: 'Предупреждение',
     success: 'Успешно',
+    openDocuments: 'Откройте каталог журналов',
   },
 };

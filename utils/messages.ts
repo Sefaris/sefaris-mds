@@ -37,6 +37,7 @@ export const Messages = {
 
   DIRECTORY_DOESNT_EXIST: "Directory {{path}} doesn't exist.",
   FILE_DOESNT_EXIST: "File {{path}} doesn't exist.",
+  FILE_SKIPPED: "File {{path}} doesn't exist. Skipped.",
   FILE_DELETING: 'Deleting {{path}} file.',
   FILE_DELETED: '{{path}} deleted.',
 
@@ -78,7 +79,7 @@ export const Messages = {
   DIRECTORY_CREATE: 'Creating directory {{path}}',
   DIRECTORY_CREATED: 'Directory created.',
 
-  CHECK_LOG_FILE: 'Something went wrong. Check Starter.log.',
+  CHECK_LOG_FILE: 'Something went wrong.\nCheck Documents/Gothic3/Starter.log.',
 };
 
 export type MessageKey = keyof typeof Messages;

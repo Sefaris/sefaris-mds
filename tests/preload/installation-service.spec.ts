@@ -116,7 +116,7 @@ describe('deleteMods', () => {
     });
   });
 
-  test('throws error for not existing files', async () => {
+  test('removes existing files saved in config and skips missing ones', async () => {
     const installedFiles = [
       'E:\\Games\\Gothic 3\\Data\\gui.mod',
       'E:\\Games\\Gothic 3\\Data\\infos.mod',
@@ -132,8 +132,11 @@ describe('deleteMods', () => {
       },
       'E:\\Games\\Gothic 3',
     );
+    await deleteMods();
 
-    await expect(deleteMods()).rejects.toThrowError();
+    installedFiles.forEach(file => {
+      expect(fs.existsSync(file)).toBeFalsy();
+    });
   });
 
   test('returns object with 2 empty arrays', async () => {
