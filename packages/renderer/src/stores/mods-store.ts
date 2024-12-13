@@ -51,6 +51,7 @@ export const useModsStore = defineStore('mods', () => {
     selectedMods.value = [];
     activePreset.value = preset;
     const presetMods = presets.value.find(item => item.name === preset)?.modIds || [];
+
     selectedMods.value = mods.value.filter(mod => presetMods.includes(mod.id)).map(mod => mod.id);
 
     const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
