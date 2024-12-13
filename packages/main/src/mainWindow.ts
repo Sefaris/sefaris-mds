@@ -19,7 +19,7 @@ async function createWindow() {
     },
     autoHideMenuBar: true,
   });
-  app.setAppUserModelId('G3 ModStarter');
+  app.setAppUserModelId('G3 Sefaris ModManager');
   windows['main'] = mainWindow;
   //Add events to the BrowserWindow
   addEvents();

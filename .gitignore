@@ -62,3 +62,4 @@ thumbs.db
 config.json
 Presets/*
 app.log
+.idea/csv-editor.xml
