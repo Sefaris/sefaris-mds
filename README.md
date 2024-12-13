@@ -1,4 +1,4 @@
-# G3 ModStarter
+# G3 Sefaris ModManager
 Mod manager for Gothic 3.
 
 ### Tech stack
