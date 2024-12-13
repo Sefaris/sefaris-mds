@@ -60,6 +60,26 @@
         class="mb-2.5 w-full"
         :src="imgSource"
       />
+      <div>
+        <span v-if="mod.dependencies.length">{{ $t('main.preview.dependencies') }} </span>
+        <span
+          v-for="(dependency, index) in mod.dependencies"
+          :key="index"
+          class="text-green-400 after:content-[',_'] last:after:content-['.']"
+        >
+          {{ dependency }}
+        </span>
+      </div>
+      <div>
+        <span v-if="mod.incompatibles.length">{{ $t('main.preview.incompatibles') }} </span>
+        <span
+          v-for="(incompatible, index) in mod.incompatibles"
+          :key="index"
+          class="text-red-400 after:content-[',_'] last:after:content-['.']"
+        >
+          {{ incompatible }}
+        </span>
+      </div>
       <div
         class="description"
         v-html="description"

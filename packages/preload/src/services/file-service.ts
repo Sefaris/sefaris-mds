@@ -47,6 +47,25 @@ export function findFilesEndsWith(directoryPath: string, fileExtension: string):
   return files;
 }
 
+export function findInstalledModFiles(directoryPath: string) {
+  const files: string[] = [];
+  try {
+    const filesList = fs.readdirSync(directoryPath);
+
+    for (const file of filesList) {
+      const ext = path.extname(file).slice(0, 2);
+      if (ext === '.m') {
+        files.push(path.join(directoryPath, file));
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      loggerError(error.message);
+    }
+  }
+  return files;
+}
+
 export async function startGame() {
   try {
     const configuration = await loadConfiguration();
@@ -107,7 +126,7 @@ export async function openModsFolder() {
 export function openFolder(path?: string) {
   if (!path) return;
   if (!fs.existsSync(path)) return;
-  exec(`explorer ${path}`);
+  exec(`explorer "${path}"`);
 }
 
 export function swapFileNames(filePath1: string, filePath2: string) {

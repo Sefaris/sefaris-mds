@@ -29,6 +29,8 @@ export default {
       authors: 'Authoren',
       noDescription: 'Für die Mod existiert noch keine Beschreibung.',
       openModFolder: 'Mod-Ordner öffnen',
+      dependencies: 'Abhängigkeiten: ',
+      incompatibles: 'Unverträgliche: ',
     },
   },
   action: {
@@ -50,6 +52,8 @@ export default {
     dependencyNotFound: 'Keine Abhängigkeiten gefunden:',
     presetSaved: 'Die Voreinstellung wurde erfolgreich gespeichert..',
     iniSaved: 'Die Konfiguration wurde erfolgreich gespeichert.',
+    resolveIncompatibility: 'Problem mit Abhängigkeiten, Behebung der Inkompatibilität von',
+    with: 'mit',
   },
   progress: {
     saveConfiguration: 'Speichere Konfiguration',
@@ -87,6 +91,8 @@ export default {
   },
   tooltip: {
     default: 'Standard',
+    dependencyOf: 'Abhängigkeit von',
+    incompatibleWith: 'Unvereinbar mit',
   },
   modal: {
     preset: 'Voreinstellung',
@@ -97,5 +103,6 @@ export default {
     info: 'Info',
     warning: 'Warnung',
     success: 'Erfolg',
+    openDocuments: 'Log-Verzeichnis öffnen',
   },
 };
