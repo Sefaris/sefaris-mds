@@ -41,7 +41,7 @@ export async function createConfigWindow() {
     });
   }
   windows['config'] = newWindow;
-  app.setAppUserModelId('G3 ModStarter');
+  app.setAppUserModelId('G3 Sefaris ModManager');
 
   return newWindow;
 }
