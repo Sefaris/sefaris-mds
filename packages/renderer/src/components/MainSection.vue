@@ -149,9 +149,7 @@ export default defineComponent({
 
     const startSearch = () => {
       displaySearchBar.value = true;
-
       window.addEventListener('keydown', onQueryKeyDown);
-
       nextTick(() => queryInputRef.value?.focus());
     };
 
