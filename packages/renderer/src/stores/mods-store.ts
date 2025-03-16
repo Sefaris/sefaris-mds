@@ -1,7 +1,7 @@
 import type { Mod } from '../../../../interfaces/Mod';
 import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
-import { ref, shallowRef } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import {
   getAllPresets,
   loadConfiguration,
@@ -14,8 +14,8 @@ import { translate } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { getMessage } from '../../../../utils/messages';
 export const useModsStore = defineStore('mods', () => {
+  const query = ref('');
   const mods = shallowRef<Mod[]>([]);
-  const displayedMods = shallowRef<Mod[]>([]);
   const installedMods = shallowRef<Mod[]>([]);
   const selectedMods = ref<string[]>([]);
   const selectedMod = ref<string>('');
@@ -26,6 +26,14 @@ export const useModsStore = defineStore('mods', () => {
   const installationState = ref<InstallationState>('ready');
   const configExists = ref(false);
   const refreshKey = ref(0);
+  const displayedMods = computed<Mod[]>(() => {
+    const result = getModsByActiveCategory();
+    if (query.value) {
+      return result.filter(mod => mod.title.toLowerCase().includes(query.value.toLowerCase()));
+    }
+
+    return result;
+  });
 
   function setSelectedMods(mods: string[]) {
     selectedMods.value = mods;
@@ -64,6 +72,7 @@ export const useModsStore = defineStore('mods', () => {
       );
       loggerWarn(`${getMessage('MISSING_MODS_FROM_PRESET')} ${missingMods.join(', ')}`);
     }
+
     loggerInfo(`${getMessage('PRESET_LOADED', { name: preset })}`);
   }
 
@@ -71,29 +80,35 @@ export const useModsStore = defineStore('mods', () => {
     return mods.value.filter(mod => mod.category === category).length;
   }
 
+  function getModsByActiveCategory(): Mod[] {
+    if (activeCategory.value === 'installed') {
+      return installedMods.value;
+    }
+    if (activeCategory.value === 'all') {
+      return mods.value;
+    }
+
+    return mods.value.filter(mod => mod.category === activeCategory.value);
+  }
+
   function displayCategory(category: string) {
     activeCategory.value = category;
-    if (category === 'all') {
-      displayAllMods();
-      return;
-    }
-    if (category === 'installed') {
-      displayInstalledMods();
-      return;
-    }
-    displayedMods.value = mods.value.filter(mod => mod.category === category);
-  }
-
-  function displayInstalledMods() {
-    displayedMods.value = installedMods.value;
-  }
-
-  function displayAllMods() {
-    displayedMods.value = mods.value;
   }
 
   function deactivatePreset() {
     activePreset.value = undefined;
+  }
+
+  function setQuery(value: string): void {
+    query.value = value;
+  }
+
+  function getQuery(): string {
+    return query.value;
+  }
+
+  function clearQuery(): void {
+    query.value = '';
   }
 
   async function loadInstalledMods() {
@@ -136,6 +151,10 @@ export const useModsStore = defineStore('mods', () => {
     installationState,
     refreshKey,
     configExists,
+
+    setQuery,
+    getQuery,
+    clearQuery,
     setConfigExists,
     incrementRefreshKey,
     countModsInCategory,

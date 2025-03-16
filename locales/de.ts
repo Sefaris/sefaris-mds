@@ -16,6 +16,8 @@ export default {
   main: {
     mods: {
       notFound: 'Mod wurde nicht gefunden!',
+      search: 'Suche',
+      searchPlaceholder: 'Suche...',
       selectAll: 'Alle Mods auswählen. (Inkompatible Mods ignorieren)',
       deselectAll: 'Alle Mods abwählen.',
       openGameFolder: 'Spieleordner öffnen.',
