@@ -8,12 +8,12 @@
         class="sticky top-0 flex h-9 justify-end gap-2 border-b border-divider bg-transparent px-4"
       >
         <template v-if="displaySearchBar">
-          <div class="flex w-100 flex-row items-center justify-between">
-            <input
+          <div class="flex w-100 flex-row items-center justify-between gap-2">
+            <app-input
               ref="queryInputRef"
               v-model="query"
-              class="m-2 h-6 flex-grow border-2 border-divider bg-transparent"
-              maxlength="100"
+              class="flex-grow"
+              :maxlength="100"
               :placeholder="$t('main.mods.searchPlaceholder')"
             />
 
@@ -115,12 +115,13 @@ import {
   openDocumentsFolder,
 } from '#preload';
 import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
+import AppInput from './Forms/AppInput.vue';
 
 export default defineComponent({
-  components: { ModPreview, NoMods, ModItem, ButtonTooltip },
+  components: { AppInput, ModPreview, NoMods, ModItem, ButtonTooltip },
 
   setup() {
-    const queryInputRef = ref<HTMLInputElement>();
+    const queryInputRef = ref<InstanceType<typeof AppInput>>();
     const displaySearchBar = ref(false);
     const modsStore = useModsStore();
     const query = computed({
@@ -150,7 +151,8 @@ export default defineComponent({
     const startSearch = () => {
       displaySearchBar.value = true;
       window.addEventListener('keydown', onQueryKeyDown);
-      nextTick(() => queryInputRef.value?.focus());
+
+      nextTick(() => queryInputRef.value?.inputRef?.focus());
     };
 
     const stopSearch = () => {

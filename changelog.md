@@ -1,6 +1,7 @@
 # Wersja XXX
 
 - Dodano możliwość filtrowania modów po tekście.
+- Dodano automatyczne zaznaczanie inputa w modalu dla tworzenia presetu.
 
 # Wersja 1.0.2
 
