@@ -2,11 +2,7 @@
 
 - Dodano możliwość filtrowania modów po tekście.
 - Dodano automatyczne zaznaczanie inputa w modalu dla tworzenia presetu.
-
-# Version XXX
-
-- Added the ability to filter mods by text.
-- Added automatic input focusing in the preset creation modal.
+- Dodano oznaczanie elementu menu "Kategorie", jeśli została wybrana kategoria z listy.
 
 # Wersja 1.0.2
 
