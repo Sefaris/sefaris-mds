@@ -7,10 +7,10 @@
       <span>
         {{ $t('modal.presetName') }}
       </span>
-      <input
+      <app-input
+        ref="inputRef"
         v-model="presetName"
-        class="h-6 border-2 border-divider bg-transparent"
-        maxlength="100"
+        :maxlength="100"
       />
       <div class="ml-auto mt-auto flex gap-2 p-px">
         <button
@@ -35,10 +35,11 @@ import { loggerError, savePreset, showAlert } from '#preload';
 import { translate } from '../../../../plugins/i18n';
 import { useModsStore } from '../stores/mods-store';
 import AppModal from './AppModal.vue';
-import { defineComponent, computed, ref } from 'vue';
+import { defineComponent, computed, ref, watch, nextTick } from 'vue';
+import AppInput from './Forms/AppInput.vue';
 
 export default defineComponent({
-  components: { AppModal },
+  components: { AppInput, AppModal },
   props: {
     isVisible: {
       type: Boolean,
@@ -46,7 +47,8 @@ export default defineComponent({
     },
   },
   emits: ['close'],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
+    const inputRef = ref<InstanceType<typeof AppInput>>();
     const modsStore = useModsStore();
     const selectedMods = computed(() => modsStore.selectedMods);
     const presetName = ref('');
@@ -63,9 +65,22 @@ export default defineComponent({
       await modsStore.loadPresets();
       emit('close');
     };
+
+    watch(
+      () => props.isVisible,
+      () => {
+        if (!props.isVisible) {
+          return;
+        }
+
+        nextTick(() => inputRef.value?.inputRef?.focus());
+      },
+    );
     return {
-      addPreset,
+      inputRef,
       presetName,
+
+      addPreset,
     };
   },
 });
