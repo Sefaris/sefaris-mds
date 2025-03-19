@@ -1,6 +1,7 @@
 <template>
   <div
     class="z-10 flex flex-col items-center"
+    :class="{ 'shadow-[inset_0_-2px_0_0_#c7f148]': $props.active, 'text-light': $props.disabled }"
     @mouseleave="collapseDropdown"
     @focusout="onFocusOut"
   >
@@ -39,6 +40,14 @@ export default defineComponent({
     showCaret: {
       type: Boolean,
       default: true,
+    },
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {
