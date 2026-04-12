@@ -25,9 +25,6 @@ import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 
-const STATIC_FILES_PATH = process.argv
-  .find(arg => arg.startsWith('--staticPath='))
-  ?.replace('--staticPath=', '') as string;
 const STATIC_FILE_MOD_EXTENSION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
 // const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
@@ -92,7 +89,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
           iniFiles.push(...inis);
         }
-        appendFakeFiles(filesDictionary);
+        await appendFakeFiles(filesDictionary);
         for (const key in filesDictionary) {
           await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
         }
@@ -195,11 +192,11 @@ export async function deleteMods(): Promise<void> {
   await saveConfiguration(configuration);
 }
 
-export function appendFakeFiles(dictionary: Record<string, string[]>): void {
-  console.error(STATIC_FILES_PATH);
-
-  dictionary['mod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.m0x'));
-  dictionary['nod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.n0x'));
+export async function appendFakeFiles(dictionary: Record<string, string[]>): Promise<void> {
+  const configuration = await loadConfiguration();
+  if (!configuration) throw new InstallationError(getMessage('CONFIG_NOT_FOUND'));
+  dictionary['mod'].push(path.join(configuration.gothicPath, 'Static', 'Projects_compiled.m0x'));
+  dictionary['nod'].push(path.join(configuration.gothicPath, 'Static', 'Projects_compiled.n0x'));
 }
 
 async function buildStringTable(
@@ -267,7 +264,9 @@ export async function mergeStringTables(
 }
 
 export async function buildWrldatasc(gothicDataPath: string, mods: Mod[], createdFiles: string[]) {
-  const wrldataPath = path.join(STATIC_FILES_PATH, WRLDATASC);
+  const configuration = await loadConfiguration();
+  if (!configuration) throw new InstallationError(getMessage('CONFIG_NOT_FOUND'));
+  const wrldataPath = path.join(configuration.gothicPath, 'Static', WRLDATASC);
   if (!mods.length) throw new InstallationError('No mods selected');
   if (!fs.existsSync(wrldataPath)) throw new InstallationError('No wrldatasc file');
   const outputFileName = await getFreeFileName(gothicDataPath, 'projects_compiled', 'mod');
@@ -377,7 +376,7 @@ export async function getNewModsFilesPaths(files: string[], destDirectory: strin
 }
 
 export async function moveSplash(configuration: AppConfiguration, presetName: string) {
-  let splash = path.join(STATIC_FILES_PATH, SPLASH);
+  let splash = path.join(configuration.gothicPath, 'Static', SPLASH);
   const presetFilesPath = path.join(configuration.gothicPath, 'presets');
   if (presetName && fs.existsSync(path.join(presetFilesPath, presetName, SPLASH))) {
     splash = path.join(presetFilesPath, presetName, SPLASH);

@@ -15,7 +15,6 @@ import { UTF8 } from '../../utils/constants';
 import os from 'os';
 import type { Mod } from '../../interfaces/Mod';
 let config;
-const baseDir = path.resolve();
 
 function mockConfig(files: string[], missing?: boolean) {
   config = {
@@ -513,9 +512,9 @@ describe('installMods', () => {
     ];
     vol.fromJSON({
       '\\user\\Documents\\gothic3\\Mods0': '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
-      [path.join(baseDir, 'Static', 'G3_World_01.wrldatasc')]: '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x':'',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x':'',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc':'',
       'E:\\Games\\Gothic 3\\mods\\mod1\\mod.json': JSON.stringify(mods[0]),
       'E:\\Games\\Gothic 3\\mods\\mod1\\file1.m0x': '',
       'E:\\Games\\Gothic 3\\mods\\mod1\\file2.m0x': '',
@@ -558,9 +557,9 @@ describe('installMods', () => {
     ];
     vol.fromJSON({
       '\\user\\Documents\\gothic3\\Mods0': '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
-      [path.join(baseDir, 'Static', 'G3_World_01.wrldatasc')]: '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x':'',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x':'',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc':'',
       'E:\\Games\\Gothic 3\\mods\\mod1\\mod.json': JSON.stringify(mods[0]),
       'E:\\Games\\Gothic 3\\mods\\mod1\\file1.m0x': '',
       'E:\\Games\\Gothic 3\\mods\\mod1\\file2.m0x': '',
@@ -623,9 +622,9 @@ describe('installMods', () => {
 describe('buildWrldatasc', () => {
   test('merges wrldatasc', async () => {
     vol.fromJSON({
-      [path.join(baseDir, 'Static', 'G3_World_01.wrldatasc')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x':'',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x':'',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc':'',
       'E:\\Games\\Gothic 3\\data\\projects_compiled.mod': '',
     });
 
@@ -659,9 +658,9 @@ describe('buildWrldatasc', () => {
 
   test('throws error for missing projects_compiled', async () => {
     vol.fromJSON({
-      [path.join(baseDir, 'Static', 'G3_World_01.wrldatasc')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x':'',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x':'',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc':'',
     });
 
     const mods = [
@@ -693,9 +692,9 @@ describe('buildWrldatasc', () => {
 
   test('throws error for missing G3_World_01', async () => {
     vol.fromJSON({
-      [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
-      'E:\\Games\\Gothic 3\\data\\projects_compiled.mod': '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x':'',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x':'',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc':'',
     });
 
     const mods = [
@@ -727,9 +726,9 @@ describe('buildWrldatasc', () => {
 
   test('throws error for missing mods', async () => {
     vol.fromJSON({
-      [path.join(baseDir, 'Static', 'G3_World_01.wrldatasc')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.m0x')]: '',
-      [path.join(baseDir, 'Static', 'Projects_compiled.n0x')]: '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x':'',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x':'',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc':'',
       'E:\\Games\\Gothic 3\\data\\projects_compiled.mod': '',
     });
 
