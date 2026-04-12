@@ -38,14 +38,6 @@
 
           <button-tooltip
             class="text-primary"
-            icon="mdi-select-all"
-            @click="selectAll"
-          >
-            {{ $t('main.mods.selectAll') }}
-          </button-tooltip>
-
-          <button-tooltip
-            class="text-primary"
             icon="mdi-select-off"
             @click="deselectAll"
           >
