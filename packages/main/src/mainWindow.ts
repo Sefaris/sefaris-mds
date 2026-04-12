@@ -2,6 +2,8 @@ import { app, BrowserWindow } from 'electron';
 import { join, resolve } from 'node:path';
 import { addEvents } from './events';
 const windows: { [key: string]: BrowserWindow | undefined } = {};
+const STATIC_PATH = join(app.getAppPath(), 'Static');
+
 async function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -16,6 +18,7 @@ async function createWindow() {
       webviewTag: false, // The webview tag is not recommended. Consider alternatives like an iframe or Electron's BrowserView. @see https://www.electronjs.org/docs/latest/api/webview-tag#warning
       preload: join(app.getAppPath(), 'packages/preload/dist/index.cjs'),
       devTools: import.meta.env.DEV ? true : false,
+      additionalArguments: [`--staticPath=${STATIC_PATH}`],
     },
     autoHideMenuBar: true,
   });

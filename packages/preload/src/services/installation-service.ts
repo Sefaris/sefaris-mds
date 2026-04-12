@@ -25,8 +25,9 @@ import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 
-const APP_PATH = path.resolve();
-const STATIC_FILES_PATH = path.join(APP_PATH, 'Static');
+const STATIC_FILES_PATH = process.argv
+  .find(arg => arg.startsWith('--staticPath='))
+  ?.replace('--staticPath=', '') as string;
 const STATIC_FILE_MOD_EXTENSION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
 // const STRINGTABLEMOD_FILENAME = 'stringtablemod.ini';
@@ -195,6 +196,8 @@ export async function deleteMods(): Promise<void> {
 }
 
 export function appendFakeFiles(dictionary: Record<string, string[]>): void {
+  console.error(STATIC_FILES_PATH);
+
   dictionary['mod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.m0x'));
   dictionary['nod'].push(path.join(STATIC_FILES_PATH, 'Projects_compiled.n0x'));
 }
