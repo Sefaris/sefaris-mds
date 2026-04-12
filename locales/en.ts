@@ -68,6 +68,7 @@ export default {
     searchMods: 'Searching for mods',
     mergeArchives: 'Merging archives',
     dontTurnOff: "Don't turn off program!",
+    copyPresetInis: 'Copying preset inis',
   },
   config: {
     inisNotFound: 'No configuration files found.',

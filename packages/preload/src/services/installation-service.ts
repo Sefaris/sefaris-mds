@@ -19,7 +19,7 @@ import {
 } from './file-service';
 import { loadMods } from './mod-service';
 import { updateProgressBar } from './progress-service';
-import { UTF8 } from '../../../../utils/constants';
+import { PRESETS_DIRECTORY, UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
@@ -98,6 +98,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         await copyScriptsFiles(iniPath, iniFiles, createdFiles);
         await buildStringTable(dataPath, mods, createdFiles);
         await buildWrldatasc(dataPath, mods, createdFiles);
+        if (preset) {
+          await copyPresetInis(configuration.gothicPath, preset, createdFiles);
+          
+        }
         const endTime = performance.now();
         const time = (endTime - startTime) / 1000;
 
@@ -406,4 +410,32 @@ export async function moveShader(configuration: AppConfiguration, presetName: st
   loggerInfo(getMessage('COPY_SHADER_START'));
   fs.copyFileSync(shader, shaderDest);
   loggerInfo(getMessage('COPY_SHADER_COMPLETE'));
+}
+
+export async function copyPresetInis(gothicPath: string, preset: string, createdFiles: string[]) {
+  const presetPath = path.join(gothicPath, PRESETS_DIRECTORY, preset);
+  const iniPath = path.join(gothicPath, 'ini');
+
+  if (!fs.existsSync(presetPath)) {
+    return;
+  }
+
+  const iniFiles = findFilesEndsWith(presetPath, INI_EXTENSION);
+
+  if (!iniFiles.length) {
+    return;
+  }
+
+  loggerInfo(getMessage('COPY_PRESET_INIS_START'));
+  for (let i = 0; i < iniFiles.length; i++) {
+    updateProgressBar('progress.copyPresetInis', i, iniFiles.length);
+    const fileName = path.basename(iniFiles[i]);
+    const newFilePath = path.join(iniPath, fileName);
+
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: iniFiles[i], dst: newFilePath }));
+    await fs.promises.copyFile(iniFiles[i], newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: iniFiles[i], dst: newFilePath }));
+    createdFiles.push(newFilePath);
+  }
+  loggerInfo(getMessage('COPY_PRESET_INIS_COMPLETE'));
 }

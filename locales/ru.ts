@@ -68,6 +68,7 @@ export default {
     searchMods: 'Поиск модов',
     mergeArchives: 'Объединение архивов',
     dontTurnOff: 'Не выключайте программу!',
+    copyPresetInis: 'Копирование ini файлов пресета',
   },
   config: {
     inisNotFound: 'Файлы конфигурации не найдены.',

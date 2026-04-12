@@ -69,6 +69,7 @@ export default {
     searchMods: 'Szukanie modów',
     mergeArchives: 'Łączenie archiwów',
     dontTurnOff: 'Nie wyłączaj programu!',
+    copyPresetInis: 'Kopiowanie plików ini z presetu',
   },
   config: {
     inisNotFound: 'Nie znaleziono żadnych plików konfiguracyjnych.',

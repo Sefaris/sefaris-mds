@@ -76,6 +76,9 @@ export const Messages = {
   COPY_SHADER_NOT_FOUND: 'Shader.Cache not found in preset {{preset}}',
   COPY_SHADER_COMPLETE: 'Shader.Cache successfully copied.',
 
+  COPY_PRESET_INIS_START: 'Copying preset inis.',
+  COPY_PRESET_INIS_COMPLETE: 'Preset inis successfully copied.',
+
   DIRECTORY_CREATE: 'Creating directory {{path}}',
   DIRECTORY_CREATED: 'Directory created.',
 

@@ -67,6 +67,7 @@ export default {
     searchMods: 'Suche nach Mods',
     mergeArchives: 'Zusammenführung von Archiven',
     dontTurnOff: 'Schalten Sie das Programm nicht aus!',
+    copyPresetInis: 'Kopiere ini-Dateien der Voreinstellung',
   },
   config: {
     inisNotFound: 'Keine Konfigurationsdateien gefunden.',
