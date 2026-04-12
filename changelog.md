@@ -4,6 +4,7 @@
 - Dodano automatyczne zaznaczanie inputa w modalu dla tworzenia presetu.
 - Dodano oznaczanie elementu menu "Kategorie", jeśli została wybrana kategoria z listy.
 - Naprawiono błąd z nieprawidłową ścieżką do statycznych plików kopiowanych podczas instalacji.
+- Dodano obsługę gifów w galerii.
 
 # Wersja 1.0.2
 
