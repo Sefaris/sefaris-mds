@@ -60,7 +60,7 @@ const config = {
  */
 function preloadBridge() {
   const PRELOAD_MODULE_ID = '#preload';
-  const RESOLVED_ID = '\0#preload';
+  const RESOLVED_ID = '\0virtual:preload';
   const EXPOSED_PREFIX = '__electron_preload__';
 
   return {
