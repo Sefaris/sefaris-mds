@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isVisible"
-    class="absolute left-0 top-0 z-10 h-190 w-200 select-none bg-black bg-opacity-60"
+    class="absolute left-0 top-0 z-10 h-190 w-200 select-none bg-black/60"
   >
     <div
       class="modal-border fixed left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col bg-modal"

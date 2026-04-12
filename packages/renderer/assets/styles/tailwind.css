@@ -26,6 +26,11 @@
     font-size: 15px;
     color: #ffffff;
   }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @font-face {
