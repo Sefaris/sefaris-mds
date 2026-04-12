@@ -97,8 +97,8 @@ async function mergeArchives(archives: string[][], mergedFiles: string[], dataPa
       const resultFile = path.join(dataPath, path.basename(files[0]));
       await buildPackage(mergeDirPath, resultFile);
       mergedFiles.push(resultFile);
-      await fs.promises.rmdir(backupDirPath, { recursive: true });
-      await fs.promises.rmdir(mergeDirPath, { recursive: true });
+      await fs.promises.rm(backupDirPath, { recursive: true });
+      await fs.promises.rm(mergeDirPath, { recursive: true });
     }
   } catch (error) {
     if (error instanceof Error) {
