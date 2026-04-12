@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-182 flex-col items-center gap-2 overflow-y-auto p-2 text-menu">
+  <div class="flex min-h-0 flex-1 flex-col items-center gap-2 overflow-y-auto p-2 text-menu">
     <h1 class="text-2xl">
       {{ $t('nav.top.options') }}
     </h1>

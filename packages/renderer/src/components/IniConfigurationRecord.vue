@@ -1,6 +1,8 @@
 <template>
-  <div class="h-174.5 w-full overflow-y-auto text-center">
-    <div class="select-none text-2xl">[{{ sectionName }}]</div>
+  <div class="min-h-0 flex-1 w-full overflow-y-auto text-center">
+    <div class="select-none text-2xl">
+      [{{ sectionName }}]
+    </div>
     <ini-configuration-section
       v-for="(section, index) in sections"
       :key="index"
