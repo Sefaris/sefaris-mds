@@ -1,8 +1,9 @@
-# Wersja XXX
+# Wersja 1.0.3
 
 - Dodano możliwość filtrowania modów po tekście.
 - Dodano automatyczne zaznaczanie inputa w modalu dla tworzenia presetu.
 - Dodano oznaczanie elementu menu "Kategorie", jeśli została wybrana kategoria z listy.
+- Naprawiono błąd z nieprawidłową ścieżką do statycznych plików kopiowanych podczas instalacji.
 
 # Wersja 1.0.2
 
