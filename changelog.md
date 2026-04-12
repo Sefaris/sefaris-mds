@@ -1,3 +1,11 @@
+# Wersja 1.0.3
+
+- Dodano możliwość filtrowania modów po tekście.
+- Dodano automatyczne zaznaczanie inputa w modalu dla tworzenia presetu.
+- Dodano oznaczanie elementu menu "Kategorie", jeśli została wybrana kategoria z listy.
+- Naprawiono błąd z nieprawidłową ścieżką do statycznych plików kopiowanych podczas instalacji.
+- Dodano obsługę gifów w galerii.
+
 # Wersja 1.0.2
 
 - Scrollowalne okienko alertów.
@@ -29,4 +37,3 @@
 - Message about finding installed mods when starting the program despite a clean configuration file.
 - Message about files not being found in the installed list and cleaning up the configuration file.
 - Changing the name of the starter to G3 Sefaris ModManager!
-

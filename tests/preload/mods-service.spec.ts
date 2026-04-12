@@ -313,7 +313,7 @@ describe('loadImages', () => {
     expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(3);
   });
 
-  test('returns empty array for gif file', () => {
+  test('returns 1 file for gif file', () => {
     const modQP = {
       id: 'QuestPaket',
       title: 'QuestPaket',
@@ -330,7 +330,7 @@ describe('loadImages', () => {
       },
       'E:\\Games\\Gothic 3\\',
     );
-    expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(0);
+    expect(loadImages('E:\\Games\\Gothic 3\\mods\\QuestPaket')).toHaveLength(1);
   });
 
   test('returns empty array when there is no picture dir', () => {

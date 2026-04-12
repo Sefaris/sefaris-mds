@@ -84,16 +84,17 @@ export default defineComponent({
     };
 
     return {
-      openWebsite,
       modsCounter,
       activeCategory,
       installedModsCounter,
       categoriesExist,
-      selectCategory,
       presetsExist,
       configExists,
       SEFARIS_WEBSITE,
       installationState,
+
+      selectCategory,
+      openWebsite,
       openConfigWindow,
     };
   },

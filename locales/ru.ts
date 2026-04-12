@@ -16,6 +16,8 @@ export default {
   main: {
     mods: {
       notFound: 'Моды не найдены',
+      search: 'Поиск',
+      searchPlaceholder: 'Поиск...',
       selectAll: 'Выбрать все моды. (Игнорирует несовместимые)',
       deselectAll: 'Отменить выбор всех модов.',
       openGameFolder: 'Открыть папку с игрой.',

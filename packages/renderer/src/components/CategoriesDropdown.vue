@@ -1,6 +1,7 @@
 <template>
-  <app-dropdown>
+  <app-dropdown :active="anyCategorySelected">
     <template #activator>{{ $t('nav.bottom.categories') }}</template>
+
     <div class="max-h-110 overflow-y-auto">
       <div class="mr-2 flex flex-col gap-1">
         <category-dropdown-button
@@ -28,6 +29,9 @@ export default defineComponent({
     const modsStore = useModsStore();
     const categories = computed(() => modsStore.categories);
     const activeCategory = computed(() => modsStore.activeCategory);
+    const anyCategorySelected = computed(() =>
+      categories.value.some(category => category === activeCategory.value),
+    );
 
     const countModsInCategory = (category: string) => {
       return modsStore.countModsInCategory(category);
@@ -38,8 +42,10 @@ export default defineComponent({
 
     return {
       categories,
-      selectCategory,
       activeCategory,
+      anyCategorySelected,
+
+      selectCategory,
       countModsInCategory,
     };
   },

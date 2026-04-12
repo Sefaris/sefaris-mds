@@ -88,7 +88,7 @@ export function loadImages(modPath: string): string[] {
   const files = fs.readdirSync(imagesPath);
   const imageFiles = files.filter(file => {
     const ext = path.extname(file).toLowerCase();
-    return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
+    return ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif';
   });
   const images: string[] = [];
   if (imageFiles.length > 0) {
