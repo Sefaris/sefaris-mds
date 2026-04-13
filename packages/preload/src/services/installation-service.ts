@@ -19,7 +19,7 @@ import {
 } from './file-service';
 import { loadMods } from './mod-service';
 import { updateProgressBar } from './progress-service';
-import { UTF8 } from '../../../../utils/constants';
+import { PRESETS_DIRECTORY, UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
@@ -89,6 +89,20 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
           iniFiles.push(...inis);
         }
+
+        if (preset) {
+          for (const extension of MOD_EXTENSIONS) {
+            const files = findFilesEndsWith(
+              path.join(configuration.gothicPath, PRESETS_DIRECTORY, preset),
+              `${extension[0]}${STATIC_FILE_MOD_EXTENSION}`,
+            );
+            if (!filesDictionary[extension]) {
+              filesDictionary[extension] = [];
+            }
+            filesDictionary[extension].push(...files);
+          }
+        }
+
         await appendFakeFiles(filesDictionary);
         for (const key in filesDictionary) {
           await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
@@ -98,6 +112,11 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         await copyScriptsFiles(iniPath, iniFiles, createdFiles);
         await buildStringTable(dataPath, mods, createdFiles);
         await buildWrldatasc(dataPath, mods, createdFiles);
+
+        if (preset) {
+          await copyPresetInis(configuration.gothicPath, preset, createdFiles);
+          await copyPresetDlls(configuration.gothicPath, preset, createdFiles);
+        }
         const endTime = performance.now();
         const time = (endTime - startTime) / 1000;
 
@@ -406,4 +425,59 @@ export async function moveShader(configuration: AppConfiguration, presetName: st
   loggerInfo(getMessage('COPY_SHADER_START'));
   fs.copyFileSync(shader, shaderDest);
   loggerInfo(getMessage('COPY_SHADER_COMPLETE'));
+}
+
+export async function copyPresetInis(gothicPath: string, preset: string, createdFiles: string[]) {
+  const presetPath = path.join(gothicPath, PRESETS_DIRECTORY, preset);
+  const iniPath = path.join(gothicPath, 'ini');
+
+  if (!fs.existsSync(presetPath)) {
+    return;
+  }
+
+  const iniFiles = findFilesEndsWith(presetPath, INI_EXTENSION);
+
+  if (!iniFiles.length) {
+    return;
+  }
+
+  loggerInfo(getMessage('COPY_PRESET_INIS_START'));
+  for (let i = 0; i < iniFiles.length; i++) {
+    updateProgressBar('progress.copyPresetInis', i, iniFiles.length);
+    const fileName = path.basename(iniFiles[i]);
+    const newFilePath = path.join(iniPath, fileName);
+
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: iniFiles[i], dst: newFilePath }));
+    await fs.promises.copyFile(iniFiles[i], newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: iniFiles[i], dst: newFilePath }));
+    createdFiles.push(newFilePath);
+  }
+  loggerInfo(getMessage('COPY_PRESET_INIS_COMPLETE'));
+}
+
+export async function copyPresetDlls(gothicPath: string, preset: string, createdFiles: string[]) {
+  const presetPath = path.join(gothicPath, PRESETS_DIRECTORY, preset);
+  const scriptsPath = path.join(gothicPath, 'scripts');
+
+  if (!fs.existsSync(presetPath)) {
+    return;
+  }
+
+  const dllFiles = findFilesEndsWith(presetPath, DLL_EXTENSION);
+
+  if (!dllFiles.length) {
+    return;
+  }
+  loggerInfo(getMessage('COPY_PRESET_DLLS_START', { preset }));
+  for (let i = 0; i < dllFiles.length; i++) {
+    updateProgressBar('progress.copyPresetDlls', i, dllFiles.length);
+    const fileName = path.basename(dllFiles[i]);
+    const newFilePath = path.join(scriptsPath, fileName);
+
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: dllFiles[i], dst: newFilePath }));
+    await fs.promises.copyFile(dllFiles[i], newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: dllFiles[i], dst: newFilePath }));
+    createdFiles.push(newFilePath);
+  }
+  loggerInfo(getMessage('COPY_PRESET_DLLS_COMPLETE', { preset }));
 }
