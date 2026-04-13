@@ -100,7 +100,8 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         await buildWrldatasc(dataPath, mods, createdFiles);
         if (preset) {
           await copyPresetInis(configuration.gothicPath, preset, createdFiles);
-          
+          await copyPresetFiles(configuration.gothicPath, preset, createdFiles);
+          await copyPresetDlls(configuration.gothicPath, preset, createdFiles);          
         }
         const endTime = performance.now();
         const time = (endTime - startTime) / 1000;
@@ -439,3 +440,60 @@ export async function copyPresetInis(gothicPath: string, preset: string, created
   }
   loggerInfo(getMessage('COPY_PRESET_INIS_COMPLETE'));
 }
+
+export async function copyPresetFiles(gothicPath: string, preset: string, createdFiles: string[]) {
+    const presetPath = path.join(gothicPath, PRESETS_DIRECTORY, preset);
+    const dataPath = path.join(gothicPath, 'Data');
+
+  if (!fs.existsSync(presetPath)) {
+    return;
+  }
+
+  MOD_EXTENSIONS.forEach(element => {
+    const files = findFilesEndsWith(presetPath, element);
+
+    if (!files.length) {
+      return;
+    }
+    loggerInfo(getMessage('COPY_PRESET_FILES_START', { preset, extension: element }));
+    for(let i = 0; i < files.length; i++) {
+      updateProgressBar('progress.copyPresetFiles', i, files.length);
+      const fileName = path.basename(files[i]);
+      const newFilePath = path.join(dataPath, fileName);
+
+      loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: files[i], dst: newFilePath }));
+      fs.copyFileSync(files[i], newFilePath);
+      loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: files[i], dst: newFilePath }));
+      createdFiles.push(newFilePath);
+    }   
+    loggerInfo(getMessage('COPY_PRESET_FILES_COMPLETE', { preset, extension: element }));
+    
+  });
+}
+
+export async function copyPresetDlls(gothicPath: string, preset: string, createdFiles: string[]) {
+  const presetPath = path.join(gothicPath, PRESETS_DIRECTORY, preset);
+  const scriptsPath = path.join(gothicPath, 'scripts');
+
+  if (!fs.existsSync(presetPath)) {
+    return;
+  }
+
+  const dllFiles = findFilesEndsWith(presetPath, DLL_EXTENSION);
+
+  if (!dllFiles.length) {
+    return;
+  }
+  loggerInfo(getMessage('COPY_PRESET_DLLS_START', { preset }));
+  for (let i = 0; i < dllFiles.length; i++) {
+    updateProgressBar('progress.copyPresetDlls', i, dllFiles.length);
+    const fileName = path.basename(dllFiles[i]);
+    const newFilePath = path.join(scriptsPath, fileName);
+
+    loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: dllFiles[i], dst: newFilePath }));
+    await fs.promises.copyFile(dllFiles[i], newFilePath);
+    loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: dllFiles[i], dst: newFilePath }));
+    createdFiles.push(newFilePath);
+  }
+  loggerInfo(getMessage('COPY_PRESET_DLLS_COMPLETE', { preset }));
+} 

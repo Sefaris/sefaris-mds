@@ -69,6 +69,8 @@ export default {
     mergeArchives: 'Объединение архивов',
     dontTurnOff: 'Не выключайте программу!',
     copyPresetInis: 'Копирование ini файлов пресета',
+    copyPresetFiles: 'Копирование файлов пресета',
+    copyPresetDlls: 'Копирование dll пресета',
   },
   config: {
     inisNotFound: 'Файлы конфигурации не найдены.',

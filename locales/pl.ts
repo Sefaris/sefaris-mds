@@ -70,6 +70,8 @@ export default {
     mergeArchives: 'Łączenie archiwów',
     dontTurnOff: 'Nie wyłączaj programu!',
     copyPresetInis: 'Kopiowanie plików ini z presetu',
+    copyPresetFiles: 'Kopiowanie plików z presetu',
+    copyPresetDlls: 'Kopiowanie dll z presetu',
   },
   config: {
     inisNotFound: 'Nie znaleziono żadnych plików konfiguracyjnych.',
