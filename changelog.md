@@ -1,3 +1,7 @@
+# Wersja 1.0.4
+
+- Dodano możliwość umieszczania plików dll, ini, m0x, n0x w folderach presetów aby w trakcie integracji zostały zainstalowane.
+
 # Wersja 1.0.3
 
 - Dodano możliwość filtrowania modów po tekście.

@@ -89,6 +89,20 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           const inis = findFilesEndsWith(mods[i].path, INI_EXTENSION);
           iniFiles.push(...inis);
         }
+
+        if (preset) {
+          for (const extension of MOD_EXTENSIONS) {
+            const files = findFilesEndsWith(
+              path.join(configuration.gothicPath, PRESETS_DIRECTORY, preset),
+              `${extension[0]}${STATIC_FILE_MOD_EXTENSION}`,
+            );
+            if (!filesDictionary[extension]) {
+              filesDictionary[extension] = [];
+            }
+            filesDictionary[extension].push(...files);            
+          }         
+        }
+        
         await appendFakeFiles(filesDictionary);
         for (const key in filesDictionary) {
           await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
@@ -98,9 +112,9 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         await copyScriptsFiles(iniPath, iniFiles, createdFiles);
         await buildStringTable(dataPath, mods, createdFiles);
         await buildWrldatasc(dataPath, mods, createdFiles);
+
         if (preset) {
           await copyPresetInis(configuration.gothicPath, preset, createdFiles);
-          await copyPresetFiles(configuration.gothicPath, preset, createdFiles);
           await copyPresetDlls(configuration.gothicPath, preset, createdFiles);          
         }
         const endTime = performance.now();
@@ -439,36 +453,6 @@ export async function copyPresetInis(gothicPath: string, preset: string, created
     createdFiles.push(newFilePath);
   }
   loggerInfo(getMessage('COPY_PRESET_INIS_COMPLETE'));
-}
-
-export async function copyPresetFiles(gothicPath: string, preset: string, createdFiles: string[]) {
-    const presetPath = path.join(gothicPath, PRESETS_DIRECTORY, preset);
-    const dataPath = path.join(gothicPath, 'Data');
-
-  if (!fs.existsSync(presetPath)) {
-    return;
-  }
-
-  MOD_EXTENSIONS.forEach(element => {
-    const files = findFilesEndsWith(presetPath, element);
-
-    if (!files.length) {
-      return;
-    }
-    loggerInfo(getMessage('COPY_PRESET_FILES_START', { preset, extension: element }));
-    for(let i = 0; i < files.length; i++) {
-      updateProgressBar('progress.copyPresetFiles', i, files.length);
-      const fileName = path.basename(files[i]);
-      const newFilePath = path.join(dataPath, fileName);
-
-      loggerInfo(getMessage('COPY_FILE_FROM_TO', { src: files[i], dst: newFilePath }));
-      fs.copyFileSync(files[i], newFilePath);
-      loggerInfo(getMessage('COPY_FILE_FROM_TO_COMPLETE', { src: files[i], dst: newFilePath }));
-      createdFiles.push(newFilePath);
-    }   
-    loggerInfo(getMessage('COPY_PRESET_FILES_COMPLETE', { preset, extension: element }));
-    
-  });
 }
 
 export async function copyPresetDlls(gothicPath: string, preset: string, createdFiles: string[]) {
