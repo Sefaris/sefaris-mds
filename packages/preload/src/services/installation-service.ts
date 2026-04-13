@@ -99,10 +99,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
             if (!filesDictionary[extension]) {
               filesDictionary[extension] = [];
             }
-            filesDictionary[extension].push(...files);            
-          }         
+            filesDictionary[extension].push(...files);
+          }
         }
-        
+
         await appendFakeFiles(filesDictionary);
         for (const key in filesDictionary) {
           await copyFiles(dataPath, key, filesDictionary[key], createdFiles);
@@ -115,7 +115,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         if (preset) {
           await copyPresetInis(configuration.gothicPath, preset, createdFiles);
-          await copyPresetDlls(configuration.gothicPath, preset, createdFiles);          
+          await copyPresetDlls(configuration.gothicPath, preset, createdFiles);
         }
         const endTime = performance.now();
         const time = (endTime - startTime) / 1000;
@@ -480,4 +480,4 @@ export async function copyPresetDlls(gothicPath: string, preset: string, created
     createdFiles.push(newFilePath);
   }
   loggerInfo(getMessage('COPY_PRESET_DLLS_COMPLETE', { preset }));
-} 
+}
