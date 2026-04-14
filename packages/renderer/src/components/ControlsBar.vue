@@ -45,14 +45,14 @@ export default defineComponent({
     }
 
     watchEffect(() => {
-      modsStore.setInstallationState(
-        compareArrays(
-          modsStore.selectedMods,
-          modsStore.installedMods.map(mod => mod.id),
-        )
-          ? 'ready'
-          : 'edit',
+      const modsMatch = compareArrays(
+        modsStore.selectedMods,
+        modsStore.installedMods.map(mod => mod.id),
       );
+      const currentPreset = modsStore.activePreset || modsStore.basePreset;
+      const presetMatch = currentPreset === modsStore.installedPreset;
+
+      modsStore.setInstallationState(modsMatch && presetMatch ? 'ready' : 'edit');
     });
 
     return {

@@ -1,6 +1,6 @@
 import { expect, test, vi, beforeEach, describe } from 'vitest';
-import { vol } from 'memfs';
-import { getAllPresets, isPresetValid } from '../../packages/preload/src/services/preset-service';
+import { vol, fs } from 'memfs';
+import { getAllPresets, isPresetValid, savePreset, getPresetFiles, loadPreset } from '../../packages/preload/src/services/preset-service';
 import path from 'path';
 import { afterEach } from 'node:test';
 let config;
@@ -148,5 +148,198 @@ describe('isPresetValid', () => {
       modIds: ['CM Rebalance', 'Main'],
     };
     expect(isPresetValid(smartPreset as never)).toBeFalsy();
+  });
+
+  test('returns true for preset with inheritsFrom', () => {
+    const preset = {
+      name: 'Child Preset',
+      modIds: ['Mod1'],
+      inheritsFrom: 'Parent Preset',
+    };
+    expect(isPresetValid(preset)).toBeTruthy();
+  });
+
+  test('returns false for preset with non-string inheritsFrom', () => {
+    const preset = {
+      name: 'Child Preset',
+      modIds: ['Mod1'],
+      inheritsFrom: 123,
+    };
+    expect(isPresetValid(preset as never)).toBeFalsy();
+  });
+});
+
+describe('savePreset', () => {
+  beforeEach(() => {
+    mockConfig();
+    vol.fromJSON(
+      {
+        'presets\\placeholder': '',
+      },
+      'E:\\Games\\Gothic 3',
+    );
+  });
+
+  test('saves preset without inheritance', async () => {
+    await savePreset(['Mod1', 'Mod2'], 'TestPreset');
+    const jsonPath = path.join('E:', 'Games', 'Gothic 3', 'presets', 'TestPreset', 'preset.json');
+    const saved = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+    expect(saved.name).toBe('TestPreset');
+    expect(saved.modIds).toEqual(['Mod1', 'Mod2']);
+    expect(saved.inheritsFrom).toBeUndefined();
+  });
+
+  test('saves preset with inheritance', async () => {
+    await savePreset(['Mod1'], 'ChildPreset', 'ParentPreset');
+    const jsonPath = path.join(
+      'E:',
+      'Games',
+      'Gothic 3',
+      'presets',
+      'ChildPreset',
+      'preset.json',
+    );
+    const saved = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+    expect(saved.name).toBe('ChildPreset');
+    expect(saved.modIds).toEqual(['Mod1']);
+    expect(saved.inheritsFrom).toBe('ParentPreset');
+  });
+
+  test('throws for empty mods', async () => {
+    await expect(savePreset([], 'TestPreset')).rejects.toThrowError();
+  });
+
+  test('throws for empty name', async () => {
+    await expect(savePreset(['Mod1'], '')).rejects.toThrowError();
+  });
+});
+
+describe('getPresetFiles', () => {
+  beforeEach(() => {
+    mockConfig();
+  });
+
+  test('returns config files excluding preset.json', async () => {
+    const preset = { name: 'MyPreset', modIds: ['Mod1'] };
+    vol.fromJSON(
+      {
+        'MyPreset\\preset.json': JSON.stringify(preset),
+        'MyPreset\\Mod.ini': '',
+        'MyPreset\\script.dll': '',
+        'MyPreset\\splash.bmp': '',
+      },
+      path.join('E:', 'Games', 'Gothic 3', 'presets'),
+    );
+    const files = await getPresetFiles('MyPreset');
+    expect(files).toHaveLength(3);
+    expect(files).toContain('Mod.ini');
+    expect(files).toContain('script.dll');
+    expect(files).toContain('splash.bmp');
+    expect(files).not.toContain('preset.json');
+  });
+
+  test('returns empty array for non-existent preset', async () => {
+    vol.fromJSON(
+      {
+        'presets\\placeholder': '',
+      },
+      'E:\\Games\\Gothic 3',
+    );
+    const files = await getPresetFiles('NonExistent');
+    expect(files).toHaveLength(0);
+  });
+
+  test('returns empty array for preset with only preset.json', async () => {
+    const preset = { name: 'EmptyPreset', modIds: ['Mod1'] };
+    vol.fromJSON(
+      {
+        'EmptyPreset\\preset.json': JSON.stringify(preset),
+      },
+      path.join('E:', 'Games', 'Gothic 3', 'presets'),
+    );
+    const files = await getPresetFiles('EmptyPreset');
+    expect(files).toHaveLength(0);
+  });
+});
+
+describe('loadPreset', () => {
+  beforeEach(() => {
+    mockConfig();
+  });
+
+  test('loads valid preset', async () => {
+    const preset = { name: 'TestPreset', modIds: ['Mod1', 'Mod2'] };
+    vol.fromJSON(
+      {
+        'TestPreset\\preset.json': JSON.stringify(preset),
+      },
+      path.join('E:', 'Games', 'Gothic 3', 'presets'),
+    );
+    const result = await loadPreset('TestPreset');
+    expect(result).not.toBeNull();
+    expect(result!.name).toBe('TestPreset');
+    expect(result!.modIds).toEqual(['Mod1', 'Mod2']);
+  });
+
+  test('loads preset with inheritsFrom', async () => {
+    const preset = {
+      name: 'ChildPreset',
+      modIds: ['Mod1'],
+      inheritsFrom: 'ParentPreset',
+    };
+    vol.fromJSON(
+      {
+        'ChildPreset\\preset.json': JSON.stringify(preset),
+      },
+      path.join('E:', 'Games', 'Gothic 3', 'presets'),
+    );
+    const result = await loadPreset('ChildPreset');
+    expect(result).not.toBeNull();
+    expect(result!.inheritsFrom).toBe('ParentPreset');
+  });
+
+  test('returns null for non-existent preset', async () => {
+    vol.fromJSON(
+      {
+        'presets\\placeholder': '',
+      },
+      'E:\\Games\\Gothic 3',
+    );
+    const result = await loadPreset('NonExistent');
+    expect(result).toBeNull();
+  });
+
+  test('returns null for invalid preset', async () => {
+    const invalidPreset = { name: 'Bad', modIds: [] };
+    vol.fromJSON(
+      {
+        'Bad\\preset.json': JSON.stringify(invalidPreset),
+      },
+      path.join('E:', 'Games', 'Gothic 3', 'presets'),
+    );
+    const result = await loadPreset('Bad');
+    expect(result).toBeNull();
+  });
+});
+
+describe('getAllPresets with inheritance', () => {
+  beforeEach(() => {
+    mockConfig();
+  });
+
+  test('loads presets with inheritsFrom field', async () => {
+    const parent = { name: 'Parent', modIds: ['Mod1'] };
+    const child = { name: 'Child', modIds: ['Mod1', 'Mod2'], inheritsFrom: 'Parent' };
+    vol.fromJSON(
+      {
+        'Parent\\preset.json': JSON.stringify(parent),
+        'Child\\preset.json': JSON.stringify(child),
+      },
+      path.join('E:', 'Games', 'Gothic 3', 'presets'),
+    );
+    const presets = await getAllPresets();
+    expect(presets).toHaveLength(2);
+    const childPreset = presets.find(p => p.name === 'Child');
+    expect(childPreset?.inheritsFrom).toBe('Parent');
   });
 });
