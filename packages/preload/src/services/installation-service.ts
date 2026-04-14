@@ -67,9 +67,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
           );
           if (fs.existsSync(parentPath)) {
             parentPreset = presetData.inheritsFrom;
-            loggerInfo(
-              getMessage('PRESET_INHERITS_FROM', { name: preset, parent: parentPreset }),
-            );
+            loggerInfo(getMessage('PRESET_INHERITS_FROM', { name: preset, parent: parentPreset }));
           } else {
             loggerWarn(
               getMessage('PRESET_PARENT_NOT_FOUND', {

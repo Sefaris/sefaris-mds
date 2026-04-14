@@ -1,6 +1,12 @@
 import { expect, test, vi, beforeEach, describe } from 'vitest';
 import { vol, fs } from 'memfs';
-import { getAllPresets, isPresetValid, savePreset, getPresetFiles, loadPreset } from '../../packages/preload/src/services/preset-service';
+import {
+  getAllPresets,
+  isPresetValid,
+  savePreset,
+  getPresetFiles,
+  loadPreset,
+} from '../../packages/preload/src/services/preset-service';
 import path from 'path';
 import { afterEach } from 'node:test';
 let config;
@@ -191,14 +197,7 @@ describe('savePreset', () => {
 
   test('saves preset with inheritance', async () => {
     await savePreset(['Mod1'], 'ChildPreset', 'ParentPreset');
-    const jsonPath = path.join(
-      'E:',
-      'Games',
-      'Gothic 3',
-      'presets',
-      'ChildPreset',
-      'preset.json',
-    );
+    const jsonPath = path.join('E:', 'Games', 'Gothic 3', 'presets', 'ChildPreset', 'preset.json');
     const saved = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
     expect(saved.name).toBe('ChildPreset');
     expect(saved.modIds).toEqual(['Mod1']);
