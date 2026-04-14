@@ -15,7 +15,7 @@ export async function getPresetsPath() {
   return path.join(config.gothicPath, PRESETS_DIRECTORY);
 }
 
-export async function savePreset(modIds: string[], name: string) {
+export async function savePreset(modIds: string[], name: string, inheritsFrom?: string) {
   const presetsDirPath = await getPresetsPath();
   const presetPath = path.join(presetsDirPath, name);
 
@@ -32,6 +32,7 @@ export async function savePreset(modIds: string[], name: string) {
   const preset: Preset = {
     name,
     modIds,
+    ...(inheritsFrom ? { inheritsFrom } : {}),
   };
 
   const presetJsonPath = path.join(presetPath, PRESET_JSON);
@@ -63,6 +64,26 @@ export async function getAllPresets(): Promise<Preset[]> {
 
 export function isPresetValid(preset: Preset): boolean {
   return (
-    typeof preset.name === 'string' && Array.isArray(preset.modIds) && preset.modIds.length > 0
+    typeof preset.name === 'string' &&
+    Array.isArray(preset.modIds) &&
+    preset.modIds.length > 0 &&
+    (preset.inheritsFrom === undefined || typeof preset.inheritsFrom === 'string')
   );
+}
+
+export async function getPresetFiles(presetName: string): Promise<string[]> {
+  const presetsPath = await getPresetsPath();
+  const presetPath = path.join(presetsPath, presetName);
+  if (!fs.existsSync(presetPath)) return [];
+  const files = fs.readdirSync(presetPath);
+  return files.filter(file => file !== PRESET_JSON);
+}
+
+export async function loadPreset(presetName: string): Promise<Preset | null> {
+  const presetsPath = await getPresetsPath();
+  const jsonPath = path.join(presetsPath, presetName, PRESET_JSON);
+  if (!fs.existsSync(jsonPath)) return null;
+  const preset: Preset = JSON.parse(fs.readFileSync(jsonPath, UTF8));
+  if (!isPresetValid(preset)) return null;
+  return preset;
 }

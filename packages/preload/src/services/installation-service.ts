@@ -20,10 +20,11 @@ import {
 import { loadMods } from './mod-service';
 import { updateProgressBar } from './progress-service';
 import { PRESETS_DIRECTORY, UTF8 } from '../../../../utils/constants';
-import { loggerError, loggerInfo } from './logger-service';
+import { loggerError, loggerInfo, loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
+import { loadPreset } from './preset-service';
 
 const STATIC_FILE_MOD_EXTENSION = '0x';
 const STRINGTABLE_FILENAME = 'stringtable.ini';
@@ -55,6 +56,29 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
       const allMods: Mod[] = await loadMods();
       const mods = allMods.filter(mod => modIds.includes(mod.id));
 
+      let parentPreset: string | undefined;
+      if (preset) {
+        const presetData = await loadPreset(preset);
+        if (presetData?.inheritsFrom) {
+          const parentPath = path.join(
+            configuration.gothicPath,
+            PRESETS_DIRECTORY,
+            presetData.inheritsFrom,
+          );
+          if (fs.existsSync(parentPath)) {
+            parentPreset = presetData.inheritsFrom;
+            loggerInfo(getMessage('PRESET_INHERITS_FROM', { name: preset, parent: parentPreset }));
+          } else {
+            loggerWarn(
+              getMessage('PRESET_PARENT_NOT_FOUND', {
+                name: preset,
+                parent: presetData.inheritsFrom,
+              }),
+            );
+          }
+        }
+      }
+
       try {
         if (!modIds.length) throw new InstallationError(getMessage('NO_MODS_SELECTED'));
         const startTime = performance.now();
@@ -65,8 +89,8 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         if (preset) {
           console.log('Preset');
-          await moveSplash(configuration, preset);
-          await moveShader(configuration, preset);
+          await moveSplash(configuration, preset, parentPreset);
+          await moveShader(configuration, preset, parentPreset);
         }
 
         if (!fs.existsSync(dataPath))
@@ -91,15 +115,20 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         }
 
         if (preset) {
-          for (const extension of MOD_EXTENSIONS) {
-            const files = findFilesEndsWith(
-              path.join(configuration.gothicPath, PRESETS_DIRECTORY, preset),
-              `${extension[0]}${STATIC_FILE_MOD_EXTENSION}`,
-            );
-            if (!filesDictionary[extension]) {
-              filesDictionary[extension] = [];
+          const presetSources = [preset];
+          if (parentPreset) presetSources.push(parentPreset);
+
+          for (const presetSource of presetSources) {
+            for (const extension of MOD_EXTENSIONS) {
+              const files = findFilesEndsWith(
+                path.join(configuration.gothicPath, PRESETS_DIRECTORY, presetSource),
+                `${extension[0]}${STATIC_FILE_MOD_EXTENSION}`,
+              );
+              if (!filesDictionary[extension]) {
+                filesDictionary[extension] = [];
+              }
+              filesDictionary[extension].push(...files);
             }
-            filesDictionary[extension].push(...files);
           }
         }
 
@@ -114,6 +143,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         await buildWrldatasc(dataPath, mods, createdFiles);
 
         if (preset) {
+          if (parentPreset) {
+            await copyPresetInis(configuration.gothicPath, parentPreset, createdFiles);
+            await copyPresetDlls(configuration.gothicPath, parentPreset, createdFiles);
+          }
           await copyPresetInis(configuration.gothicPath, preset, createdFiles);
           await copyPresetDlls(configuration.gothicPath, preset, createdFiles);
         }
@@ -394,11 +427,17 @@ export async function getNewModsFilesPaths(files: string[], destDirectory: strin
   return newFilesPaths;
 }
 
-export async function moveSplash(configuration: AppConfiguration, presetName: string) {
+export async function moveSplash(
+  configuration: AppConfiguration,
+  presetName: string,
+  parentPreset?: string,
+) {
   let splash = path.join(configuration.gothicPath, 'Static', SPLASH);
   const presetFilesPath = path.join(configuration.gothicPath, 'presets');
   if (presetName && fs.existsSync(path.join(presetFilesPath, presetName, SPLASH))) {
     splash = path.join(presetFilesPath, presetName, SPLASH);
+  } else if (parentPreset && fs.existsSync(path.join(presetFilesPath, parentPreset, SPLASH))) {
+    splash = path.join(presetFilesPath, parentPreset, SPLASH);
   }
 
   if (!fs.existsSync(splash)) {
@@ -411,11 +450,18 @@ export async function moveSplash(configuration: AppConfiguration, presetName: st
   loggerInfo(getMessage('COPY_SPLASH_COMPLETE'));
 }
 
-export async function moveShader(configuration: AppConfiguration, presetName: string) {
+export async function moveShader(
+  configuration: AppConfiguration,
+  presetName: string,
+  parentPreset?: string,
+) {
   const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
   const presetFilesPath = path.join(configuration.gothicPath, 'presets');
 
-  const shader = path.join(presetFilesPath, presetName, SHADER);
+  let shader = path.join(presetFilesPath, presetName, SHADER);
+  if (!fs.existsSync(shader) && parentPreset) {
+    shader = path.join(presetFilesPath, parentPreset, SHADER);
+  }
 
   if (!fs.existsSync(shader)) {
     loggerInfo(getMessage('COPY_SHADER_NOT_FOUND', { preset: presetName }));

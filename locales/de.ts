@@ -104,6 +104,8 @@ export default {
     save: 'Speichern',
     close: 'Schließen',
     presetName: 'Speichere Voreinstellung als ',
+    inheritFrom: 'Konfigurationsdateien erben von',
+    inheritFiles: 'Eltern-Konfigurationsdateien',
     error: 'Fehler',
     info: 'Info',
     warning: 'Warnung',

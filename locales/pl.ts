@@ -105,6 +105,8 @@ export default {
     save: 'Zapisz',
     close: 'Zamknij',
     presetName: 'Zapisz preset jako',
+    inheritFrom: 'Dziedzicz pliki konfiguracyjne z',
+    inheritFiles: 'Pliki konfiguracyjne rodzica',
     error: 'Błąd',
     info: 'Informacja',
     warning: 'Ostrzeżenie',

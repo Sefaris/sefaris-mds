@@ -26,7 +26,7 @@ export { loadMods, loadModDescription, loadImages } from './services/mod-service
 
 export { installMods, deleteMods } from './services/installation-service';
 export { mergeModFiles } from './services/merge-service';
-export { getAllPresets, savePreset } from './services/preset-service';
+export { getAllPresets, savePreset, getPresetFiles, loadPreset } from './services/preset-service';
 export { openWebsite } from './services/redirect-service';
 export { extractAll } from './services/pak-service';
 export { openConfigWindow, changeConfigLocale, forceReloadConfig } from './services/window-service';
