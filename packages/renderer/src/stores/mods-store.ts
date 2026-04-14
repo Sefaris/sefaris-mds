@@ -22,6 +22,8 @@ export const useModsStore = defineStore('mods', () => {
   const categories = shallowRef<string[]>([]);
   const presets = shallowRef<Preset[]>([]);
   const activePreset = ref<string | undefined>();
+  const basePreset = ref<string | undefined>();
+  const installedPreset = ref<string | undefined>();
   const activeCategory = ref<string>('all');
   const installationState = ref<InstallationState>('ready');
   const configExists = ref(false);
@@ -58,6 +60,7 @@ export const useModsStore = defineStore('mods', () => {
   function selectPreset(preset: string) {
     selectedMods.value = [];
     activePreset.value = preset;
+    basePreset.value = preset;
     const presetMods = presets.value.find(item => item.name === preset)?.modIds || [];
 
     selectedMods.value = mods.value.filter(mod => presetMods.includes(mod.id)).map(mod => mod.id);
@@ -115,6 +118,8 @@ export const useModsStore = defineStore('mods', () => {
     const config = await loadConfiguration();
     if (!config) return;
     activePreset.value = config.preset;
+    basePreset.value = config.preset;
+    installedPreset.value = config.preset;
     installedMods.value = mods.value.filter((mod: Mod) => config.installedMods.includes(mod.id));
     selectedMods.value = installedMods.value.map(mod => mod.id);
   }
@@ -148,6 +153,8 @@ export const useModsStore = defineStore('mods', () => {
     activeCategory,
     presets,
     activePreset,
+    basePreset,
+    installedPreset,
     installationState,
     refreshKey,
     configExists,

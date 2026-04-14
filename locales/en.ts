@@ -104,6 +104,8 @@ export default {
     save: 'Save',
     close: 'Close',
     presetName: 'Save preset as',
+    inheritFrom: 'Inherit config files from',
+    inheritFiles: 'Parent config files',
     error: 'Error',
     info: 'Info',
     warning: 'Warning',

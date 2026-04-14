@@ -1,7 +1,7 @@
 {
   "name": "g3-sefaris-modmanager",
   "description": "Mod manager for Gothic 3 by Sefaris",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "author": {
     "email": "gothicsefaris@gmail.com",
@@ -44,6 +44,7 @@
     "electron": "25.5.0",
     "electron-builder": "24.6.3",
     "eslint": "8.47.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "9.17.0",
     "happy-dom": "10.9.0",
     "memfs": "^4.11.1",

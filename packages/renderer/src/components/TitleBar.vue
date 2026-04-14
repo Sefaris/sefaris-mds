@@ -1,6 +1,6 @@
 <template>
   <div class="title-bar flex h-8 select-none justify-between pl-2">
-    <div class="py-1">G3 Sefaris ModManager 1.0.4</div>
+    <div class="py-1">G3 Sefaris ModManager {{ appVersion }}</div>
     <div class="controls flex align-middle">
       <div
         class="px-1.5 hover:cursor-pointer hover:bg-primary-bg"
@@ -26,9 +26,11 @@ import { defineComponent } from 'vue';
 
 import { minimizeWindow, closeApplication } from '#preload';
 
+const appVersion = import.meta.env.VITE_APP_VERSION;
+
 export default defineComponent({
   setup() {
-    return { minimizeWindow, closeApplication };
+    return { minimizeWindow, closeApplication, appVersion };
   },
 });
 </script>

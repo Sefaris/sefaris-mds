@@ -61,6 +61,7 @@ export default defineComponent({
       },
     });
     const activePreset = computed(() => modsStore.activePreset);
+    const basePreset = computed(() => modsStore.basePreset);
     const selectedMods = computed({
       get() {
         return modsStore.selectedMods;
@@ -79,7 +80,10 @@ export default defineComponent({
     });
     const startInstallation = async () => {
       installationState.value = 'installation';
-      installMods(JSON.parse(JSON.stringify(selectedMods.value)), activePreset.value)
+      installMods(
+        JSON.parse(JSON.stringify(selectedMods.value)),
+        activePreset.value || basePreset.value,
+      )
         .then(time => {
           showAlert('modal.success', `${translate('alert.installed')} ${time}s`, 'success');
           showNotification({
@@ -88,6 +92,7 @@ export default defineComponent({
           });
           loggerInfo(`${getMessage('MODS_INSTALLED')} ${time}s`);
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
+          modsStore.installedPreset = activePreset.value || basePreset.value;
           installationState.value = 'ready';
         })
         .catch(error => {
@@ -102,6 +107,7 @@ export default defineComponent({
           showAlert('modal.success', translate('alert.deleted'), 'success');
           loggerInfo(getMessage('MODS_DELETED'));
           installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
+          modsStore.installedPreset = undefined;
           installationState.value = 'ready';
         })
         .catch(error => {
@@ -111,6 +117,8 @@ export default defineComponent({
     };
     const cancelChanges = () => {
       selectedMods.value = modsStore.installedMods.map(mod => mod.id);
+      modsStore.basePreset = modsStore.installedPreset;
+      modsStore.activePreset = modsStore.installedPreset;
     };
 
     return { startInstallation, cancelChanges, startDeletion, selectedMods, currentLanguage };

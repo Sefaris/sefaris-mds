@@ -1,3 +1,11 @@
+# Wersja 1.0.5
+
+- Dodano możliwość dziedziczenia presetów.
+- Dodano możliwość wyczyszczenia wyboru presetu.
+- Dodano automatyczne zaciąganie numeru wersji z `package.json`.
+- Od teraz po wyborze presetu i dorzuceniu modyfikacji, nie usuwa informacji o wcześniej wybranym presecie.
+- Poprawiono błąd, w którym przy wyborze presetów z tą samą listą modów, nie rejestrowało poprawnie zmiany presetu, przez co nie było możliwości ponownej instalacji.
+
 # Wersja 1.0.4
 
 - Dodano możliwość umieszczania plików dll, ini, m0x, n0x w folderach presetów aby w trakcie integracji zostały zainstalowane.
