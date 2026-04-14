@@ -22,7 +22,9 @@
             type="checkbox"
             class="accent-primary"
           />
-          <span>{{ $t('modal.inheritFrom') }} <strong>{{ basePreset }}</strong></span>
+          <span
+            >{{ $t('modal.inheritFrom') }} <strong>{{ basePreset }}</strong></span
+          >
         </label>
         <div
           v-if="inheritEnabled && parentFiles.length"

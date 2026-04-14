@@ -14,7 +14,8 @@
       <span
         v-if="$props.modified"
         class="text-xs text-gray-400"
-      >*</span>
+        >*</span
+      >
     </button>
     <button
       v-if="$props.active || $props.modified"
