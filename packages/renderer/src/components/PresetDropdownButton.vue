@@ -1,13 +1,30 @@
 <template>
-  <button
-    class="w-full rounded-md px-4 py-1.5 hover:bg-default-hover"
+  <div
+    class="hover:bg-default-hover flex w-full items-center rounded-md"
     :class="{
-      'border-r-4 border-primary': $props.active,
+      'border-primary border-r-4': $props.active,
+      'border-primary/40 border-r-4': $props.modified,
     }"
-    @click="selectPreset($props.preset)"
   >
-    {{ presetName }} ({{ $props.modsCount }})
-  </button>
+    <button
+      class="flex-1 px-4 py-1.5 text-left"
+      @click="selectPreset($props.preset)"
+    >
+      {{ presetName }} ({{ $props.modsCount }})
+      <span
+        v-if="$props.modified"
+        class="text-xs text-gray-400"
+        >*</span
+      >
+    </button>
+    <button
+      v-if="$props.active || $props.modified"
+      class="mr-2 px-1 text-gray-400 hover:text-white"
+      @click.stop="$emit('deselect')"
+    >
+      <i class="mdi mdi-close mdi-small" />
+    </button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -24,11 +41,16 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    modified: {
+      type: Boolean,
+      default: false,
+    },
     modsCount: {
       type: Number,
       required: true,
     },
   },
+  emits: ['deselect'],
   setup(props) {
     const modsStore = useModsStore();
     const presetName = computed(() => {

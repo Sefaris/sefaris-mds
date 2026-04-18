@@ -9,13 +9,17 @@ vi.hoisted(() => {
 
 import {
   buildWrldatasc,
+  copyPresetDlls,
+  copyPresetInis,
   deleteMods,
   getNewModsFilesPaths,
   getNextSaveDirectoryName,
   getOldModsFiles,
   installMods,
   mergeStringTables,
+  moveShader,
   moveSaves,
+  moveSplash,
 } from '../../packages/preload/src/services/installation-service';
 import { fs, vol } from 'memfs';
 import path from 'path';
@@ -745,5 +749,192 @@ describe('buildWrldatasc', () => {
 
     const createdFiles: string[] = [];
     expect(buildWrldatasc('E:\\Games\\Gothic 3\\data', mods, createdFiles)).rejects.toThrowError();
+  });
+});
+
+describe('moveSplash with inheritance', () => {
+  const configuration = {
+    gothicPath: 'E:\\Games\\Gothic 3',
+    modsPath: 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: [],
+    filesCreated: [],
+  };
+
+  test('copies splash from child preset', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\splash.bmp': 'child-splash',
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\splash.bmp': 'parent-splash',
+      'E:\\Games\\Gothic 3\\Static\\splash.bmp': 'static-splash',
+    });
+    await moveSplash(configuration, 'ChildPreset', 'ParentPreset');
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\splash.bmp', 'utf-8');
+    expect(result).toBe('child-splash');
+  });
+
+  test('falls back to parent splash when child has none', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\preset.json': '{}',
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\splash.bmp': 'parent-splash',
+      'E:\\Games\\Gothic 3\\Static\\splash.bmp': 'static-splash',
+    });
+    await moveSplash(configuration, 'ChildPreset', 'ParentPreset');
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\splash.bmp', 'utf-8');
+    expect(result).toBe('parent-splash');
+  });
+
+  test('uses static splash when neither preset has one', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\preset.json': '{}',
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\preset.json': '{}',
+      'E:\\Games\\Gothic 3\\Static\\splash.bmp': 'static-splash',
+    });
+    await moveSplash(configuration, 'ChildPreset', 'ParentPreset');
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\splash.bmp', 'utf-8');
+    expect(result).toBe('static-splash');
+  });
+
+  test('copies splash without parent preset', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\MyPreset\\splash.bmp': 'my-splash',
+    });
+    await moveSplash(configuration, 'MyPreset');
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\splash.bmp', 'utf-8');
+    expect(result).toBe('my-splash');
+  });
+});
+
+describe('moveShader with inheritance', () => {
+  beforeEach(() => {
+    mockConfig([]);
+  });
+
+  const configuration = {
+    gothicPath: 'E:\\Games\\Gothic 3',
+    modsPath: 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: [],
+    filesCreated: [],
+  };
+
+  test('copies shader from child preset', async () => {
+    vol.fromJSON({
+      '\\user\\Documents\\gothic3\\placeholder': '',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\Shader.Cache': 'child-shader',
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\Shader.Cache': 'parent-shader',
+    });
+    await moveShader(configuration, 'ChildPreset', 'ParentPreset');
+    const result = fs.readFileSync('\\user\\Documents\\gothic3\\Shader.Cache', 'utf-8');
+    expect(result).toBe('child-shader');
+  });
+
+  test('falls back to parent shader when child has none', async () => {
+    vol.fromJSON({
+      '\\user\\Documents\\gothic3\\placeholder': '',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\preset.json': '{}',
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\Shader.Cache': 'parent-shader',
+    });
+    await moveShader(configuration, 'ChildPreset', 'ParentPreset');
+    const result = fs.readFileSync('\\user\\Documents\\gothic3\\Shader.Cache', 'utf-8');
+    expect(result).toBe('parent-shader');
+  });
+
+  test('does nothing when no shader exists', async () => {
+    vol.fromJSON({
+      '\\user\\Documents\\gothic3\\placeholder': '',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\preset.json': '{}',
+    });
+    await moveShader(configuration, 'ChildPreset');
+    expect(fs.existsSync('\\user\\Documents\\gothic3\\Shader.Cache')).toBe(false);
+  });
+});
+
+describe('copyPresetInis with inheritance', () => {
+  beforeEach(() => {
+    mockConfig([]);
+  });
+
+  test('copies inis from parent then child (child overwrites)', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\config.ini': 'parent-ini',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\config.ini': 'child-ini',
+      'E:\\Games\\Gothic 3\\ini\\placeholder': '',
+    });
+    const createdFiles: string[] = [];
+    await copyPresetInis('E:\\Games\\Gothic 3', 'ParentPreset', createdFiles);
+    await copyPresetInis('E:\\Games\\Gothic 3', 'ChildPreset', createdFiles);
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\ini\\config.ini', 'utf-8');
+    expect(result).toBe('child-ini');
+    expect(createdFiles).toHaveLength(2);
+  });
+
+  test('copies only parent inis when child has none', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\settings.ini': 'parent-settings',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\preset.json': '{}',
+      'E:\\Games\\Gothic 3\\ini\\placeholder': '',
+    });
+    const createdFiles: string[] = [];
+    await copyPresetInis('E:\\Games\\Gothic 3', 'ParentPreset', createdFiles);
+    await copyPresetInis('E:\\Games\\Gothic 3', 'ChildPreset', createdFiles);
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\ini\\settings.ini', 'utf-8');
+    expect(result).toBe('parent-settings');
+    expect(createdFiles).toHaveLength(1);
+  });
+
+  test('does nothing for non-existent preset', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\ini\\placeholder': '',
+    });
+    const createdFiles: string[] = [];
+    await copyPresetInis('E:\\Games\\Gothic 3', 'NonExistent', createdFiles);
+    expect(createdFiles).toHaveLength(0);
+  });
+});
+
+describe('copyPresetDlls with inheritance', () => {
+  beforeEach(() => {
+    mockConfig([]);
+  });
+
+  test('copies dlls from parent then child (child overwrites)', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\script.dll': 'parent-dll',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\script.dll': 'child-dll',
+      'E:\\Games\\Gothic 3\\scripts\\placeholder': '',
+    });
+    const createdFiles: string[] = [];
+    await copyPresetDlls('E:\\Games\\Gothic 3', 'ParentPreset', createdFiles);
+    await copyPresetDlls('E:\\Games\\Gothic 3', 'ChildPreset', createdFiles);
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\scripts\\script.dll', 'utf-8');
+    expect(result).toBe('child-dll');
+    expect(createdFiles).toHaveLength(2);
+  });
+
+  test('copies only parent dlls when child has none', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\presets\\ParentPreset\\engine.dll': 'parent-engine',
+      'E:\\Games\\Gothic 3\\presets\\ChildPreset\\preset.json': '{}',
+      'E:\\Games\\Gothic 3\\scripts\\placeholder': '',
+    });
+    const createdFiles: string[] = [];
+    await copyPresetDlls('E:\\Games\\Gothic 3', 'ParentPreset', createdFiles);
+    await copyPresetDlls('E:\\Games\\Gothic 3', 'ChildPreset', createdFiles);
+    const result = fs.readFileSync('E:\\Games\\Gothic 3\\scripts\\engine.dll', 'utf-8');
+    expect(result).toBe('parent-engine');
+    expect(createdFiles).toHaveLength(1);
+  });
+
+  test('does nothing for non-existent preset', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\scripts\\placeholder': '',
+    });
+    const createdFiles: string[] = [];
+    await copyPresetDlls('E:\\Games\\Gothic 3', 'NonExistent', createdFiles);
+    expect(createdFiles).toHaveLength(0);
   });
 });

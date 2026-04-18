@@ -1,8 +1,27 @@
-# Wersja XXX
+# (incoming)
+
+- Podbicie pakietów do najnowszych wersji
+- Dodanie możliwości powiększania okna startera (minimalne rozmiary okna zostają zachowane)
+
+# Wersja 1.0.5
+
+- Dodano możliwość dziedziczenia presetów.
+- Dodano możliwość wyczyszczenia wyboru presetu.
+- Dodano automatyczne zaciąganie numeru wersji z `package.json`.
+- Od teraz po wyborze presetu i dorzuceniu modyfikacji, nie usuwa informacji o wcześniej wybranym presecie.
+- Poprawiono błąd, w którym przy wyborze presetów z tą samą listą modów, nie rejestrowało poprawnie zmiany presetu, przez co nie było możliwości ponownej instalacji.
+
+# Wersja 1.0.4
+
+- Dodano możliwość umieszczania plików dll, ini, m0x, n0x w folderach presetów aby w trakcie integracji zostały zainstalowane.
+
+# Wersja 1.0.3
 
 - Dodano możliwość filtrowania modów po tekście.
 - Dodano automatyczne zaznaczanie inputa w modalu dla tworzenia presetu.
 - Dodano oznaczanie elementu menu "Kategorie", jeśli została wybrana kategoria z listy.
+- Naprawiono błąd z nieprawidłową ścieżką do statycznych plików kopiowanych podczas instalacji.
+- Dodano obsługę gifów w galerii.
 
 # Wersja 1.0.2
 

@@ -68,6 +68,9 @@ export default {
     searchMods: 'Поиск модов',
     mergeArchives: 'Объединение архивов',
     dontTurnOff: 'Не выключайте программу!',
+    copyPresetInis: 'Копирование ini файлов пресета',
+    copyPresetFiles: 'Копирование файлов пресета',
+    copyPresetDlls: 'Копирование dll пресета',
   },
   config: {
     inisNotFound: 'Файлы конфигурации не найдены.',
@@ -101,6 +104,8 @@ export default {
     save: 'Сохранить',
     close: 'Закрыть',
     presetName: 'Сохранить пресет как',
+    inheritFrom: 'Наследовать файлы конфигурации от',
+    inheritFiles: 'Файлы конфигурации родителя',
     error: 'Ошибка',
     info: 'Информация',
     warning: 'Предупреждение',

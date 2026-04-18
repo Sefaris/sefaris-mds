@@ -1,5 +1,5 @@
 <template>
-  <div class="flex select-none items-center justify-between">
+  <div class="flex items-center justify-between select-none">
     <div class="p-6">
       <img src="../../assets/images/game-icon.png" />
     </div>
@@ -45,14 +45,14 @@ export default defineComponent({
     }
 
     watchEffect(() => {
-      modsStore.setInstallationState(
-        compareArrays(
-          modsStore.selectedMods,
-          modsStore.installedMods.map(mod => mod.id),
-        )
-          ? 'ready'
-          : 'edit',
+      const modsMatch = compareArrays(
+        modsStore.selectedMods,
+        modsStore.installedMods.map(mod => mod.id),
       );
+      const currentPreset = modsStore.activePreset || modsStore.basePreset;
+      const presetMatch = currentPreset === modsStore.installedPreset;
+
+      modsStore.setInstallationState(modsMatch && presetMatch ? 'ready' : 'edit');
     });
 
     return {

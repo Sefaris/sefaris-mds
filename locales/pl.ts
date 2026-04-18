@@ -69,6 +69,9 @@ export default {
     searchMods: 'Szukanie modów',
     mergeArchives: 'Łączenie archiwów',
     dontTurnOff: 'Nie wyłączaj programu!',
+    copyPresetInis: 'Kopiowanie plików ini z presetu',
+    copyPresetFiles: 'Kopiowanie plików z presetu',
+    copyPresetDlls: 'Kopiowanie dll z presetu',
   },
   config: {
     inisNotFound: 'Nie znaleziono żadnych plików konfiguracyjnych.',
@@ -102,6 +105,8 @@ export default {
     save: 'Zapisz',
     close: 'Zamknij',
     presetName: 'Zapisz preset jako',
+    inheritFrom: 'Dziedzicz pliki konfiguracyjne z',
+    inheritFiles: 'Pliki konfiguracyjne rodzica',
     error: 'Błąd',
     info: 'Informacja',
     warning: 'Ostrzeżenie',

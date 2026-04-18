@@ -1,6 +1,8 @@
 <template>
-  <app-dropdown>
-    <template #activator>{{ $t('nav.bottom.presets') }}</template>
+  <app-dropdown :active="!!activePreset || !!basePreset">
+    <template #activator>
+      {{ $t('nav.bottom.presets') }}
+    </template>
     <div class="max-h-110 min-w-50 overflow-y-auto">
       <div class="mr-2 flex flex-col gap-1">
         <preset-dropdown-button
@@ -8,13 +10,15 @@
           :key="index"
           :preset="preset.name"
           :active="preset.name === activePreset"
+          :modified="preset.name === basePreset && preset.name !== activePreset"
           :mods-count="preset.modIds.length"
+          @deselect="deselectPreset"
         />
         <button
-          class="h-8.5 w-full rounded-md px-4 py-1.5 text-primary hover:bg-default-hover"
+          class="text-primary hover:bg-default-hover h-8.5 w-full rounded-md px-4 py-1.5"
           @click="showPresetModal"
         >
-          <i class="mdi mdi-plus mdi-small"> </i>
+          <i class="mdi mdi-plus mdi-small" />
         </button>
       </div>
     </div>
@@ -39,10 +43,16 @@ export default defineComponent({
     const modsStore = useModsStore();
     const presets = computed(() => modsStore.presets);
     const activePreset = computed(() => modsStore.activePreset);
+    const basePreset = computed(() => modsStore.basePreset);
     const showModal = ref(false);
 
     const selectPreset = (preset: string) => {
       modsStore.selectPreset(preset);
+    };
+
+    const deselectPreset = () => {
+      modsStore.deactivatePreset();
+      modsStore.basePreset = undefined;
     };
 
     const showPresetModal = () => {
@@ -56,7 +66,9 @@ export default defineComponent({
     return {
       presets,
       selectPreset,
+      deselectPreset,
       activePreset,
+      basePreset,
       showModal,
       showPresetModal,
       hidePresetModal,

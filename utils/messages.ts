@@ -51,6 +51,9 @@ export const Messages = {
   PRESET_INVALID: 'Preset {{name}} is invalid.',
   PRESET_MISSING_JSON: 'Missing json for {{name}}.',
 
+  PRESET_INHERITS_FROM: 'Preset {{name}} inherits from {{parent}}.',
+  PRESET_PARENT_NOT_FOUND: 'Parent preset {{parent}} not found for {{name}}. Ignoring inheritance.',
+
   INSTALLATION_START: 'Installing {{num}} mods started!',
   INSTALLATION_MOD_LIST: 'Mods to install: {{mods}}',
   INSTALLATION_FAIL: 'Installation failed!',
@@ -75,6 +78,15 @@ export const Messages = {
   COPY_SHADER_START: 'Copying Shader.Cache.',
   COPY_SHADER_NOT_FOUND: 'Shader.Cache not found in preset {{preset}}',
   COPY_SHADER_COMPLETE: 'Shader.Cache successfully copied.',
+
+  COPY_PRESET_INIS_START: 'Copying preset inis.',
+  COPY_PRESET_INIS_COMPLETE: 'Preset inis successfully copied.',
+
+  COPY_PRESET_FILES_START: 'Copying preset files.',
+  COPY_PRESET_FILES_COMPLETE: 'Preset files successfully copied.',
+
+  COPY_PRESET_DLLS_START: 'Copying preset dlls.',
+  COPY_PRESET_DLLS_COMPLETE: 'Preset dlls successfully copied.',
 
   DIRECTORY_CREATE: 'Creating directory {{path}}',
   DIRECTORY_CREATED: 'Directory created.',

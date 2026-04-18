@@ -10,7 +10,7 @@
       style="width: 364px"
     >
       <div
-        class="sticky top-0 flex h-9 justify-end gap-2 border-b border-divider bg-transparent px-4"
+        class="border-divider sticky top-0 flex h-9 justify-end gap-2 border-b bg-transparent px-4"
       >
         <template v-if="displaySearchBar">
           <div class="flex w-full flex-row items-center justify-between gap-2">
@@ -39,14 +39,6 @@
             @click="startSearch"
           >
             {{ $t('main.mods.search') }}
-          </button-tooltip>
-
-          <button-tooltip
-            class="text-primary"
-            icon="mdi-select-all"
-            @click="selectAll"
-          >
-            {{ $t('main.mods.selectAll') }}
           </button-tooltip>
 
           <button-tooltip
@@ -102,11 +94,11 @@
     </div>
 
     <div
-      class="flex w-1.5 shrink-0 cursor-col-resize items-center justify-center hover:bg-divider/40 active:bg-divider/60"
+      class="hover:bg-divider/40 active:bg-divider/60 flex w-1.5 shrink-0 cursor-col-resize items-center justify-center"
       @mousedown="startResize"
       @dblclick="resetPanelWidth"
     >
-      <div class="h-8 w-0.5 rounded-full bg-divider" />
+      <div class="bg-divider h-8 w-0.5 rounded-full" />
     </div>
 
     <mod-preview />
@@ -114,7 +106,16 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue';
 import ModPreview from './ModPreview.vue';
 import { useModsStore } from '../stores/mods-store';
 import NoMods from './NoMods.vue';
