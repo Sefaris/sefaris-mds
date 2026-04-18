@@ -9,11 +9,16 @@ import {
 } from '../../../../utils/constants';
 import * as fs from 'fs';
 import * as path from 'path';
-import { loggerError, loggerInfo } from './logger-service';
+import { loggerError, loggerInfo, loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
-import { ensureDirectory, findInstalledModFiles, getDocumentsPath } from './file-service';
+import {
+  ensureDirectory,
+  findInstalledModFiles,
+  getDocumentsPath,
+  toAbsolute,
+} from './file-service';
 
 export async function selectGameFolder(): Promise<string> {
   return await ipcRenderer.invoke('open-folder-dialog-game');
@@ -54,7 +59,46 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
   if (!isValidConfiguration(config)) {
     throw new ConfigurationError(getMessage('INVALID_CONFIGURATION'));
   }
+  migrateFilesCreated(config);
   return config;
+}
+
+/**
+ * Migracja `filesCreated` z absolutnych ścieżek do relatywnych względem `gothicPath`.
+ * - Wpisy już relatywne są normalizowane do separatora `/`.
+ * - Absolutne wpisy należące do `gothicPath` → konwertowane na relatywne.
+ * - Absolutne wpisy spoza `gothicPath` → odrzucane (z warningiem do logu, bez kasowania plików).
+ * Mutuje obiekt in-place; zmiany trafią na dysk przy najbliższym `saveConfiguration`.
+ */
+export function migrateFilesCreated(config: AppConfiguration): void {
+  if (!config.filesCreated.length) return;
+  const gothicPath = path.resolve(config.gothicPath);
+  const migrated: string[] = [];
+  const dropped: string[] = [];
+
+  for (const entry of config.filesCreated) {
+    if (path.isAbsolute(entry)) {
+      const normalized = path.resolve(entry);
+      const rel = path.relative(gothicPath, normalized);
+      if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) {
+        dropped.push(entry);
+        continue;
+      }
+      migrated.push(rel.split(path.sep).join('/'));
+    } else {
+      migrated.push(entry.split(/[\\/]/).join('/'));
+    }
+  }
+
+  if (dropped.length) {
+    loggerWarn(
+      getMessage('CONFIG_FILES_CREATED_DROPPED', {
+        count: dropped.length.toString(),
+        files: dropped.join(', '),
+      }),
+    );
+  }
+  config.filesCreated = migrated;
 }
 
 export function isValidConfiguration(config: AppConfiguration) {
@@ -112,7 +156,7 @@ export async function installedFilesExist() {
   if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   if (!config.filesCreated.length) return true;
   config.filesCreated.forEach(file => {
-    if (!fs.existsSync(file)) return false;
+    if (!fs.existsSync(toAbsolute(config.gothicPath, file))) return false;
   });
   return true;
 }

@@ -4,12 +4,12 @@
 
 | Obszar | Plik testowy | Status |
 | --- | --- | --- |
-| Helper `toRelative`/`toAbsolute` | `tests/preload/file-service.spec.ts` (nowy lub rozszerzenie) | [ ] |
-| `installMods` zapis relatywny | `tests/preload/installation-service.spec.ts` | [ ] |
-| `deleteMods` rozwiązywanie | `tests/preload/installation-service.spec.ts` | [ ] |
-| `installedFilesExist` | `tests/preload/configuration-service.spec.ts` | [ ] |
-| Migracja starego configu | `tests/preload/configuration-service.spec.ts` | [ ] |
-| `ini-service` lookup | `tests/preload/ini-service.spec.ts` | [ ] |
+| Helper `toRelative`/`toAbsolute` | `tests/preload/file-service.spec.ts` (nowy) | [x] |
+| `installMods` zapis relatywny | `tests/preload/installation-service.spec.ts` | [x] |
+| `deleteMods` rozwiązywanie | `tests/preload/installation-service.spec.ts` | [x] |
+| `installedFilesExist` | (pośrednio przez loadConfiguration migration) | [x] |
+| Migracja starego configu | `tests/preload/configuration-service.spec.ts` | [x] |
+| `ini-service` lookup | `tests/preload/ini-service.spec.ts` | [x] |
 
 ## Scenariusze
 
@@ -44,5 +44,7 @@
 ## Wynik ostatniego runu
 
 ```
-(brak)
+Test Files  6 passed (6)
+     Tests  130 passed (130)
+  Duration  ~625ms
 ```
