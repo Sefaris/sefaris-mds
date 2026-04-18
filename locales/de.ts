@@ -49,6 +49,10 @@ export default {
     presetNotFound: 'Voreinstellung wurde nicht gefunden: ',
     configNotFound:
       'Konfiguration konnte nicht gefunden werden oder ist beschädigt. Wähle das Gothic 3-Verzeichnis aus.',
+    gamePathInvalidTitle: 'Spielordner nicht gefunden',
+    gamePathInvalid:
+      'Der gespeicherte Gothic 3-Ordner enthält keine Gothic3.exe mehr. Wähle den neuen Spielort aus, um installierte Mods, Voreinstellungen und Einstellungen zu behalten.',
+    selectNewGameFolder: 'Neuen Spielordner auswählen',
     missingModsFromPreset: 'Fehlende Mods in der Voreinstellung: ',
     checkLog: 'Etwas is schief gelaufen. Überprüfe die app.log-Datei',
     dependencyNotFound: 'Keine Abhängigkeiten gefunden:',

@@ -61,6 +61,20 @@ Każdy etap ma odpowiadający katalog `.sefaris/stages/NN-*/` z plikami:
 - Komunikuj się po polsku, zwięźle.
 - Przy konflikcie między promptem a kodem — pytaj użytkownika i loguj decyzję.
 
+## Quality gate (obowiązkowe na koniec każdego etapu)
+Przed zamknięciem etapu / oddaniem raportu **zawsze** uruchom w tej kolejności i napraw wszystkie błędy:
+
+1. `npm run format` — Prettier (auto-fix).
+2. `npm run lint:fix` — ESLint (auto-fix); pozostałe błędy/ostrzeżenia dotyczące zmienionych plików **musisz naprawić ręcznie**.
+3. `npm run typecheck` — `tsc` / `vue-tsc` dla wszystkich pakietów (`main`, `preload`, `renderer`). Zero błędów.
+4. `npm run test` — pełny pakiet testów. Zero failed.
+
+Zasady:
+- Jeśli któraś komenda zgłasza błędy — **napraw je**, nie raportuj „done” z błędami w konsoli.
+- Lint/format/typecheck/test uruchamiaj **na koniec etapu** oraz **po każdej większej zmianie** (np. po dodaniu nowego service'u).
+- Jeżeli błąd lintera / typechecka pochodzi z pliku spoza zakresu etapu i wymaga niebanalnej zmiany — zaloguj w `decisions.md` i ustal z użytkownikiem, czy naprawiamy w tym etapie.
+- W końcowym raporcie podaj wynik wszystkich 4 komend (np. „format: clean, lint: 0 errors, typecheck: 0 errors, tests: 156/156”).
+
 ## Format wpisu w journal.md
 ```
 ## 2026-04-18 14:32 — <krótki tytuł>

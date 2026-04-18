@@ -3,8 +3,12 @@ import {
   isValidConfiguration,
   isGothicPathValid,
   loadConfiguration,
+  loadConfigurationRaw,
+  backupConfiguration,
   saveConfiguration,
 } from '../../packages/preload/src/services/configuration-service';
+import { ConfigurationError } from '../../Errors/ConfigurationError';
+import { getMessage } from '../../utils/messages';
 import { fs, vol } from 'memfs';
 import path from 'path';
 import { CONFIG_FILE } from '../../utils/constants';
@@ -365,5 +369,171 @@ describe('saveConfiguration', () => {
     };
     await saveConfiguration(config);
     expect(fs.existsSync(path.join('\\user', 'documents', 'gothic3', CONFIG_FILE))).toBeFalsy();
+  });
+});
+
+describe('loadConfiguration error variants', () => {
+  const CONFIG_PATH = path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json');
+  const BACKUP_PATH = `${CONFIG_PATH}.bak`;
+
+  const validRest = {
+    modsPath: 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: ['ModA'],
+    filesCreated: ['Data/gui.mod'],
+  };
+
+  test('throws INVALID_GAME_PATH when only gothicPath is invalid', async () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        ...validRest,
+      }),
+    });
+
+    await expect(loadConfiguration()).rejects.toThrowError(getMessage('INVALID_GAME_PATH'));
+  });
+
+  test('attaches parsed config payload to INVALID_GAME_PATH error', async () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        ...validRest,
+      }),
+    });
+
+    let caught: ConfigurationError | undefined;
+    try {
+      await loadConfiguration();
+    } catch (error) {
+      caught = error as ConfigurationError;
+    }
+    expect(caught).toBeInstanceOf(ConfigurationError);
+    expect(caught?.config).toBeDefined();
+    expect(caught?.config?.installedMods).toEqual(['ModA']);
+    expect(caught?.config?.filesCreated).toEqual(['Data/gui.mod']);
+    expect(caught?.config?.gothicPath).toBe('E:\\Games\\Gothic 3');
+  });
+
+  test('does NOT create a backup when only gothicPath is invalid', async () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        ...validRest,
+      }),
+    });
+
+    await expect(loadConfiguration()).rejects.toThrow();
+    expect(fs.existsSync(BACKUP_PATH)).toBeFalsy();
+  });
+
+  test('creates a .bak file when JSON is corrupted', async () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: '{not valid json',
+    });
+
+    await expect(loadConfiguration()).rejects.toThrowError(getMessage('INVALID_CONFIGURATION'));
+    expect(fs.existsSync(BACKUP_PATH)).toBeTruthy();
+    expect(fs.readFileSync(BACKUP_PATH, 'utf8')).toBe('{not valid json');
+  });
+
+  test('creates a .bak file when configuration structure is invalid', async () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: JSON.stringify({ gothicPath: 'E:\\Games\\Gothic 3' }),
+    });
+
+    await expect(loadConfiguration()).rejects.toThrowError(getMessage('INVALID_CONFIGURATION'));
+    expect(fs.existsSync(BACKUP_PATH)).toBeTruthy();
+  });
+
+  test('throws MISSING_CONFIGURATION when file does not exist (no backup)', async () => {
+    vol.fromJSON({});
+    await expect(loadConfiguration()).rejects.toThrowError(getMessage('MISSING_CONFIGURATION'));
+    expect(fs.existsSync(BACKUP_PATH)).toBeFalsy();
+  });
+});
+
+describe('loadConfigurationRaw', () => {
+  const CONFIG_PATH = path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json');
+
+  test('returns parsed config without validating gothicPath', async () => {
+    const raw = {
+      gothicPath: 'E:\\Games\\Gothic 3',
+      modsPath: 'E:\\Games\\Gothic 3\\mods',
+      language: 'pl',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
+      installedMods: ['ModA', 'ModB'],
+      filesCreated: ['Data/gui.mod'],
+    };
+    vol.fromJSON({ [CONFIG_PATH]: JSON.stringify(raw) });
+
+    const result = await loadConfigurationRaw();
+    expect(result.installedMods).toEqual(['ModA', 'ModB']);
+    expect(result.filesCreated).toEqual(['Data/gui.mod']);
+    expect(result.gothicPath).toBe('E:\\Games\\Gothic 3');
+  });
+
+  test('throws MISSING_CONFIGURATION when file does not exist', async () => {
+    vol.fromJSON({});
+    await expect(loadConfigurationRaw()).rejects.toThrowError(getMessage('MISSING_CONFIGURATION'));
+  });
+
+  test('throws INVALID_CONFIGURATION when JSON is malformed', async () => {
+    vol.fromJSON({ [CONFIG_PATH]: '{bad json' });
+    await expect(loadConfigurationRaw()).rejects.toThrowError(getMessage('INVALID_CONFIGURATION'));
+  });
+
+  test('throws INVALID_CONFIGURATION when structure is invalid', async () => {
+    vol.fromJSON({ [CONFIG_PATH]: JSON.stringify({ gothicPath: 'X' }) });
+    await expect(loadConfigurationRaw()).rejects.toThrowError(getMessage('INVALID_CONFIGURATION'));
+  });
+
+  test('does not migrate filesCreated entries (gothicPath may be invalid)', async () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        modsPath: 'E:\\Games\\Gothic 3\\mods',
+        language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: ['E:\\Games\\Gothic 3\\Data\\gui.mod'],
+      }),
+    });
+
+    const result = await loadConfigurationRaw();
+    // raw should keep original (absolute) entry — migration runs only after
+    // a valid gothicPath has been set via loadConfiguration.
+    expect(result.filesCreated).toEqual(['E:\\Games\\Gothic 3\\Data\\gui.mod']);
+  });
+});
+
+describe('backupConfiguration', () => {
+  const CONFIG_PATH = path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json');
+  const BACKUP_PATH = `${CONFIG_PATH}.bak`;
+
+  test('creates a .bak copy of the existing config file', () => {
+    vol.fromJSON({ [CONFIG_PATH]: 'original-content' });
+    backupConfiguration(CONFIG_PATH);
+    expect(fs.existsSync(BACKUP_PATH)).toBeTruthy();
+    expect(fs.readFileSync(BACKUP_PATH, 'utf8')).toBe('original-content');
+  });
+
+  test('overwrites a previous .bak (single-slot retention)', () => {
+    vol.fromJSON({
+      [CONFIG_PATH]: 'new-content',
+      [BACKUP_PATH]: 'old-backup',
+    });
+    backupConfiguration(CONFIG_PATH);
+    expect(fs.readFileSync(BACKUP_PATH, 'utf8')).toBe('new-content');
+  });
+
+  test('does nothing when source file does not exist', () => {
+    vol.fromJSON({});
+    expect(() => backupConfiguration(CONFIG_PATH)).not.toThrow();
+    expect(fs.existsSync(BACKUP_PATH)).toBeFalsy();
   });
 });

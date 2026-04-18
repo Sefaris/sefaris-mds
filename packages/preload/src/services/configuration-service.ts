@@ -55,12 +55,74 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
   if (!fs.existsSync(configPath)) {
     throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   }
-  const config: AppConfiguration = JSON.parse(fs.readFileSync(configPath, UTF8));
-  if (!isValidConfiguration(config)) {
+
+  let parsed: AppConfiguration;
+  try {
+    parsed = JSON.parse(fs.readFileSync(configPath, UTF8));
+  } catch {
+    backupConfiguration(configPath);
     throw new ConfigurationError(getMessage('INVALID_CONFIGURATION'));
   }
-  migrateFilesCreated(config);
-  return config;
+
+  if (!isValidConfigurationStructure(parsed)) {
+    backupConfiguration(configPath);
+    throw new ConfigurationError(getMessage('INVALID_CONFIGURATION'));
+  }
+
+  if (!isGothicPathValid(parsed)) {
+    throw new ConfigurationError(getMessage('INVALID_GAME_PATH'), parsed);
+  }
+
+  migrateFilesCreated(parsed);
+  return parsed;
+}
+
+/**
+ * Variant of `loadConfiguration` that does NOT validate `gothicPath`. Used by
+ * the renderer recovery flow to recover the previous configuration when the
+ * game folder has moved (so we can preserve `installedMods`, `filesCreated`,
+ * presets and settings while updating only `gothicPath`).
+ *
+ * Throws `MISSING_CONFIGURATION` or `INVALID_CONFIGURATION` for the same cases
+ * as `loadConfiguration`. Does not run `migrateFilesCreated` because the
+ * gothicPath may be wrong; migration runs once a valid path is set.
+ */
+export async function loadConfigurationRaw(): Promise<AppConfiguration> {
+  const configPath = path.join(await getDocumentsPath(), DOCUMENTS_GOTHIC_DIRECTORY, CONFIG_FILE);
+
+  if (!fs.existsSync(configPath)) {
+    throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
+  }
+
+  let parsed: AppConfiguration;
+  try {
+    parsed = JSON.parse(fs.readFileSync(configPath, UTF8));
+  } catch {
+    throw new ConfigurationError(getMessage('INVALID_CONFIGURATION'));
+  }
+
+  if (!isValidConfigurationStructure(parsed)) {
+    throw new ConfigurationError(getMessage('INVALID_CONFIGURATION'));
+  }
+
+  return parsed;
+}
+
+/**
+ * Creates a `<config>.bak` copy of the existing config file before it gets
+ * overwritten by a fresh one. Single-slot retention — the previous backup is
+ * overwritten. Failures are logged but never thrown (best-effort).
+ */
+export function backupConfiguration(configPath: string): void {
+  try {
+    if (!fs.existsSync(configPath)) return;
+    const backupPath = `${configPath}.bak`;
+    fs.copyFileSync(configPath, backupPath);
+    loggerInfo(getMessage('CONFIG_BACKUP_CREATED', { path: backupPath }));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    loggerWarn(getMessage('CONFIG_BACKUP_FAILED', { error: message }));
+  }
 }
 
 /**
@@ -102,6 +164,19 @@ export function migrateFilesCreated(config: AppConfiguration): void {
 }
 
 export function isValidConfiguration(config: AppConfiguration) {
+  if (!isValidConfigurationStructure(config)) return false;
+  if (!isGothicPathValid(config)) return false;
+  return true;
+}
+
+/**
+ * Structural validation of the configuration object — checks required keys,
+ * allowed keys, types and language code. Does NOT verify whether
+ * `gothicPath` actually points to a Gothic 3 installation; that check lives in
+ * `isGothicPathValid` and is performed separately so the renderer can offer a
+ * "select new game folder" recovery flow without losing the rest of the config.
+ */
+export function isValidConfigurationStructure(config: AppConfiguration) {
   const requiredKeys = [
     'gothicPath',
     'modsPath',
@@ -123,14 +198,12 @@ export function isValidConfiguration(config: AppConfiguration) {
     return false;
   }
 
-  if (!isGothicPathValid(config)) return false;
-
   return (
     typeof config.gothicPath === 'string' &&
     typeof config.modsPath === 'string' &&
     typeof config.ignoreDependencies === 'boolean' &&
     typeof config.ignoreIncompatible === 'boolean' &&
-    LANGUAGE_SETTINGS.find(item => item.code === config.language) &&
+    !!LANGUAGE_SETTINGS.find(item => item.code === config.language) &&
     Array.isArray(config.installedMods) &&
     Array.isArray(config.filesCreated) &&
     (config.preset === undefined || typeof config.preset === 'string')

@@ -2,12 +2,12 @@
 
 ## Zakres
 
-| Obszar                               | Plik                                           | Status |
-| ------------------------------------ | ---------------------------------------------- | ------ |
-| `INVALID_GAME_PATH` rzucany          | `tests/preload/configuration-service.spec.ts`  | [ ]    |
-| Merge starego configu z nową ścieżką | `tests/preload/configuration-service.spec.ts`  | [ ]    |
-| Backup `.bak`                        | `tests/preload/configuration-service.spec.ts`  | [ ]    |
-| Flow HomeView                        | `tests/renderer/views/HomeView.spec.ts` (nowy) | [ ]    |
+| Obszar | Plik | Status |
+| --- | --- | --- |
+| `INVALID_GAME_PATH` rzucany + payload | `tests/preload/configuration-service.spec.ts` | [x] |
+| `loadConfigurationRaw` warianty | `tests/preload/configuration-service.spec.ts` | [x] |
+| Backup `.bak` (warianty) | `tests/preload/configuration-service.spec.ts` | [x] |
+| Flow HomeView | `tests/renderer/views/HomeView.spec.ts` (nowy) | [ ] (decyzja #5) |
 
 ## Scenariusze
 
@@ -29,5 +29,8 @@
 ## Wynik ostatniego runu
 
 ```
-(brak)
+npm run test
+Test Files  7 passed (7)
+     Tests  156 passed (156)
+  (configuration-service.spec.ts: 32 testy, w tym 14 nowych dla etapu 2)
 ```

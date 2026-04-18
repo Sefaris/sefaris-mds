@@ -1,7 +1,7 @@
 # Postęp — Etap 2
 
-- **Status**: blocked (zależy od Etap 1)
-- **Ukończone kroki**: 0 / 10
-- **Następny krok**: 2.1 (po ukończeniu Etapu 1)
-- **Blokery**: wymaga `filesCreated` relatywnych z Etapu 1
+- **Status**: ukończony (kod + testy); 2.9 i 2.10 odłożone (patrz plan.md)
+- **Ukończone kroki**: 8 / 10 (2.9 wymaga setupu vue-test-utils — poza zakresem; 2.10 manualny)
+- **Następny krok**: smoke manualny po buildzie + ewentualny setup testów komponentowych
+- **Blokery**: brak
 - **Ostatnia aktualizacja**: 2026-04-18

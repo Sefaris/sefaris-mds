@@ -47,6 +47,10 @@ export default {
     wrongPath: 'Gothic3.exe nie znaleziony. Wybierz właściwy folder.',
     presetNotFound: 'Nie znaleziono presetu: ',
     configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',
+    gamePathInvalidTitle: 'Nie znaleziono folderu gry',
+    gamePathInvalid:
+      'Zapisany folder Gothic 3 nie zawiera już Gothic3.exe. Wskaż nową lokalizację gry, aby zachować zainstalowane mody, presety i ustawienia.',
+    selectNewGameFolder: 'Wskaż nowy folder gry',
     foundAlreadyInstalledFiles: 'Znaleziono pliki modów. Instaluj mody na czystą instancję gry!',
     modFilesNotFound:
       'Zainstalowane mody nie znalezione. Usunąłeś mody ręcznie? Resetuje plik konfiguracyjny.',
