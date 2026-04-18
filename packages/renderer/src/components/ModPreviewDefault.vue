@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mb-6 flex w-91 items-center justify-center rounded-lg border border-dashed border-light text-light"
+    class="border-light text-light mb-6 flex min-w-91 flex-1 items-center justify-center overflow-hidden rounded-lg border border-dashed"
   >
     <div class="flex flex-col justify-center">
       <span class="w-44 text-center">

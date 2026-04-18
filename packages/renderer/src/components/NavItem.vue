@@ -2,7 +2,7 @@
   <button
     class="flex items-center gap-1.5"
     :class="{
-      'cursor-default text-light hover:text-light': $props.disabled,
+      'text-light hover:text-light cursor-default': $props.disabled,
       'hover:text-primary': !$props.disabled,
     }"
     :disabled="$props.disabled"

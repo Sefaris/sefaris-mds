@@ -305,7 +305,7 @@ AutoLootToggleHotkey=SEMICOLON
 
 describe('loadIniConfiguration', () => {
   beforeEach(() => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
   });
 
   test('returns 2 sections', async () => {
@@ -371,11 +371,7 @@ ShowItemMeleeWeapon=false
 
 describe('getAllIniNames', () => {
   test('returns 3 ini file names', async () => {
-    mockConfig([
-      'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
-      'E:\\Games\\Gothic 3\\ini\\floatingdamage.ini',
-      'E:\\Games\\Gothic 3\\ini\\G3Fixes.ini',
-    ]);
+    mockConfig(['ini/eCDELocator.ini', 'ini/floatingdamage.ini', 'ini/G3Fixes.ini']);
 
     vol.fromJSON(
       {
@@ -399,10 +395,7 @@ CompanionAutoDefendHotkey=APOSTROPHE
   });
 
   test('returns 1 ini file name for one empty file', async () => {
-    mockConfig([
-      'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
-      'E:\\Games\\Gothic 3\\ini\\floatingdamage.ini',
-    ]);
+    mockConfig(['ini/eCDELocator.ini', 'ini/floatingdamage.ini']);
 
     vol.fromJSON(
       {
@@ -438,7 +431,7 @@ ShowOnlyPlayerDamage=true
 
 describe('validateIniFile', () => {
   beforeEach(() => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
   });
 
   test('returns true for valid ini file', async () => {
@@ -505,7 +498,7 @@ describe('saveIniConfiguration', () => {
   });
 
   test('saves ini overwriting all supported types', async () => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -646,7 +639,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('throws error for missing ini file', async () => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
 
     const input = JSON.parse(
       '[{"name":"Main","options":[{"name":"FontName","description":"lorem","value":"Comic Sans MC","type":"string","defaultValue":"Comic Sans MS"},{"name":"FontSize","description":"lorem","value":26,"type":"number","defaultValue":16,"ranges":[0,60]},{"name":"FontBold","description":"lorem","value":true,"type":"boolean","defaultValue":false}]},{"name":"Mode","options":[{"name":"Mode","description":"Default - Standard threshold for STR/DEX/INT at 250 NoThreshold - Removes the threshold at 250 Hardcore - New thresholds as configured in [Thresholds]","value":"NoThreshold","type":"mode","defaultValue":"Default","modes":["Default","NoThreshold","Hardcore"]}]},{"name":"Thresholds","options":[{"name":"STR","description":"lorem","value":[200,500],"type":"arrayType:number","defaultValue":[200,300,400]}]},{"name":"QuickLoot","options":[{"name":"IgnoredItems","description":"List of ignored items","value":["It_Bradley_SlaveList","It_Item"],"type":"arrayType:string","defaultValue":["It_Bradley_SlaveList"]},{"name":"AutoLootToggleHotkey","description":"lorem ipsum","value":"G","type":"key","defaultValue":"SEMICOLON"},{"name":"AutoLootIconPosTopX","description":"lorem ipsum","value":92.5,"type":"number","defaultValue":98.5,"ranges":[1,300,0.5]}]}]',
@@ -707,7 +700,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('throws error not try to save no data', async () => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -755,7 +748,7 @@ AutoLootIconPosTopX=98.500000
   });
 
   test('ini stays the same for saving with no changes', async () => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem
@@ -809,7 +802,7 @@ AutoLootIconPosTopX=98.5
   });
 
   test('ini doesnt overwrite commented informations', async () => {
-    mockConfig(['E:\\Games\\Gothic 3\\ini\\eCDELocator.ini']);
+    mockConfig(['ini/eCDELocator.ini']);
     const ini = `[Main]
 FontName=Comic Sans MS
 ; lorem

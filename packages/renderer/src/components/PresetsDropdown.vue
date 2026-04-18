@@ -1,6 +1,8 @@
 <template>
   <app-dropdown :active="!!activePreset || !!basePreset">
-    <template #activator>{{ $t('nav.bottom.presets') }}</template>
+    <template #activator>
+      {{ $t('nav.bottom.presets') }}
+    </template>
     <div class="max-h-110 min-w-50 overflow-y-auto">
       <div class="mr-2 flex flex-col gap-1">
         <preset-dropdown-button
@@ -13,10 +15,10 @@
           @deselect="deselectPreset"
         />
         <button
-          class="h-8.5 w-full rounded-md px-4 py-1.5 text-primary hover:bg-default-hover"
+          class="text-primary hover:bg-default-hover h-8.5 w-full rounded-md px-4 py-1.5"
           @click="showPresetModal"
         >
-          <i class="mdi mdi-plus mdi-small"> </i>
+          <i class="mdi mdi-plus mdi-small" />
         </button>
       </div>
     </div>

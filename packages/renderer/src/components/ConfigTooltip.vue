@@ -1,7 +1,11 @@
 <template>
-  <div ref="referenceElement">
+  <div
+    ref="referenceElement"
+    :class="truncate ? 'min-w-0 flex-1 overflow-hidden' : ''"
+  >
     <span
-      class="min-w-50 text-left"
+      :class="['text-left', truncate ? 'block truncate' : 'min-w-50', highlight ? 'fake-bold' : '']"
+      :title="truncate ? $props.name : undefined"
       @mouseenter="showTooltip"
       @mouseleave="hideTooltip"
     >
@@ -11,7 +15,7 @@
       v-if="visible"
       ref="floatingElement"
       :style="tooltipStyles"
-      class="flex w-max flex-col rounded-2xl border-2 border-solid border-divider bg-primary-bg p-2"
+      class="border-divider bg-primary-bg flex w-max flex-col rounded-2xl border-2 border-solid p-2"
     >
       <slot />
     </div>
@@ -27,6 +31,14 @@ export default defineComponent({
     name: {
       type: String,
       required: true,
+    },
+    truncate: {
+      type: Boolean,
+      default: true,
+    },
+    highlight: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {

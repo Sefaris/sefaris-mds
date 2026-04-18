@@ -1,14 +1,19 @@
 <template>
   <div
+    ref="containerRef"
     :key="refreshKey"
-    class="flex h-126.5 justify-evenly pt-6"
+    class="flex min-h-0 flex-1 px-6 pt-6"
   >
-    <div class="flex w-91 flex-col overflow-y-auto">
+    <div
+      data-panel="left"
+      class="flex shrink-0 flex-col overflow-y-auto"
+      style="width: 364px"
+    >
       <div
-        class="sticky top-0 flex h-9 justify-end gap-2 border-b border-divider bg-transparent px-4"
+        class="border-divider sticky top-0 flex h-9 justify-end gap-2 border-b bg-transparent px-4"
       >
         <template v-if="displaySearchBar">
-          <div class="flex w-100 flex-row items-center justify-between gap-2">
+          <div class="flex w-full flex-row items-center justify-between gap-2">
             <app-input
               ref="queryInputRef"
               v-model="query"
@@ -44,6 +49,24 @@
             {{ $t('main.mods.deselectAll') }}
           </button-tooltip>
 
+          <template v-if="modListMode === 'grouped'">
+            <button-tooltip
+              class="text-primary"
+              icon="mdi-chevron-double-down"
+              @click="expandAllCategories"
+            >
+              {{ $t('main.mods.expandAllCategories') }}
+            </button-tooltip>
+
+            <button-tooltip
+              class="text-primary"
+              icon="mdi-chevron-double-up"
+              @click="collapseAllCategories"
+            >
+              {{ $t('main.mods.collapseAllCategories') }}
+            </button-tooltip>
+          </template>
+
           <button-tooltip
             class="text-primary"
             icon="mdi-folder-home-outline"
@@ -77,15 +100,28 @@
           </button-tooltip>
         </template>
       </div>
-      <div class="flex w-91 flex-col overflow-y-auto">
-        <no-mods v-if="!mods.length" />
-        <mod-item
-          v-for="(mod, index) in mods"
-          :key="index"
-          :config="config"
-          :mod="mod"
-        />
+      <div class="flex flex-col overflow-y-auto">
+        <template v-if="modListMode === 'grouped'">
+          <grouped-mod-list :config="config" />
+        </template>
+        <template v-else>
+          <no-mods v-if="!mods.length" />
+          <mod-item
+            v-for="(mod, index) in mods"
+            :key="index"
+            :config="config"
+            :mod="mod"
+          />
+        </template>
       </div>
+    </div>
+
+    <div
+      class="hover:bg-divider/40 active:bg-divider/60 flex w-1.5 shrink-0 cursor-col-resize items-center justify-center"
+      @mousedown="startResize"
+      @dblclick="resetPanelWidth"
+    >
+      <div class="bg-divider h-8 w-0.5 rounded-full" />
     </div>
 
     <mod-preview />
@@ -93,11 +129,21 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, ref, shallowRef, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  shallowRef,
+  watch,
+} from 'vue';
 import ModPreview from './ModPreview.vue';
 import { useModsStore } from '../stores/mods-store';
 import NoMods from './NoMods.vue';
 import ModItem from './ModItem.vue';
+import GroupedModList from './GroupedModList.vue';
 import ButtonTooltip from './ButtonTooltip.vue';
 import {
   openModsFolder,
@@ -109,18 +155,85 @@ import {
 import type { AppConfiguration } from '../../../../interfaces/AppConfiguration';
 import AppInput from './Forms/AppInput.vue';
 
+const MIN_LEFT_WIDTH = 364;
+const MIN_RIGHT_WIDTH = 364;
+
 export default defineComponent({
-  components: { AppInput, ModPreview, NoMods, ModItem, ButtonTooltip },
+  components: { AppInput, ModPreview, NoMods, ModItem, GroupedModList, ButtonTooltip },
 
   setup() {
     const queryInputRef = ref<InstanceType<typeof AppInput>>();
     const displaySearchBar = ref(false);
+    const containerRef = ref<HTMLElement | null>(null);
+    let leftPanelEl: HTMLElement | null = null;
+    let isResizing = false;
+    let rafId = 0;
+    let currentWidth = MIN_LEFT_WIDTH;
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isResizing || !containerRef.value) return;
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        if (!containerRef.value || !leftPanelEl) return;
+        const containerRect = containerRef.value.getBoundingClientRect();
+        const paddingLeft = 24;
+        const handleWidth = 6;
+        const newWidth = e.clientX - containerRect.left - paddingLeft;
+        const maxWidth = containerRect.width - paddingLeft * 2 - handleWidth - MIN_RIGHT_WIDTH;
+        currentWidth = Math.max(MIN_LEFT_WIDTH, Math.min(newWidth, maxWidth));
+        leftPanelEl.style.width = currentWidth + 'px';
+      });
+    };
+
+    const onMouseUp = () => {
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    const startResize = () => {
+      isResizing = true;
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    };
+
+    const resetPanelWidth = () => {
+      currentWidth = MIN_LEFT_WIDTH;
+      if (leftPanelEl) leftPanelEl.style.width = MIN_LEFT_WIDTH + 'px';
+    };
+
+    const clampWidth = () => {
+      if (!containerRef.value || !leftPanelEl) return;
+      const containerRect = containerRef.value.getBoundingClientRect();
+      const paddingLeft = 24;
+      const handleWidth = 6;
+      const maxWidth = containerRect.width - paddingLeft * 2 - handleWidth - MIN_RIGHT_WIDTH;
+      if (currentWidth > maxWidth) {
+        currentWidth = Math.max(MIN_LEFT_WIDTH, maxWidth);
+        leftPanelEl.style.width = currentWidth + 'px';
+      }
+    };
+
+    onMounted(() => {
+      leftPanelEl = containerRef.value?.querySelector('[data-panel="left"]') as HTMLElement;
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      window.addEventListener('resize', clampWidth);
+    });
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('resize', clampWidth);
+    });
     const modsStore = useModsStore();
     const query = computed({
       set: modsStore.setQuery,
       get: modsStore.getQuery,
     });
     const mods = computed(() => modsStore.displayedMods);
+    const modListMode = computed(() => modsStore.modListMode);
     const refreshKey = computed(() => modsStore.refreshKey);
     const config = shallowRef<AppConfiguration | null>(null);
     const selectedMods = computed({
@@ -138,6 +251,14 @@ export default defineComponent({
 
     const deselectAll = () => {
       selectedMods.value = [];
+    };
+
+    const expandAllCategories = () => {
+      modsStore.expandAllCategories();
+    };
+
+    const collapseAllCategories = () => {
+      modsStore.collapseAllCategories();
     };
 
     const startSearch = () => {
@@ -170,10 +291,14 @@ export default defineComponent({
     return {
       query,
       queryInputRef,
+      containerRef,
       mods,
+      modListMode,
       refreshKey,
       config,
       displaySearchBar,
+      startResize,
+      resetPanelWidth,
 
       openModsFolder,
       openGameFolder,
@@ -181,6 +306,8 @@ export default defineComponent({
       openDocumentsFolder,
       selectAll,
       deselectAll,
+      expandAllCategories,
+      collapseAllCategories,
       startSearch,
       stopSearch,
     };

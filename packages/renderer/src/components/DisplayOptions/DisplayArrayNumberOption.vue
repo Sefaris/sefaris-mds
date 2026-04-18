@@ -6,10 +6,10 @@
           v-model="input"
           min="0"
           type="number"
-          class="h-6 w-16 border-2 border-divider bg-transparent"
+          class="border-divider h-6 w-16 border-2 bg-transparent"
         />
         <button @click="addItem(input)">
-          <i class="mdi mdi-plus"> </i>
+          <i class="mdi mdi-plus" />
         </button>
       </div>
       <div class="flex w-68 justify-end gap-2">
@@ -17,7 +17,7 @@
           class="cursor-pointer"
           @click="scrollLeft"
         >
-          <i class="mdi mdi-skip-backward hover:text-red-300"> </i>
+          <i class="mdi mdi-skip-backward hover:text-red-300" />
         </button>
         <div
           ref="scrollContainer"
@@ -26,12 +26,12 @@
           <div
             v-for="(item, index) in setting.value"
             :key="index"
-            class="cursor-pointer snap-start border border-divider p-0.5 hover:border-red-700 hover:text-red-700"
-            @click="removeItem(item)"
+            class="border-divider cursor-pointer snap-start border p-0.5 hover:border-red-700 hover:text-red-700"
+            @click="removeItem(item as number)"
           >
             <span class="flex w-max items-center">
               {{ item }}
-              <i class="mdi mdi-window-close flex h-6 items-center"> </i>
+              <i class="mdi mdi-window-close flex h-6 items-center" />
             </span>
           </div>
         </div>
@@ -39,7 +39,7 @@
           class="z-10 cursor-pointer"
           @click="scrollRight"
         >
-          <i class="mdi mdi-skip-forward"> </i>
+          <i class="mdi mdi-skip-forward" />
         </button>
       </div>
     </div>

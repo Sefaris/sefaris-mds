@@ -13,12 +13,13 @@ export {
   startGame,
 } from './services/file-service';
 
-export { minimizeWindow, closeApplication } from './services/titlebar-service';
+export { minimizeWindow, maximizeWindow, closeApplication } from './services/titlebar-service';
 
 export {
   isGothicPathValid,
   saveConfiguration,
   loadConfiguration,
+  loadConfigurationRaw,
   getAlreadyInstalledFiles,
 } from './services/configuration-service';
 

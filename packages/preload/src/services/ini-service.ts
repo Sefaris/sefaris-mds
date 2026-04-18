@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { loadConfiguration } from './configuration-service';
-import { ensureDirectory } from './file-service';
+import { ensureDirectory, toAbsolute } from './file-service';
 import type { ConfigValue } from '../../../../types/ConfigValue';
 import type { ConfigSection } from '../../../../interfaces/ConfigSection';
 import type { OptionType } from '../../../../types/OptionType';
@@ -204,7 +204,8 @@ export async function loadIniConfiguration(name: string) {
   if (!config) throw new ConfigurationError(getMessage('MISSING_CONFIGURATION'));
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
-  let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  const relativeMatch = config.filesCreated.find(file => path.basename(file) === name);
+  let iniFilePath = relativeMatch ? toAbsolute(config.gothicPath, relativeMatch) : undefined;
   let silent = false;
   if (name === 'ge3.ini') {
     iniFilePath = path.join(iniPath, 'ge3.ini');
@@ -223,7 +224,8 @@ export async function saveIniConfiguration(sections: ConfigSection[], name: stri
   const iniPath = path.join(config.gothicPath, 'ini');
   ensureDirectory(iniPath);
 
-  let iniFilePath = config.filesCreated.find(file => file.includes(name));
+  const relativeMatch = config.filesCreated.find(file => path.basename(file) === name);
+  let iniFilePath = relativeMatch ? toAbsolute(config.gothicPath, relativeMatch) : undefined;
   if (name === 'ge3.ini') {
     iniFilePath = path.join(iniPath, 'ge3.ini');
   }

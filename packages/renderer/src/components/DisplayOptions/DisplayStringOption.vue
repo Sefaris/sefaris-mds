@@ -2,7 +2,7 @@
   <display-base-option :option="$props.option">
     <span
       v-if="!editing"
-      class="h-6 cursor-pointer hover:text-menu-hover"
+      class="hover:text-menu-hover h-6 cursor-pointer"
       @click="editing = true"
     >
       {{ setting.value }}
@@ -11,7 +11,7 @@
       v-else
       ref="input"
       v-model="setting.value"
-      class="h-6 min-w-40 border-2 border-divider bg-transparent"
+      class="border-divider h-6 min-w-40 border-2 bg-transparent"
       type="text"
       @focusout="editing = false"
     />

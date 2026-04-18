@@ -2,7 +2,7 @@
 <template>
   <div
     v-if="!selectedMod"
-    class="mb-6 flex w-91 items-center justify-center rounded-lg border border-dashed border-light text-light"
+    class="border-light text-light mb-6 flex min-w-91 flex-1 items-center justify-center overflow-hidden rounded-lg border border-dashed"
   >
     <div class="flex flex-col justify-center">
       <span class="w-44 text-center">
@@ -16,14 +16,16 @@
   </div>
   <div
     v-else-if="mod"
-    class="w-91"
+    class="flex min-w-0 min-w-91 flex-1 flex-col overflow-hidden"
   >
-    <div class="mb-2 flex items-center justify-between border-b border-divider">
+    <div class="border-divider mb-2 flex items-center justify-between border-b">
       <div>
-        <div class="font-bold">{{ mod.title }}</div>
+        <div class="font-bold">
+          {{ mod.title }}
+        </div>
         <div
           v-if="mod.authors.length"
-          class="text-xs text-light"
+          class="text-light text-xs"
         >
           <span
             v-if="mod.authors.length > 1"
@@ -48,16 +50,16 @@
       </div>
 
       <button-tooltip
-        class="mr-2 text-primary"
+        class="text-primary mr-2"
         icon="mdi-folder-outline"
         @click="openFolder(mod.path)"
       >
         {{ $t('main.preview.openModFolder') }}
       </button-tooltip>
     </div>
-    <div class="h-105 overflow-y-auto">
+    <div class="min-h-0 flex-1 overflow-y-auto">
       <img
-        class="mb-2.5 w-full"
+        class="mb-2.5 max-h-96 w-auto max-w-full object-contain"
         :src="imgSource"
       />
       <div>
@@ -95,6 +97,7 @@ import { i18n, translate } from '../../../../plugins/i18n';
 import type { Mod } from '../../../../interfaces/Mod';
 import { useModsStore } from '../stores/mods-store';
 import ButtonTooltip from './ButtonTooltip.vue';
+import { isSameModId } from '../../../../utils/mod-id';
 
 export default defineComponent({
   components: { ButtonTooltip },
@@ -109,7 +112,7 @@ export default defineComponent({
     const selectedMod = computed(() => modsStore.selectedMod);
 
     watch([selectedMod, i18n.global.locale], async ([newMod, _]) => {
-      mod.value = (await loadMods()).find(mod => mod.id === newMod);
+      mod.value = (await loadMods()).find(mod => isSameModId(mod.id, newMod));
       if (!mod.value) {
         return;
       }

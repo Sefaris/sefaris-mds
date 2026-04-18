@@ -1,9 +1,9 @@
 <template>
-  <div class="absolute left-0 top-0 h-2 w-200">
+  <div class="absolute top-0 left-0 h-2 w-full">
     <div
-      class="h-2 bg-primary duration-200 ease-in"
+      class="bg-primary h-2 duration-200 ease-in"
       :style="{ width: progressValue }"
-    ></div>
+    />
   </div>
 </template>
 
@@ -19,13 +19,12 @@ export default defineComponent({
   },
 
   setup(props) {
-    const WIDTH = 800;
-    const progressValue = ref('0px');
+    const progressValue = ref('0%');
 
     watch(
       () => props.progress,
       newValue => {
-        progressValue.value = `${(newValue / 100) * WIDTH}px`;
+        progressValue.value = `${newValue}%`;
       },
     );
 

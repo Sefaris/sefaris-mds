@@ -20,6 +20,8 @@ export default {
       searchPlaceholder: 'Search...',
       selectAll: 'Select all mods. (Ignores incompatibles)',
       deselectAll: 'Deselect all mods.',
+      expandAllCategories: 'Expand all categories.',
+      collapseAllCategories: 'Collapse all categories.',
       openGameFolder: 'Open game folder.',
       openModsFolder: 'Open mods folder.',
       openDocumentsFolder: 'Open documents folder.',
@@ -47,6 +49,10 @@ export default {
     wrongPath: "Gothic3.exe wasn't found. Select correct directory.",
     presetNotFound: 'Preset not found: ',
     configNotFound: 'Config not found or corrupted. Select Gothic 3 directory.',
+    gamePathInvalidTitle: 'Game folder not found',
+    gamePathInvalid:
+      'Saved Gothic 3 folder no longer contains Gothic3.exe. Select the new game location to keep your installed mods, presets and settings.',
+    selectNewGameFolder: 'Select new game folder',
     foundAlreadyInstalledFiles: 'Found mod files. Install mods on clear Gothic instance!',
     modFilesNotFound:
       "Can't find installed mods. Seems like you deleted mods manually. Clearing configuration.",
@@ -79,11 +85,18 @@ export default {
     ignoreDependencies: 'Ignore dependencies',
     ignoreIncompatibles: 'Ignore incompatibles',
     starter: 'Starter settings',
+    modListMode: {
+      label: 'Mod list mode',
+      flat: 'Flat list',
+      grouped: 'Grouped by category',
+    },
     description: {
       gothicPath: 'Path to folder containing installed Gothic 3.',
       modsPath: 'Path to folder containing mods.',
       ignoreDependencies: 'Disables automatic marking of mods marked as required.',
       ignoreIncompatibles: 'Allows installation of mods defined as incompatible.',
+      modListMode:
+        'Choose how the mod list is displayed: flat (categories in the top bar) or grouped into expandable category sections.',
     },
     nav: {
       back: 'Back',
@@ -98,6 +111,7 @@ export default {
     default: 'Default',
     dependencyOf: 'Dependency of',
     incompatibleWith: 'Incompatible with',
+    revert: 'Revert unsaved change',
   },
   modal: {
     preset: 'Preset',

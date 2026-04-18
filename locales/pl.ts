@@ -20,6 +20,8 @@ export default {
       searchPlaceholder: 'Szukaj...',
       selectAll: 'Zaznacz wszystkie mody. (Ignoruje niekompatybilność)',
       deselectAll: 'Odznacz wszystkie mody.',
+      expandAllCategories: 'Rozwiń wszystkie kategorie.',
+      collapseAllCategories: 'Zwiń wszystkie kategorie.',
       openGameFolder: 'Otwórz folder z grą.',
       openModsFolder: 'Otwórz folder z modami.',
       openDocumentsFolder: 'Otwórz folder dokumentów.',
@@ -47,6 +49,10 @@ export default {
     wrongPath: 'Gothic3.exe nie znaleziony. Wybierz właściwy folder.',
     presetNotFound: 'Nie znaleziono presetu: ',
     configNotFound: 'Plik konfiguracyjny nie znaleziony lub uszkodzony. Wskaż folder z grą.',
+    gamePathInvalidTitle: 'Nie znaleziono folderu gry',
+    gamePathInvalid:
+      'Zapisany folder Gothic 3 nie zawiera już Gothic3.exe. Wskaż nową lokalizację gry, aby zachować zainstalowane mody, presety i ustawienia.',
+    selectNewGameFolder: 'Wskaż nowy folder gry',
     foundAlreadyInstalledFiles: 'Znaleziono pliki modów. Instaluj mody na czystą instancję gry!',
     modFilesNotFound:
       'Zainstalowane mody nie znalezione. Usunąłeś mody ręcznie? Resetuje plik konfiguracyjny.',
@@ -80,11 +86,18 @@ export default {
     ignoreDependencies: 'Ignoruj zależności',
     ignoreIncompatibles: 'Ignoruj niekompatybilność',
     starter: 'Ustawienia startera',
+    modListMode: {
+      label: 'Tryb listy modów',
+      flat: 'Płaska lista',
+      grouped: 'Pogrupowane wg kategorii',
+    },
     description: {
       gothicPath: 'Ścieżka do folderu z zainstalowanym Gothic 3.',
       modsPath: 'Ścieżka do folderu zawierającego mody.',
       ignoreDependencies: 'Wyłącza automatycznie zaznaczanie modów oznaczonych jako wymagane.',
       ignoreIncompatibles: 'Umożliwia instalację modów oznaczonych jako niekompatybilne.',
+      modListMode:
+        'Wybierz sposób wyświetlania listy modów: płaski (kategorie w pasku górnym) albo pogrupowany w rozwijane sekcje kategorii.',
     },
     nav: {
       back: 'Wróć',
@@ -99,6 +112,7 @@ export default {
     default: 'Domyślne',
     dependencyOf: 'Zależne od',
     incompatibleWith: 'Zablokowane przez',
+    revert: 'Cofnij niezapisaną zmianę',
   },
   modal: {
     preset: 'Preset',

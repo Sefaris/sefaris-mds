@@ -1,5 +1,4 @@
 import { chrome } from '../../.electron-vendors.cache.json';
-import { preload } from 'unplugin-auto-expose';
 import { join } from 'node:path';
 import { injectAppVersion } from '../../version/inject-app-version-plugin.mjs';
 
@@ -22,7 +21,7 @@ const config = {
     assetsDir: '.',
     minify: process.env.MODE !== 'development',
     lib: {
-      entry: 'src/index.ts',
+      entry: { index: 'src/exposed.ts' },
       formats: ['cjs'],
     },
     rollupOptions: {
@@ -33,7 +32,7 @@ const config = {
     emptyOutDir: true,
     reportCompressedSize: false,
   },
-  plugins: [preload.vite(), injectAppVersion()],
+  plugins: [injectAppVersion()],
 };
 
 export default config;

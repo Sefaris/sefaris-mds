@@ -16,12 +16,15 @@ import {
   getLastExistingFileName,
   removeFileNameExtension,
   swapFileNames,
+  toAbsolute,
+  toRelative,
 } from './file-service';
 import { loadMods } from './mod-service';
 import { updateProgressBar } from './progress-service';
 import { PRESETS_DIRECTORY, UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo, loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import { includesModId } from '../../../../utils/mod-id';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 import { loadPreset } from './preset-service';
@@ -54,7 +57,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
       const scriptsPath = path.join(configuration.gothicPath, 'scripts');
       const iniPath = path.join(configuration.gothicPath, 'ini');
       const allMods: Mod[] = await loadMods();
-      const mods = allMods.filter(mod => modIds.includes(mod.id));
+      const mods = allMods.filter(mod => includesModId(modIds, mod.id));
 
       let parentPreset: string | undefined;
       if (preset) {
@@ -157,8 +160,10 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         configuration.installedMods = mods.map(mod => mod.id);
         configuration.preset = preset ? preset : undefined;
-        //Get rid of possible duplicates
-        configuration.filesCreated = Array.from(new Set(createdFiles));
+        //Get rid of possible duplicates and persist relative paths
+        configuration.filesCreated = Array.from(new Set(createdFiles)).map(file =>
+          toRelative(configuration.gothicPath, file),
+        );
 
         await saveConfiguration(configuration);
         loggerInfo(getMessage('INSTALLATION_COMPLETE', { num: modIds.length.toString() }));
@@ -229,12 +234,14 @@ export async function deleteMods(): Promise<void> {
   if (!filesCount) return;
   for (let i = 0; i < filesCount; i++) {
     updateProgressBar('progress.delete', i, filesCount);
-    loggerInfo(getMessage('FILE_DELETING', { path: configuration.filesCreated[i] }));
-    if (fs.existsSync(configuration.filesCreated[i])) {
-      fs.unlinkSync(configuration.filesCreated[i]);
-      loggerInfo(getMessage('FILE_DELETED', { path: configuration.filesCreated[i] }));
+    const relative = configuration.filesCreated[i];
+    const absolute = toAbsolute(configuration.gothicPath, relative);
+    loggerInfo(getMessage('FILE_DELETING', { path: absolute }));
+    if (fs.existsSync(absolute)) {
+      fs.unlinkSync(absolute);
+      loggerInfo(getMessage('FILE_DELETED', { path: absolute }));
     } else {
-      loggerInfo(getMessage('FILE_SKIPPED', { path: configuration.filesCreated[i] }));
+      loggerInfo(getMessage('FILE_SKIPPED', { path: absolute }));
     }
   }
 

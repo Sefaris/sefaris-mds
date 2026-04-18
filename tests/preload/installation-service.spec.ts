@@ -1,4 +1,12 @@
 import { expect, test, vi, beforeEach, describe, afterEach } from 'vitest';
+
+vi.hoisted(() => {
+  const _staticPath = process.cwd() + (process.platform === 'win32' ? '\\' : '/') + 'Static';
+  if (!process.argv.some(a => a.startsWith('--staticPath='))) {
+    process.argv.push('--staticPath=' + _staticPath);
+  }
+});
+
 import {
   buildWrldatasc,
   copyPresetDlls,
@@ -18,7 +26,8 @@ import path from 'path';
 import { UTF8 } from '../../utils/constants';
 import os from 'os';
 import type { Mod } from '../../interfaces/Mod';
-let config;
+import type { AppConfiguration } from '../../interfaces/AppConfiguration';
+let config: AppConfiguration | null;
 
 function mockConfig(files: string[], missing?: boolean) {
   config = {
@@ -92,14 +101,17 @@ afterEach(() => {
 
 describe('deleteMods', () => {
   test('deletes files included in config', async () => {
-    const installedFiles = [
-      'E:\\Games\\Gothic 3\\Data\\gui.mod',
-      'E:\\Games\\Gothic 3\\Data\\infos.mod',
-      'E:\\Games\\Gothic 3\\Data\\quests.mod',
-      'E:\\Games\\Gothic 3\\Data\\templates.mod',
-      'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
+    const installedFilesRelative = [
+      'Data/gui.mod',
+      'Data/infos.mod',
+      'Data/quests.mod',
+      'Data/templates.mod',
+      'Data/_compiledanimation.mod',
     ];
-    mockConfig(installedFiles);
+    const installedFilesAbsolute = installedFilesRelative.map(f =>
+      path.join('E:\\Games\\Gothic 3', f),
+    );
+    mockConfig(installedFilesRelative);
 
     vol.fromJSON(
       {
@@ -114,20 +126,23 @@ describe('deleteMods', () => {
 
     await deleteMods();
 
-    installedFiles.forEach(file => {
+    installedFilesAbsolute.forEach(file => {
       expect(fs.existsSync(file)).toBeFalsy();
     });
   });
 
   test('removes existing files saved in config and skips missing ones', async () => {
-    const installedFiles = [
-      'E:\\Games\\Gothic 3\\Data\\gui.mod',
-      'E:\\Games\\Gothic 3\\Data\\infos.mod',
-      'E:\\Games\\Gothic 3\\Data\\quests.mod',
-      'E:\\Games\\Gothic 3\\Data\\templates.mod',
-      'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
+    const installedFilesRelative = [
+      'Data/gui.mod',
+      'Data/infos.mod',
+      'Data/quests.mod',
+      'Data/templates.mod',
+      'Data/_compiledanimation.mod',
     ];
-    mockConfig(installedFiles);
+    const installedFilesAbsolute = installedFilesRelative.map(f =>
+      path.join('E:\\Games\\Gothic 3', f),
+    );
+    mockConfig(installedFilesRelative);
     vol.fromJSON(
       {
         'Data\\gui.mod': '',
@@ -137,20 +152,20 @@ describe('deleteMods', () => {
     );
     await deleteMods();
 
-    installedFiles.forEach(file => {
+    installedFilesAbsolute.forEach(file => {
       expect(fs.existsSync(file)).toBeFalsy();
     });
   });
 
   test('returns object with 2 empty arrays', async () => {
-    const installedFiles = [
-      'E:\\Games\\Gothic 3\\Data\\gui.mod',
-      'E:\\Games\\Gothic 3\\Data\\infos.mod',
-      'E:\\Games\\Gothic 3\\Data\\quests.mod',
-      'E:\\Games\\Gothic 3\\Data\\templates.mod',
-      'E:\\Games\\Gothic 3\\Data\\_compiledanimation.mod',
+    const installedFilesRelative = [
+      'Data/gui.mod',
+      'Data/infos.mod',
+      'Data/quests.mod',
+      'Data/templates.mod',
+      'Data/_compiledanimation.mod',
     ];
-    mockConfig(installedFiles);
+    mockConfig(installedFilesRelative);
     vol.fromJSON(
       {
         'Data\\gui.mod': '',
@@ -207,6 +222,24 @@ describe('deleteMods', () => {
     files.forEach(file => {
       expect(fs.existsSync(file)).toBeTruthy();
     });
+  });
+
+  test('resolves relative paths against current gothicPath after the game folder moved', async () => {
+    const installedFilesRelative = ['Data/gui.mod', 'Data/infos.mod'];
+    mockConfig(installedFilesRelative);
+    // Files exist only under the new gothicPath — stary absolutny katalog jest pusty.
+    vol.fromJSON(
+      {
+        'Data\\gui.mod': '',
+        'Data\\infos.mod': '',
+      },
+      'E:\\Games\\Gothic 3',
+    );
+
+    await deleteMods();
+
+    expect(fs.existsSync('E:\\Games\\Gothic 3\\Data\\gui.mod')).toBeFalsy();
+    expect(fs.existsSync('E:\\Games\\Gothic 3\\Data\\infos.mod')).toBeFalsy();
   });
 });
 
@@ -533,6 +566,50 @@ describe('installMods', () => {
 
     const modsIds = mods.map(item => item.id);
     expect(installMods(modsIds)).resolves.toBeTypeOf('string');
+  });
+
+  test('persists relative paths in filesCreated after successful installation', async () => {
+    mockConfig([]);
+    const mods = [
+      {
+        id: 'Mod1',
+        title: 'Mod1',
+        category: 'category',
+        dependencies: [],
+        incompatibles: [],
+        directoryName: 'Mod1',
+        authors: ['Autor'],
+        path: 'E:\\Games\\Gothic 3\\mods\\mod1',
+      },
+    ];
+    vol.fromJSON({
+      '\\user\\Documents\\gothic3\\Mods0': '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x': '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x': '',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc': '',
+      'E:\\Games\\Gothic 3\\mods\\mod1\\mod.json': JSON.stringify(mods[0]),
+      'E:\\Games\\Gothic 3\\mods\\mod1\\file1.m0x': '',
+      'E:\\Games\\Gothic 3\\mods\\mod1\\file2.m0x': '',
+      'E:\\Games\\Gothic 3\\Data\\strings.pak': '',
+      'E:\\Games\\Gothic 3\\Data\\temp\\stringtable.ini': '',
+    });
+
+    await installMods(mods.map(m => m.id));
+
+    const persisted = JSON.parse(
+      fs.readFileSync(
+        path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json'),
+        UTF8,
+      ) as string,
+    );
+
+    expect(Array.isArray(persisted.filesCreated)).toBe(true);
+    expect(persisted.filesCreated.length).toBeGreaterThan(0);
+    persisted.filesCreated.forEach((entry: string) => {
+      expect(path.isAbsolute(entry)).toBe(false);
+      expect(entry.startsWith('Data/')).toBe(true);
+      expect(entry).not.toContain('\\');
+    });
   });
 
   test('rejects for empty modsIds list', async () => {

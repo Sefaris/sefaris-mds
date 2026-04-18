@@ -1,4 +1,5 @@
 import type { Mod } from '../../../../interfaces/Mod';
+import type { ModListMode } from '../../../../interfaces/AppConfiguration';
 import type { Preset } from '../../../../interfaces/Preset';
 import { defineStore } from 'pinia';
 import { computed, ref, shallowRef } from 'vue';
@@ -13,6 +14,7 @@ import {
 import { translate } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { getMessage } from '../../../../utils/messages';
+import { includesModId, isSameModId } from '../../../../utils/mod-id';
 export const useModsStore = defineStore('mods', () => {
   const query = ref('');
   const mods = shallowRef<Mod[]>([]);
@@ -28,12 +30,51 @@ export const useModsStore = defineStore('mods', () => {
   const installationState = ref<InstallationState>('ready');
   const configExists = ref(false);
   const refreshKey = ref(0);
+  const modListMode = ref<ModListMode>('flat');
+  const expandedCategories = ref<Set<string>>(new Set());
   const displayedMods = computed<Mod[]>(() => {
     const result = getModsByActiveCategory();
     if (query.value) {
       return result.filter(mod => mod.title.toLowerCase().includes(query.value.toLowerCase()));
     }
 
+    return result;
+  });
+
+  /**
+   * Mods grouped by category for the `grouped` list mode.
+   * Respects only grouped-relevant filters:
+   * - `activeCategory === 'installed'` => installed mods only
+   * - otherwise => all mods
+   * and applies `query` over the selected source.
+   * Returned object iterates categories alphabetically (locale-aware, case-insensitive).
+   * Mods without a `category` are bucketed under `'Uncategorized'`.
+   */
+  const groupedMods = computed<Record<string, Mod[]>>(() => {
+    const byFilter = activeCategory.value === 'installed' ? installedMods.value : mods.value;
+    const source = query.value
+      ? byFilter.filter(mod => mod.title.toLowerCase().includes(query.value.toLowerCase()))
+      : byFilter;
+
+    const groups = new Map<string, Mod[]>();
+    for (const mod of source) {
+      const key = mod.category || 'Uncategorized';
+      const bucket = groups.get(key);
+      if (bucket) {
+        bucket.push(mod);
+      } else {
+        groups.set(key, [mod]);
+      }
+    }
+
+    const sortedKeys = Array.from(groups.keys()).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' }),
+    );
+
+    const result: Record<string, Mod[]> = {};
+    for (const key of sortedKeys) {
+      result[key] = groups.get(key)!;
+    }
     return result;
   });
 
@@ -63,9 +104,13 @@ export const useModsStore = defineStore('mods', () => {
     basePreset.value = preset;
     const presetMods = presets.value.find(item => item.name === preset)?.modIds || [];
 
-    selectedMods.value = mods.value.filter(mod => presetMods.includes(mod.id)).map(mod => mod.id);
+    selectedMods.value = mods.value
+      .filter(mod => includesModId(presetMods, mod.id))
+      .map(mod => mod.id);
 
-    const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
+    const missingMods = presetMods.filter(
+      modId => !mods.value.some(mod => isSameModId(mod.id, modId)),
+    );
 
     if (missingMods.length > 0) {
       showAlert(
@@ -120,7 +165,9 @@ export const useModsStore = defineStore('mods', () => {
     activePreset.value = config.preset;
     basePreset.value = config.preset;
     installedPreset.value = config.preset;
-    installedMods.value = mods.value.filter((mod: Mod) => config.installedMods.includes(mod.id));
+    installedMods.value = mods.value.filter((mod: Mod) =>
+      includesModId(config.installedMods, mod.id),
+    );
     selectedMods.value = installedMods.value.map(mod => mod.id);
   }
 
@@ -137,15 +184,51 @@ export const useModsStore = defineStore('mods', () => {
     categories.value = [
       ...new Set(mods.value.map(mod => mod.category).filter(category => category !== undefined)),
     ];
+    // Reset expanded state so every visible group starts expanded after each (re)load.
+    expandedCategories.value = new Set(mods.value.map(mod => mod.category || 'Uncategorized'));
   }
 
   function setInstallationState(state: InstallationState) {
     installationState.value = state;
   }
 
+  function setModListMode(mode: ModListMode) {
+    modListMode.value = mode;
+    if (
+      mode === 'grouped' &&
+      activeCategory.value !== 'all' &&
+      activeCategory.value !== 'installed'
+    ) {
+      activeCategory.value = 'all';
+    }
+  }
+
+  function isCategoryExpanded(name: string): boolean {
+    return expandedCategories.value.has(name);
+  }
+
+  function toggleCategoryExpanded(name: string) {
+    const next = new Set(expandedCategories.value);
+    if (next.has(name)) {
+      next.delete(name);
+    } else {
+      next.add(name);
+    }
+    expandedCategories.value = next;
+  }
+
+  function expandAllCategories() {
+    expandedCategories.value = new Set(Object.keys(groupedMods.value));
+  }
+
+  function collapseAllCategories() {
+    expandedCategories.value = new Set();
+  }
+
   return {
     mods,
     displayedMods,
+    groupedMods,
     installedMods,
     selectedMods,
     selectedMod,
@@ -158,6 +241,8 @@ export const useModsStore = defineStore('mods', () => {
     installationState,
     refreshKey,
     configExists,
+    modListMode,
+    expandedCategories,
 
     setQuery,
     getQuery,
@@ -176,5 +261,10 @@ export const useModsStore = defineStore('mods', () => {
     loadPresets,
     deactivatePreset,
     setInstallationState,
+    setModListMode,
+    isCategoryExpanded,
+    toggleCategoryExpanded,
+    expandAllCategories,
+    collapseAllCategories,
   };
 });

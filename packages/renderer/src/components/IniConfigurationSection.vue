@@ -1,5 +1,7 @@
 <template>
-  <div class="mt-2 select-none text-center text-xl">{{ $props.section.name }}</div>
+  <div class="mt-2 text-center text-xl select-none">
+    {{ $props.section.name }}
+  </div>
   <component
     :is="display.component!"
     v-for="(display, index) in displays"

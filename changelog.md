@@ -1,3 +1,13 @@
+# Wersja 1.1.0
+
+- Podbicie pakietów do najnowszych wersji
+- Dodanie możliwości powiększania okna startera (minimalne rozmiary okna zostają zachowane)
+- Poprawione porównywanie identyfikatorów modów. Od teraz wielkość znaków przy porównaniu nie ma znaczenia.
+- Przy błędnej ścieżce do Gothica, od teraz config zostanie utrzymany, gdy nowa ścieżka zostanie wskazana.
+- Poprawiono wczytywanie fonta Gothic3.
+- Dodano opcję do zmiany wyglądu grupowania modyfikacji. Domyślnie kategorie są przypięte w pasku nawigacji, ale można przełączyć na widok z kategoriami jako rozwijanymi sekcjami bezpośrednio w liście modów.
+- Poprawiono błąd od pierwszej wersji startera, który polegał na braku fonta `Lato` w projekcie.
+
 # Wersja 1.0.5
 
 - Dodano możliwość dziedziczenia presetów.

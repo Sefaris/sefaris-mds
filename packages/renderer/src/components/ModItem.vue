@@ -1,7 +1,7 @@
 <template>
   <div
     class="mr-2 flex items-center gap-3 py-1.5"
-    :class="{ 'border-r-4 border-primary': isActive }"
+    :class="{ 'border-primary border-r-4': isActive }"
   >
     <mod-checkbox-tooltip
       :mod-id="mod.id"
@@ -23,6 +23,7 @@ import { useModsStore } from '../stores/mods-store';
 import type { Mod } from '../../../../interfaces/Mod';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import ModCheckboxTooltip from '/@/components/ModCheckboxTooltip.vue';
+import { isSameModId } from '../../../../utils/mod-id';
 export default defineComponent({
   components: { ModCheckboxTooltip },
   props: {
@@ -45,7 +46,7 @@ export default defineComponent({
         modsStore.setSelectedMod(mod);
       },
     });
-    const isActive = computed(() => selectedMod.value == props.mod.id);
+    const isActive = computed(() => isSameModId(selectedMod.value, props.mod.id));
 
     return {
       selectedMod,

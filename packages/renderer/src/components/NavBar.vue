@@ -1,8 +1,8 @@
 <template>
-  <div class="box-border flex h-28.5 select-none flex-col border-b border-divider">
+  <div class="border-divider box-border flex h-28.5 shrink-0 flex-col border-b select-none">
     <div class="m-6 flex h-8 justify-between">
       <span
-        class="cursor-pointer text-xl text-primary hover:text-primary-hover"
+        class="text-primary hover:text-primary-hover cursor-pointer text-xl"
         @click="openWebsite(SEFARIS_WEBSITE)"
       >
         Sefaris.eu
@@ -26,8 +26,13 @@
     </div>
 
     <div class="flex items-center justify-center">
-      <span class="mr-6 text-light"> {{ $t('nav.bottom.title') }}: </span>
+      <span class="text-light mr-6"> {{ $t('nav.bottom.title') }}: </span>
       <div class="flex h-8.5 items-center gap-6">
+        <!--
+          In `grouped` mode categories are rendered inline in `GroupedModList`.
+          We keep `all`/`installed` here as a global source filter, but hide
+          category dropdown to avoid duplicate category-filter UX.
+        -->
         <category-button
           :active="activeCategory === 'all'"
           :mods-counter="modsCounter"
@@ -39,7 +44,7 @@
           :disabled="installedModsCounter === 0"
           category="installed"
         />
-        <categories-dropdown v-if="categoriesExist" />
+        <categories-dropdown v-if="modListMode === 'flat' && categoriesExist" />
         <presets-dropdown />
       </div>
     </div>
@@ -78,6 +83,7 @@ export default defineComponent({
     const presetsExist = computed(() => modsStore.presets.length > 0);
     const installationState = computed(() => modsStore.installationState);
     const configExists = computed(() => modsStore.configExists);
+    const modListMode = computed(() => modsStore.modListMode);
 
     const selectCategory = (category: string) => {
       modsStore.displayCategory(category);
@@ -90,6 +96,7 @@ export default defineComponent({
       categoriesExist,
       presetsExist,
       configExists,
+      modListMode,
       SEFARIS_WEBSITE,
       installationState,
 

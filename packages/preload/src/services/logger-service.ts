@@ -8,7 +8,7 @@ const { printf } = format;
 let logger: Logger;
 
 const myFormat = printf(({ level, message, timestamp }) => {
-  const formattedTimestamp = new Date(timestamp).toLocaleString('en-GB');
+  const formattedTimestamp = new Date(timestamp as string).toLocaleString('en-GB');
   return `${formattedTimestamp} [${level}]: ${message}`;
 });
 
