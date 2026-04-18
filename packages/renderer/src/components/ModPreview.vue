@@ -2,7 +2,7 @@
 <template>
   <div
     v-if="!selectedMod"
-    class="mb-6 flex w-91 items-center justify-center rounded-lg border border-dashed border-light text-light"
+    class="mb-6 flex min-w-91 flex-1 items-center justify-center overflow-hidden rounded-lg border border-dashed border-light text-light"
   >
     <div class="flex flex-col justify-center">
       <span class="w-44 text-center">
@@ -11,16 +11,18 @@
       <img
         class="m-auto mt-3 w-6"
         src="../../assets/svg/cursor-default-click.svg"
-      />
+      >
     </div>
   </div>
   <div
     v-else-if="mod"
-    class="w-91"
+    class="min-w-91 flex min-w-0 flex-1 flex-col overflow-hidden"
   >
     <div class="mb-2 flex items-center justify-between border-b border-divider">
       <div>
-        <div class="font-bold">{{ mod.title }}</div>
+        <div class="font-bold">
+          {{ mod.title }}
+        </div>
         <div
           v-if="mod.authors.length"
           class="text-xs text-light"
@@ -55,11 +57,11 @@
         {{ $t('main.preview.openModFolder') }}
       </button-tooltip>
     </div>
-    <div class="h-105 overflow-y-auto">
+    <div class="min-h-0 flex-1 overflow-y-auto">
       <img
-        class="mb-2.5 w-full"
+        class="mb-2.5 max-h-96 w-auto max-w-full object-contain"
         :src="imgSource"
-      />
+      >
       <div>
         <span v-if="mod.dependencies.length">{{ $t('main.preview.dependencies') }} </span>
         <span

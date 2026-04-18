@@ -1,6 +1,6 @@
 <template>
   <nav-bar />
-  <main-section />
+  <main-section class="min-h-0 flex-1" />
   <footer-section />
 </template>
 

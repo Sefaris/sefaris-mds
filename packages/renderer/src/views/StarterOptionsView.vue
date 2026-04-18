@@ -1,10 +1,10 @@
 <template>
-  <div class="flex h-182 select-none flex-col items-center text-menu">
+  <div class="flex min-h-0 flex-1 select-none flex-col items-center text-menu">
     <div class="mt-2 select-none text-center text-xl">
       {{ $t('config.starter') }}
     </div>
 
-    <div class="h-174.5 w-full overflow-y-auto text-center">
+    <div class="min-h-0 flex-1 w-full overflow-y-auto text-center">
       <div class="mx-20 mt-3 flex select-none items-center justify-between">
         <config-tooltip :name="$t('config.gothicPath')">
           <span class="max-w-100">

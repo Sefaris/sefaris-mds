@@ -13,9 +13,11 @@ export async function createConfigWindow() {
   const newWindow = new BrowserWindow({
     width: 800,
     height: 760,
+    minWidth: 800,
+    minHeight: 760,
     show: false,
     frame: false,
-    resizable: false,
+    resizable: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
