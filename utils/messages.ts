@@ -34,6 +34,8 @@ export const Messages = {
   CONFIGURATION_SAVED: 'Configuration successfully saved!',
   INVALID_CONFIGURATION: 'Invalid configuration!',
   MISSING_CONFIGURATION: 'Missing configuration file!',
+  CONFIG_FILES_CREATED_DROPPED:
+    'Migrated config: dropped {{count}} filesCreated entries outside gothicPath: {{files}}',
 
   DIRECTORY_DOESNT_EXIST: "Directory {{path}} doesn't exist.",
   FILE_DOESNT_EXIST: "File {{path}} doesn't exist.",

@@ -205,6 +205,23 @@ export async function copyFiles(
     createdFiles.push(newFilePath);
   }
 }
+/**
+ * Konwertuje absolutną ścieżkę pliku na relatywną względem `gothicPath`.
+ * Wynik ma znormalizowany separator `/` (cross-platform stabilność JSON-a).
+ */
+export function toRelative(gothicPath: string, absolutePath: string): string {
+  const rel = path.relative(gothicPath, absolutePath);
+  return rel.split(path.sep).join('/');
+}
+
+/**
+ * Konwertuje relatywną ścieżkę (zwykle z configu) na absolutną w obrębie `gothicPath`.
+ * Akceptuje zarówno separatory `/` jak i `\`.
+ */
+export function toAbsolute(gothicPath: string, relativePath: string): string {
+  return path.join(gothicPath, relativePath);
+}
+
 export async function getDocumentsPath(): Promise<string> {
   return new Promise((resolve, reject) => {
     const regKey = new Winreg({

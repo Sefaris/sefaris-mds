@@ -223,6 +223,111 @@ describe('loadConfiguration', () => {
     await expect(loadConfiguration()).rejects.toBeDefined();
     await expect(loadConfiguration()).rejects.toThrowError();
   });
+
+  test('migrates absolute filesCreated entries inside gothicPath to relative', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        modsPath: 'E:\\Games\\Gothic 3\\mods',
+        language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: [
+          'E:\\Games\\Gothic 3\\Data\\gui.mod',
+          'E:\\Games\\Gothic 3\\ini\\eCDELocator.ini',
+        ],
+      }),
+    });
+
+    const config = await loadConfiguration();
+    expect(config?.filesCreated).toEqual(['Data/gui.mod', 'ini/eCDELocator.ini']);
+  });
+
+  test('drops absolute filesCreated entries outside gothicPath', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        modsPath: 'E:\\Games\\Gothic 3\\mods',
+        language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: [
+          'E:\\Games\\Gothic 3\\Data\\gui.mod',
+          'D:\\OldGothic\\Data\\stale.mod',
+          'C:\\elsewhere\\file.mod',
+        ],
+      }),
+    });
+
+    const config = await loadConfiguration();
+    expect(config?.filesCreated).toEqual(['Data/gui.mod']);
+  });
+
+  test('keeps already relative filesCreated entries and normalizes separators', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        modsPath: 'E:\\Games\\Gothic 3\\mods',
+        language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: ['Data/gui.mod', 'Data\\infos.mod'],
+      }),
+    });
+
+    const config = await loadConfiguration();
+    expect(config?.filesCreated).toEqual(['Data/gui.mod', 'Data/infos.mod']);
+  });
+
+  test('migration is idempotent on a mixed entry config', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        modsPath: 'E:\\Games\\Gothic 3\\mods',
+        language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: [
+          'E:\\Games\\Gothic 3\\Data\\gui.mod',
+          'Data/infos.mod',
+          'C:\\elsewhere\\file.mod',
+        ],
+      }),
+    });
+
+    const first = await loadConfiguration();
+    await saveConfiguration(first as never);
+    const second = await loadConfiguration();
+
+    expect(first?.filesCreated).toEqual(['Data/gui.mod', 'Data/infos.mod']);
+    expect(second?.filesCreated).toEqual(first?.filesCreated);
+  });
+
+  test('handles empty filesCreated without errors', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json')]: JSON.stringify({
+        gothicPath: 'E:\\Games\\Gothic 3',
+        modsPath: 'E:\\Games\\Gothic 3\\mods',
+        language: 'pl',
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: [],
+      }),
+    });
+
+    const config = await loadConfiguration();
+    expect(config?.filesCreated).toEqual([]);
+  });
 });
 
 describe('saveConfiguration', () => {
