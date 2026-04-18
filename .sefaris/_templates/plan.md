@@ -9,4 +9,5 @@
 - [ ] 3. <opis>
 
 ## Out of scope
+
 - ...

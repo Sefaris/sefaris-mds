@@ -2,22 +2,26 @@
 
 ## Zakres pokrycia
 
-| Obszar | Plik testowy | Status |
-|---|---|---|
-| ... | `tests/.../*.spec.ts` | [ ] |
+| Obszar | Plik testowy          | Status |
+| ------ | --------------------- | ------ |
+| ...    | `tests/.../*.spec.ts` | [ ]    |
 
 ## Scenariusze
 
 ### Happy path
+
 - [ ] ...
 
 ### Edge cases
+
 - [ ] ...
 
 ### Migracje / wsteczna kompatybilność
+
 - [ ] ...
 
 ### Cross-platform (jeśli dotyczy)
+
 - [ ] win32: ...
 - [ ] linux: ...
 

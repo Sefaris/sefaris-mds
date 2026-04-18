@@ -17,5 +17,6 @@
 - [ ] 5.13 Smoke manualny: przełączenie trybu, filtrowanie query w obu trybach.
 
 ## Out of scope
+
 - Drag & drop kolejności modów.
 - Custom sortowanie kategorii (alfabetyczne wystarczy).

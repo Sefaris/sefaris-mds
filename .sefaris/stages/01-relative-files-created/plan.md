@@ -18,5 +18,6 @@
 - [ ] 1.12 Pełny `npm run test` + smoke manualny (instalacja moda → check JSON configu → przeniesienie folderu → deinstalacja).
 
 ## Out of scope
+
 - Zmiana zachowania UI po przeniesieniu gry (to Etap 2).
 - Restrukturyzacja `filesCreated` na strukturę z metadanymi mod-id (out of scope, ewentualnie w przyszłości).

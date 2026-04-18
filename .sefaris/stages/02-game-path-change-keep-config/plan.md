@@ -14,4 +14,5 @@
 - [ ] 2.10 Smoke manualny: zmiana folderu + sprawdzenie zachowania installedMods.
 
 ## Out of scope
+
 - Auto-detekcja przeniesionej gry (np. po nazwie folderu). Tylko ręczne wskazanie.

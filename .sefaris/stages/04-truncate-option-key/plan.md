@@ -10,4 +10,5 @@
 - [ ] 4.6 Wizualna weryfikacja na długim kluczu.
 
 ## Out of scope
+
 - Pretty-printing klucza (split camelCase, i18n nazw kluczy).

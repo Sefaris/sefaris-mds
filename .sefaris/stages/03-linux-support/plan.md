@@ -19,6 +19,7 @@
 - [ ] 3.15 Smoke manualny na Linuksie (jeśli środowisko dostępne) lub WSL.
 
 ## Out of scope
+
 - Natywny port G3Pak na Linuksa.
 - macOS.
 - Auto-detekcja Proton compatdata (user wskazuje ręcznie).

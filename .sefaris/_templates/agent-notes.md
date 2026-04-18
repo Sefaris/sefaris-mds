@@ -1,7 +1,6 @@
 # Notatki agenta
 
-> Scratchpad: założenia, gotchas, pomysły do późniejszych etapów.
-> Może być reorganizowany. Nie duplikuj treści dziennika.
+> Scratchpad: założenia, gotchas, pomysły do późniejszych etapów. Może być reorganizowany. Nie duplikuj treści dziennika.
 
 ## Założenia
 
