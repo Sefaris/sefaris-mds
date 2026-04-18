@@ -1,7 +1,7 @@
 # Postęp — Etap 4
 
-- **Status**: not-started
-- **Ukończone kroki**: 0 / 6
-- **Następny krok**: 4.1
+- **Status**: completed
+- **Ukończone kroki**: 6 / 6
+- **Następny krok**: —
 - **Blokery**: brak
 - **Ostatnia aktualizacja**: 2026-04-18

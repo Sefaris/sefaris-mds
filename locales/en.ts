@@ -102,6 +102,7 @@ export default {
     default: 'Default',
     dependencyOf: 'Dependency of',
     incompatibleWith: 'Incompatible with',
+    revert: 'Revert unsaved change',
   },
   modal: {
     preset: 'Preset',

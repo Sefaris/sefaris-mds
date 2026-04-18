@@ -4,17 +4,18 @@
 
 | Obszar | Plik | Status |
 | --- | --- | --- |
-| `ConfigTooltip` truncate + title | `tests/renderer/components/ConfigTooltip.spec.ts` (nowy) | [ ] |
+| `ConfigTooltip` truncate + title | `tests/renderer/components/ConfigTooltip.spec.ts` (nowy) | [x] |
 
 ## Scenariusze
 
-- [ ] Renderuje tekst.
-- [ ] Atrybut `title` zawiera pełną wartość `name`.
-- [ ] Klasy CSS truncate obecne gdy `truncate=true`.
-- [ ] Brak truncate gdy `truncate=false`.
+- [x] Renderuje tekst.
+- [x] Atrybut `title` zawiera pełną wartość `name`.
+- [x] Klasy CSS truncate obecne gdy `truncate=true`.
+- [x] Brak truncate gdy `truncate=false`.
 
 ## Wynik ostatniego runu
 
 ```
-(brak)
+Test Files  8 passed (8)
+     Tests  160 passed (160)
 ```

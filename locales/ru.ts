@@ -102,6 +102,7 @@ export default {
     default: 'По умолчанию',
     dependencyOf: 'Зависимость от',
     incompatibleWith: 'Несовместимо с',
+    revert: 'Отменить несохранённое изменение',
   },
   modal: {
     preset: 'Пресет',

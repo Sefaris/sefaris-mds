@@ -1,6 +1,7 @@
 <template>
   <div class="text-menu flex min-h-0 flex-1 flex-col items-center select-none">
     <ini-configuration-record
+      :key="reloadKey"
       ref="configRecord"
       :config-name="configName"
     />
@@ -23,6 +24,7 @@ export default defineComponent({
     const route = useRoute();
     const configName = ref<string>((route.params.ini as string) || '');
     const configRecord = ref<ConfigRecord>();
+    const reloadKey = ref(0);
 
     const saveConfig = async () => {
       if (configRecord.value) {
@@ -30,6 +32,8 @@ export default defineComponent({
         saveIniConfiguration(configSectionsCopy, configName.value)
           .then(() => {
             showAlert('modal.success', translate('alert.iniSaved'), 'success');
+            // Force re-mount of options so dirty/original snapshots reset to the saved values.
+            reloadKey.value++;
           })
           .catch(error => {
             showAlert('modal.error', error.message, 'error');
@@ -37,7 +41,7 @@ export default defineComponent({
       }
     };
 
-    return { saveConfig, configName, configRecord };
+    return { saveConfig, configName, configRecord, reloadKey };
   },
 });
 </script>

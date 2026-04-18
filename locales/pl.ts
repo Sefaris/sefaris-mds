@@ -103,6 +103,7 @@ export default {
     default: 'Domyślne',
     dependencyOf: 'Zależne od',
     incompatibleWith: 'Zablokowane przez',
+    revert: 'Cofnij niezapisaną zmianę',
   },
   modal: {
     preset: 'Preset',

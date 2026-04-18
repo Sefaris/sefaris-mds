@@ -1,3 +1,5 @@
+import vue from '@vitejs/plugin-vue';
+
 /**
  * Configuration for the global end-to-end testing,
  * placed in the project's root 'tests' folder.
@@ -5,6 +7,7 @@
  * @see https://vitest.dev/config/
  */
 const config = {
+  plugins: [vue()],
   test: {
     /**
      * By default, vitest searches for the test files in all packages.

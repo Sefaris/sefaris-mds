@@ -3,6 +3,13 @@
 @plugin "tailwind-scrollbar";
 
 @layer utilities {
+  /* Visual bold without changing text metrics (no width/height shift). */
+  .fake-bold {
+    text-shadow:
+      0.4px 0 0 currentColor,
+      -0.4px 0 0 currentColor;
+  }
+
   *::-webkit-scrollbar {
     width: 6px;
   }

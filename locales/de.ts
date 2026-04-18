@@ -102,6 +102,7 @@ export default {
     default: 'Standard',
     dependencyOf: 'Abhängigkeit von',
     incompatibleWith: 'Unvereinbar mit',
+    revert: 'Nicht gespeicherte Änderung rückgängig machen',
   },
   modal: {
     preset: 'Voreinstellung',
