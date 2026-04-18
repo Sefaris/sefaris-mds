@@ -1,3 +1,8 @@
+# (incoming)
+
+- Podbicie pakietów do najnowszych wersji
+- Dodanie możliwości powiększania okna startera (minimalne rozmiary okna zostają zachowane)
+
 # Wersja 1.0.5
 
 - Dodano możliwość dziedziczenia presetów.

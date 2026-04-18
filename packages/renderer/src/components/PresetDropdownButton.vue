@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex w-full items-center rounded-md hover:bg-default-hover"
+    class="hover:bg-default-hover flex w-full items-center rounded-md"
     :class="{
-      'border-r-4 border-primary': $props.active,
-      'border-r-4 border-primary/40': $props.modified,
+      'border-primary border-r-4': $props.active,
+      'border-primary/40 border-r-4': $props.modified,
     }"
   >
     <button

@@ -10,7 +10,7 @@
       </div>
       <div>
         <span
-          class="font-gothic text-5xl text-primary"
+          class="font-gothic text-primary text-5xl"
           :class="{ 'font-lato': currentLanguage == 'ru' }"
         >
           {{ progress }}%

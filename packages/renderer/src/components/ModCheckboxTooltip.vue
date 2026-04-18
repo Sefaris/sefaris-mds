@@ -2,8 +2,8 @@
   <div ref="referenceElement">
     <img
       v-if="selectedMods.includes($props.modId)"
-      class="cursor-pointer select-none rounded bg-primary"
-      :class="{ 'cursor-default bg-primary-disabled': isDependencyOfSelectedMod($props.modId) }"
+      class="bg-primary cursor-pointer rounded select-none"
+      :class="{ 'bg-primary-disabled cursor-default': isDependencyOfSelectedMod($props.modId) }"
       src="../../assets/svg/check-bold.svg"
       alt="selected"
       @click="deselectMod($props.modId)"
@@ -12,8 +12,8 @@
     />
     <img
       v-else
-      class="cursor-pointer select-none rounded"
-      :class="{ 'cursor-default bg-disabled': isIncompatibleOfSelectedMod($props.modId) }"
+      class="cursor-pointer rounded select-none"
+      :class="{ 'bg-disabled cursor-default': isIncompatibleOfSelectedMod($props.modId) }"
       src="../../assets/svg/state=inactive.svg"
       alt="disabled"
       @click="selectMod($props.modId)"
@@ -24,9 +24,9 @@
       v-if="visible"
       ref="floatingElement"
       :style="tooltipStyles"
-      class="z-20 -mt-1 ml-2 flex w-max flex-col rounded-2xl border-2 border-solid border-divider bg-primary-bg p-2 text-white"
+      class="border-divider bg-primary-bg z-20 -mt-1 ml-2 flex w-max flex-col rounded-2xl border-2 border-solid p-2 text-white"
     >
-      <div v-if="dependants.length">{{ $t('tooltip.dependencyOf') }}:</div>
+      <div v-if="dependants.length"> {{ $t('tooltip.dependencyOf') }}: </div>
       <div
         v-for="(item, index) in dependants"
         :key="index"
@@ -34,7 +34,7 @@
       >
         {{ item }}
       </div>
-      <div v-if="incompatibles.length">{{ $t('tooltip.incompatibleWith') }}:</div>
+      <div v-if="incompatibles.length"> {{ $t('tooltip.incompatibleWith') }}: </div>
       <div
         v-for="(item, index) in incompatibles"
         :key="index"

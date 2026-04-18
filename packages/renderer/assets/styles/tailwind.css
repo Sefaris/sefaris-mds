@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+@plugin "tailwind-scrollbar";
 
 @layer utilities {
   *::-webkit-scrollbar {
@@ -25,6 +25,16 @@
     font-family: "Lato", sans-serif;
     font-size: 15px;
     color: #ffffff;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
   }
 }
 
@@ -34,12 +44,45 @@
 }
 
 #app {
-  height: 760px;
-  width: 800px;
-  background-image: url("@assets/images/background.png");
+  min-height: 760px;
+  min-width: 800px;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#app .bg-slide {
+  position: absolute;
+  inset: 0;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.8);
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+  z-index: 0;
+}
+
+#app .bg-slide.active {
+  opacity: 1;
+}
+
+#app .bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 1;
+}
+
+#app .app-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .slider::-webkit-slider-thumb {

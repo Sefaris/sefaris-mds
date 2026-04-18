@@ -8,7 +8,7 @@
     </button>
     <button
       v-if="selectedMods.length"
-      class="mr-6 h-15 w-78.75 bg-install"
+      class="bg-install mr-6 h-15 w-78.75"
       @click="startInstallation()"
     >
       <span
@@ -20,7 +20,7 @@
     </button>
     <button
       v-else
-      class="mr-6 h-15 w-78.75 bg-install"
+      class="bg-install mr-6 h-15 w-78.75"
       @click="startDeletion()"
     >
       <span

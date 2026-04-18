@@ -1,38 +1,38 @@
 <template>
-  <div class="flex h-182 select-none flex-col items-center text-menu">
-    <div class="mt-2 select-none text-center text-xl">
+  <div class="text-menu flex min-h-0 flex-1 flex-col items-center select-none">
+    <div class="mt-2 text-center text-xl select-none">
       {{ $t('config.starter') }}
     </div>
 
-    <div class="h-174.5 w-full overflow-y-auto text-center">
-      <div class="mx-20 mt-3 flex select-none items-center justify-between">
+    <div class="min-h-0 w-full flex-1 overflow-y-auto text-center">
+      <div class="mx-20 mt-3 flex items-center justify-between select-none">
         <config-tooltip :name="$t('config.gothicPath')">
           <span class="max-w-100">
             {{ $t('config.description.gothicPath') }}
           </span>
         </config-tooltip>
         <span
-          class="h-6 cursor-pointer hover:text-menu-hover"
+          class="hover:text-menu-hover h-6 cursor-pointer"
           @click="editGothicPath"
         >
           {{ configuration?.gothicPath }}
         </span>
       </div>
 
-      <div class="mx-20 mt-3 flex select-none items-center justify-between">
+      <div class="mx-20 mt-3 flex items-center justify-between select-none">
         <config-tooltip :name="$t('config.modsPath')">
           <span class="max-w-100">
             {{ $t('config.description.modsPath') }}
           </span>
         </config-tooltip>
         <span
-          class="h-6 cursor-pointer hover:text-menu-hover"
+          class="hover:text-menu-hover h-6 cursor-pointer"
           @click="editModsPath"
         >
           {{ configuration?.modsPath }}
         </span>
       </div>
-      <div class="mx-20 mt-3 flex select-none items-center justify-between">
+      <div class="mx-20 mt-3 flex items-center justify-between select-none">
         <config-tooltip :name="$t('config.ignoreDependencies')">
           <span class="max-w-100">
             {{ $t('config.description.ignoreDependencies') }}
@@ -59,7 +59,7 @@
         </div>
       </div>
 
-      <div class="mx-20 mt-3 flex select-none items-center justify-between">
+      <div class="mx-20 mt-3 flex items-center justify-between select-none">
         <config-tooltip :name="$t('config.ignoreIncompatibles')">
           <span>
             {{ $t('config.description.ignoreIncompatibles') }}

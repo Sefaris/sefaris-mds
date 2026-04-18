@@ -9,7 +9,6 @@ export function addEvents() {
   const windows = getWindows();
 
   ipcMain.handle('open-folder-dialog-game', async (): Promise<string> => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const result = await dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -33,7 +32,6 @@ export function addEvents() {
   });
 
   ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const result = await dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -55,6 +53,15 @@ export function addEvents() {
 
   ipcMain.on('minimize-window', () => {
     BrowserWindow.getFocusedWindow()?.minimize();
+  });
+
+  ipcMain.on('maximize-window', () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win?.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win?.maximize();
+    }
   });
 
   ipcMain.on('close-application', () => {

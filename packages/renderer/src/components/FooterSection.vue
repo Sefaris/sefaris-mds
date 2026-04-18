@@ -1,5 +1,5 @@
 <template>
-  <div class="h-27 shadow-[inset_0_1px_0_0_#30303b]">
+  <div class="h-27 shrink-0 shadow-[inset_0_1px_0_0_#30303b]">
     <installation-bar v-if="installationState === 'installation'" />
     <controls-bar v-else />
   </div>

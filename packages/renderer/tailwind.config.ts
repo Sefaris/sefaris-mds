@@ -123,8 +123,4 @@ export default {
       200: '800px',
     },
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [require('tailwind-scrollbar')],
 } satisfies Config;

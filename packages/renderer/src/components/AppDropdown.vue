@@ -23,7 +23,7 @@
     <div
       v-if="expanded"
       ref="content"
-      class="flex w-max flex-col rounded-bl-2xl rounded-br-2xl rounded-tl-2xl border-2 border-solid border-divider bg-primary-bg p-2"
+      class="border-divider bg-primary-bg flex w-max flex-col rounded-tl-2xl rounded-br-2xl rounded-bl-2xl border-2 border-solid p-2"
       :style="dropdownFloatingStyles"
     >
       <slot />

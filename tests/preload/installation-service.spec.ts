@@ -1,4 +1,12 @@
 import { expect, test, vi, beforeEach, describe, afterEach } from 'vitest';
+
+vi.hoisted(() => {
+  const _staticPath = process.cwd() + (process.platform === 'win32' ? '\\' : '/') + 'Static';
+  if (!process.argv.some(a => a.startsWith('--staticPath='))) {
+    process.argv.push('--staticPath=' + _staticPath);
+  }
+});
+
 import {
   buildWrldatasc,
   copyPresetDlls,
@@ -18,7 +26,8 @@ import path from 'path';
 import { UTF8 } from '../../utils/constants';
 import os from 'os';
 import type { Mod } from '../../interfaces/Mod';
-let config;
+import type { AppConfiguration } from '../../interfaces/AppConfiguration';
+let config: AppConfiguration | null;
 
 function mockConfig(files: string[], missing?: boolean) {
   config = {

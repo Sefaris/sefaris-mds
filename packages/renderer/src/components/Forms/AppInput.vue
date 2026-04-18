@@ -2,7 +2,7 @@
   <input
     ref="inputRef"
     :value="modelValue"
-    class="transition-border-opacity h-6 rounded-md border-2 border-primary border-opacity-15 bg-gray-400 bg-opacity-15 px-2 text-white placeholder-white placeholder-opacity-50 outline-none duration-200 focus:border-opacity-100"
+    class="border-primary/15 focus:border-primary h-6 rounded-md border-2 bg-gray-400/15 px-2 text-white placeholder-white/50 transition-colors duration-200 outline-none"
     :maxlength="maxlength"
     :placeholder="placeholder"
     @input="emitValue"

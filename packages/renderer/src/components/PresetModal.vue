@@ -39,15 +39,15 @@
           </div>
         </div>
       </div>
-      <div class="ml-auto mt-auto flex gap-2 p-px">
+      <div class="mt-auto ml-auto flex gap-2 p-px">
         <button
-          class="rounded-lg border-2 border-divider bg-primary px-2 py-1 text-black hover:bg-primary-hover"
+          class="border-divider bg-primary hover:bg-primary-hover rounded-lg border-2 px-2 py-1 text-black"
           @click="addPreset"
         >
           {{ $t('modal.save') }}
         </button>
         <button
-          class="rounded-lg border-2 border-divider px-2 py-1 hover:bg-disabled"
+          class="border-divider hover:bg-disabled rounded-lg border-2 px-2 py-1"
           @click="$emit('close')"
         >
           {{ $t('modal.close') }}
