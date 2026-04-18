@@ -1,7 +1,7 @@
 <template>
   <div
     class="mr-2 flex items-center gap-3 py-1.5"
-    :class="{ 'border-r-4 border-primary': isActive }"
+    :class="{ 'border-primary border-r-4': isActive }"
   >
     <mod-checkbox-tooltip
       :mod-id="mod.id"

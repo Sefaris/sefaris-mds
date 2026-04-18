@@ -6,10 +6,10 @@
     >
       <input
         v-model="input"
-        class="h-6 w-60 border-2 border-divider bg-transparent"
+        class="border-divider h-6 w-60 border-2 bg-transparent"
         type="text"
         @focusin="show = true"
-      >
+      />
       <button @click="addItem(input)">
         <i class="mdi mdi-plus" />
       </button>
@@ -20,13 +20,13 @@
         <div
           v-for="(item, index) in setting.value"
           :key="index"
-          class="flex items-center justify-between bg-divider p-1"
+          class="bg-divider flex items-center justify-between p-1"
         >
           <span class="ml-1">
             {{ item }}
           </span>
           <button
-            class="w-9 hover:bg-default-hover"
+            class="hover:bg-default-hover w-9"
             @click="removeItem(item as string)"
           >
             <i class="mdi mdi-delete" />

@@ -1,8 +1,8 @@
 <template>
   <button
-    class="rounded-md px-4 py-1.5 hover:bg-default-hover"
+    class="hover:bg-default-hover rounded-md px-4 py-1.5"
     :class="{
-      'border-r-4 border-primary': $props.active,
+      'border-primary border-r-4': $props.active,
     }"
     @click="displayCategory(category)"
   >

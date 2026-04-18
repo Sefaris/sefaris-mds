@@ -70,19 +70,22 @@ function preloadBridge() {
     },
     load(id) {
       if (id === RESOLVED_ID) {
-        const preloadSrc = readFileSync(
-          join(PACKAGE_ROOT, '../preload/src/index.ts'),
-          'utf-8',
-        );
+        const preloadSrc = readFileSync(join(PACKAGE_ROOT, '../preload/src/index.ts'), 'utf-8');
         const exportNames = [];
         const re = /export\s+\{([^}]+)\}/g;
         let match;
         while ((match = re.exec(preloadSrc)) !== null) {
-          const names = match[1].split(',').map(n => n.trim()).filter(Boolean);
+          const names = match[1]
+            .split(',')
+            .map(n => n.trim())
+            .filter(Boolean);
           exportNames.push(...names);
         }
         return exportNames
-          .map(name => `export const ${name} = (...args) => globalThis['${EXPOSED_PREFIX}${name}'](...args);`)
+          .map(
+            name =>
+              `export const ${name} = (...args) => globalThis['${EXPOSED_PREFIX}${name}'](...args);`,
+          )
           .join('\n');
       }
     },

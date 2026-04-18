@@ -1,7 +1,7 @@
 <template>
-  <div class="absolute left-0 top-0 h-2 w-full">
+  <div class="absolute top-0 left-0 h-2 w-full">
     <div
-      class="h-2 bg-primary duration-200 ease-in"
+      class="bg-primary h-2 duration-200 ease-in"
       :style="{ width: progressValue }"
     />
   </div>

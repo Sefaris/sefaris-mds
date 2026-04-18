@@ -2,7 +2,7 @@
   <display-base-option :option="$props.option">
     <span
       v-if="!isListening"
-      class="min-w-50 cursor-pointer text-right hover:text-menu-hover"
+      class="hover:text-menu-hover min-w-50 cursor-pointer text-right"
       @click="onRebind"
     >
       {{ setting.value }}

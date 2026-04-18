@@ -6,14 +6,13 @@
         :class="$props.icon"
         @mouseenter="showTooltip"
         @mouseleave="hideTooltip"
-      >
-      </i>
+      />
     </button>
     <div
       v-if="visible"
       ref="floatingElement"
       :style="tooltipStyles"
-      class="z-20 flex w-max flex-col rounded-2xl border-2 border-solid border-divider bg-primary-bg p-2 text-white"
+      class="border-divider bg-primary-bg z-20 flex w-max flex-col rounded-2xl border-2 border-solid p-2 text-white"
     >
       <slot />
     </div>

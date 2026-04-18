@@ -6,8 +6,8 @@
           v-model="input"
           min="0"
           type="number"
-          class="h-6 w-16 border-2 border-divider bg-transparent"
-        >
+          class="border-divider h-6 w-16 border-2 bg-transparent"
+        />
         <button @click="addItem(input)">
           <i class="mdi mdi-plus" />
         </button>
@@ -26,7 +26,7 @@
           <div
             v-for="(item, index) in setting.value"
             :key="index"
-            class="cursor-pointer snap-start border border-divider p-0.5 hover:border-red-700 hover:text-red-700"
+            class="border-divider cursor-pointer snap-start border p-0.5 hover:border-red-700 hover:text-red-700"
             @click="removeItem(item as number)"
           >
             <span class="flex w-max items-center">

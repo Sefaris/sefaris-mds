@@ -5,7 +5,7 @@
     :max="$props.max"
     :value="sliderValue"
     :step="$props.step"
-    class="slider h-0.5 cursor-pointer appearance-none bg-slider"
+    class="slider bg-slider h-0.5 cursor-pointer appearance-none"
     @change="onSlide"
   />
 </template>

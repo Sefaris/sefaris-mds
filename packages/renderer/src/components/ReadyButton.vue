@@ -1,6 +1,6 @@
 <template>
   <button
-    class="mr-6 h-15 w-78.75 bg-play"
+    class="bg-play mr-6 h-15 w-78.75"
     @click="play()"
   >
     <span

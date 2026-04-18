@@ -10,8 +10,7 @@
           class="h-6.5 w-6.5"
           :class="[setting.value === mode ? 'bg-checkbox-active' : 'bg-checkbox-inactive']"
           @click="setting.value = mode"
-        >
-        </button>
+        />
         <span class="min-w-40 text-left">
           {{ mode }}
         </span>

@@ -10,13 +10,13 @@
     <div class="ml-auto flex gap-2 p-px">
       <button
         v-if="$props.showLogButton"
-        class="my-2 rounded-lg border-2 border-divider px-2 py-1 hover:bg-disabled"
+        class="border-divider hover:bg-disabled my-2 rounded-lg border-2 px-2 py-1"
         @click="openDocumentsFolder"
       >
         {{ $t('modal.openDocuments') }}
       </button>
       <button
-        class="my-2 mr-2 rounded-lg border-2 border-divider px-2 py-1 hover:bg-disabled"
+        class="border-divider hover:bg-disabled my-2 mr-2 rounded-lg border-2 px-2 py-1"
         @click="$emit('close')"
       >
         {{ $t('modal.close') }}

@@ -1,13 +1,13 @@
 <template>
   <div
     v-if="isVisible"
-    class="absolute inset-0 z-10 select-none bg-black/60"
+    class="absolute inset-0 z-10 bg-black/60 select-none"
   >
     <div
-      class="modal-border fixed left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col bg-modal"
+      class="modal-border bg-modal fixed top-1/2 left-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col"
     >
       <div
-        class="my-1 border-b border-divider px-1 text-2xl"
+        class="border-divider my-1 border-b px-1 text-2xl"
         :class="{
           'text-error': $props.type == 'error',
           'text-success': $props.type == 'success',

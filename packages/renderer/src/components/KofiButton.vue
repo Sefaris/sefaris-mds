@@ -1,7 +1,7 @@
 <template>
   <div class="ml-7">
     <a
-      class="flex rounded-lg bg-primary px-3 py-1.5 text-black hover:bg-primary-hover"
+      class="bg-primary hover:bg-primary-hover flex rounded-lg px-3 py-1.5 text-black"
       href="#"
       target="_blank"
       @click="openWebsite(SEFARIS_KOFI)"

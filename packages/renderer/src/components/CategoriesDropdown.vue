@@ -1,6 +1,8 @@
 <template>
   <app-dropdown :active="anyCategorySelected">
-    <template #activator>{{ $t('nav.bottom.categories') }}</template>
+    <template #activator>
+      {{ $t('nav.bottom.categories') }}
+    </template>
 
     <div class="max-h-110 overflow-y-auto">
       <div class="mr-2 flex flex-col gap-1">

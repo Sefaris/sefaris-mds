@@ -1,7 +1,7 @@
 <template>
-  <div class="flex w-full justify-evenly border-t border-divider py-6">
+  <div class="border-divider flex w-full justify-evenly border-t py-6">
     <button
-      class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
+      class="bg-option-button font-gothic hover:text-menu-hover h-12 w-45 bg-cover bg-no-repeat text-2xl"
       :class="{ 'font-lato': currentLanguage == 'ru' }"
       @click="$router.back()"
     >
@@ -13,7 +13,7 @@
     </button>
 
     <button
-      class="h-12 w-45 bg-option-button bg-cover bg-no-repeat font-gothic text-2xl hover:text-menu-hover"
+      class="bg-option-button font-gothic hover:text-menu-hover h-12 w-45 bg-cover bg-no-repeat text-2xl"
       :class="{ 'font-lato': currentLanguage == 'ru' }"
       @click="$props.saveMethod()"
     >

@@ -9,7 +9,6 @@ export function addEvents() {
   const windows = getWindows();
 
   ipcMain.handle('open-folder-dialog-game', async (): Promise<string> => {
-     
     while (true) {
       const result = await dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -33,7 +32,6 @@ export function addEvents() {
   });
 
   ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
-     
     while (true) {
       const result = await dialog.showOpenDialog({
         properties: ['openDirectory'],
