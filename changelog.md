@@ -2,6 +2,7 @@
 
 - Podbicie pakietów do najnowszych wersji
 - Dodanie możliwości powiększania okna startera (minimalne rozmiary okna zostają zachowane)
+- Poprawione porównywanie identyfikatorów modów. Od teraz wielkość znaków przy porównaniu nie ma znaczenia.
 
 # Wersja 1.0.5
 

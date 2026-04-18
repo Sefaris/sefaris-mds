@@ -97,6 +97,7 @@ import { i18n, translate } from '../../../../plugins/i18n';
 import type { Mod } from '../../../../interfaces/Mod';
 import { useModsStore } from '../stores/mods-store';
 import ButtonTooltip from './ButtonTooltip.vue';
+import { isSameModId } from '../../../../utils/mod-id';
 
 export default defineComponent({
   components: { ButtonTooltip },
@@ -111,7 +112,7 @@ export default defineComponent({
     const selectedMod = computed(() => modsStore.selectedMod);
 
     watch([selectedMod, i18n.global.locale], async ([newMod, _]) => {
-      mod.value = (await loadMods()).find(mod => mod.id === newMod);
+      mod.value = (await loadMods()).find(mod => isSameModId(mod.id, newMod));
       if (!mod.value) {
         return;
       }

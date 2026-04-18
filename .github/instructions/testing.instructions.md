@@ -37,8 +37,8 @@ Każda zmiana funkcjonalna w kodzie **musi** mieć pokrycie testami. Brak testó
 - Funkcje rozgałęziające się po `process.platform` testuj z mockiem (`vi.stubGlobal` lub `Object.defineProperty(process, 'platform', ...)`) dla `win32` i `linux`.
 
 ## Konwencje
-- Nazwa testu: `describe('<NazwaService>', () => { it('robi X gdy Y', ...) })`.
-- Polski w opisach OK, ale spójnie w obrębie pliku.
+- Nazwa testu: `describe('<NazwaService>', () => { it('does X when Y', ...) })`.
+- **Wszystkie opisy testów (`describe`, `it`) piszemy po angielsku** — bez wyjątków, niezależnie od języka reszty kodu / komentarzy.
 - Każdy `expect` musi być znaczący — nie testuj implementacji, testuj zachowanie.
 - Jedno założenie = jeden `it`.
 

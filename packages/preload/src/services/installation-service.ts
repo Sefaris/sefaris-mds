@@ -24,6 +24,7 @@ import { updateProgressBar } from './progress-service';
 import { PRESETS_DIRECTORY, UTF8 } from '../../../../utils/constants';
 import { loggerError, loggerInfo, loggerWarn } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
+import { includesModId } from '../../../../utils/mod-id';
 import { showAlert } from './alert-service';
 import { ConfigurationError } from '../../../../Errors/ConfigurationError';
 import { loadPreset } from './preset-service';
@@ -56,7 +57,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
       const scriptsPath = path.join(configuration.gothicPath, 'scripts');
       const iniPath = path.join(configuration.gothicPath, 'ini');
       const allMods: Mod[] = await loadMods();
-      const mods = allMods.filter(mod => modIds.includes(mod.id));
+      const mods = allMods.filter(mod => includesModId(modIds, mod.id));
 
       let parentPreset: string | undefined;
       if (preset) {

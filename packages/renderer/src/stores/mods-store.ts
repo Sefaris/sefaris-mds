@@ -13,6 +13,7 @@ import {
 import { translate } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { getMessage } from '../../../../utils/messages';
+import { includesModId, isSameModId } from '../../../../utils/mod-id';
 export const useModsStore = defineStore('mods', () => {
   const query = ref('');
   const mods = shallowRef<Mod[]>([]);
@@ -63,9 +64,13 @@ export const useModsStore = defineStore('mods', () => {
     basePreset.value = preset;
     const presetMods = presets.value.find(item => item.name === preset)?.modIds || [];
 
-    selectedMods.value = mods.value.filter(mod => presetMods.includes(mod.id)).map(mod => mod.id);
+    selectedMods.value = mods.value
+      .filter(mod => includesModId(presetMods, mod.id))
+      .map(mod => mod.id);
 
-    const missingMods = presetMods.filter(modId => !mods.value.some(mod => mod.id === modId));
+    const missingMods = presetMods.filter(
+      modId => !mods.value.some(mod => isSameModId(mod.id, modId)),
+    );
 
     if (missingMods.length > 0) {
       showAlert(
@@ -120,7 +125,9 @@ export const useModsStore = defineStore('mods', () => {
     activePreset.value = config.preset;
     basePreset.value = config.preset;
     installedPreset.value = config.preset;
-    installedMods.value = mods.value.filter((mod: Mod) => config.installedMods.includes(mod.id));
+    installedMods.value = mods.value.filter((mod: Mod) =>
+      includesModId(config.installedMods, mod.id),
+    );
     selectedMods.value = installedMods.value.map(mod => mod.id);
   }
 

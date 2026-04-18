@@ -14,6 +14,7 @@ import { useModsStore } from '../stores/mods-store';
 import ReadyButton from './ReadyButton.vue';
 import InstallationButtons from './InstallationButtons.vue';
 import type { InstallationState } from '../../../../types/InstallationState';
+import { equalModIdSets } from '../../../../utils/mod-id';
 export default defineComponent({
   components: { ReadyButton, InstallationButtons },
   setup() {
@@ -28,24 +29,8 @@ export default defineComponent({
       },
     });
 
-    function compareArrays(arr1: string[], arr2: string[]): boolean {
-      if (arr1.length !== arr2.length) {
-        return false;
-      }
-
-      const sortedArr1 = [...arr1].sort();
-      const sortedArr2 = [...arr2].sort();
-      for (let i = 0; i < sortedArr1.length; i++) {
-        if (sortedArr1[i] !== sortedArr2[i]) {
-          return false;
-        }
-      }
-
-      return true;
-    }
-
     watchEffect(() => {
-      const modsMatch = compareArrays(
+      const modsMatch = equalModIdSets(
         modsStore.selectedMods,
         modsStore.installedMods.map(mod => mod.id),
       );

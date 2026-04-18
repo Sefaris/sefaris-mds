@@ -1,7 +1,7 @@
 <template>
   <div ref="referenceElement">
     <img
-      v-if="selectedMods.includes($props.modId)"
+      v-if="selectedMods.some(id => isSameModId(id, $props.modId))"
       class="bg-primary cursor-pointer rounded select-none"
       :class="{ 'bg-primary-disabled cursor-default': isDependencyOfSelectedMod($props.modId) }"
       src="../../assets/svg/check-bold.svg"
@@ -55,6 +55,7 @@ import { NotFoundError } from '../../../../Errors/NotFoundError';
 import { getMessage } from '../../../../utils/messages';
 import { loggerError, showAlert } from '#preload';
 import { translate } from '../../../../plugins/i18n';
+import { includesModId, isSameModId } from '../../../../utils/mod-id';
 
 export default defineComponent({
   props: {
@@ -111,12 +112,12 @@ export default defineComponent({
 
     function selectDependencies(modId: string) {
       if (props.config?.ignoreDependencies) return;
-      const mod = mods.value.find(mod => mod.id === modId);
+      const mod = mods.value.find(mod => isSameModId(mod.id, modId));
       if (!mod) {
         throw new NotFoundError(getMessage('MOD_NOT_FOUND', { name: modId }));
       }
       for (const dependency of mod.dependencies) {
-        const dependencyMod = mods.value.find(mod => mod.id === dependency);
+        const dependencyMod = mods.value.find(mod => isSameModId(mod.id, dependency));
         if (!dependencyMod) {
           showAlert(
             'modal.error',
@@ -143,10 +144,10 @@ export default defineComponent({
         if (isIncompatibleOfSelectedMod(modId)) {
           return;
         }
-        if (!selectedMods.value.includes(modId)) {
+        if (!includesModId(selectedMods.value, modId)) {
           selectedMods.value.push(modId);
         }
-        const mod = mods.value.find(mod => mod.id === modId);
+        const mod = mods.value.find(mod => isSameModId(mod.id, modId));
         modsStore.deactivatePreset();
         if (!mod?.dependencies.length) {
           return;
@@ -164,8 +165,8 @@ export default defineComponent({
     function isDependencyOfSelectedMod(modId: string): boolean {
       if (props.config?.ignoreDependencies) return false;
       return selectedMods.value.some(selectedModId => {
-        const mod = mods.value.find(mod => mod.id === selectedModId);
-        return mod?.dependencies?.includes(modId) ?? false;
+        const mod = mods.value.find(mod => isSameModId(mod.id, selectedModId));
+        return includesModId(mod?.dependencies, modId);
       });
     }
 
@@ -173,15 +174,15 @@ export default defineComponent({
       if (props.config?.ignoreIncompatible) return false;
 
       const isModIncompatible = selectedMods.value.some(selectedModId => {
-        const mod = mods.value.find(mod => mod.id === selectedModId);
-        return mod?.incompatibles?.includes(modId) ?? false;
+        const mod = mods.value.find(mod => isSameModId(mod.id, selectedModId));
+        return includesModId(mod?.incompatibles, modId);
       });
 
       const areSelectedModsIncompatible = (() => {
-        const currentMod = mods.value.find(mod => mod.id === modId);
+        const currentMod = mods.value.find(mod => isSameModId(mod.id, modId));
         if (!currentMod?.incompatibles) return false;
         return selectedMods.value.some(selectedModId =>
-          currentMod.incompatibles.includes(selectedModId),
+          includesModId(currentMod.incompatibles, selectedModId),
         );
       })();
 
@@ -189,30 +190,31 @@ export default defineComponent({
     }
 
     function deselectMod(modId: string) {
-      if (!selectedMods.value.includes(modId)) {
+      if (!includesModId(selectedMods.value, modId)) {
         return;
       }
       if (isDependencyOfSelectedMod(modId)) {
         return;
       }
       modsStore.deactivatePreset();
-      selectedMods.value.splice(selectedMods.value.indexOf(modId), 1);
+      const index = selectedMods.value.findIndex(id => isSameModId(id, modId));
+      if (index >= 0) selectedMods.value.splice(index, 1);
     }
 
     function showIncompatibles() {
       incompatibles.value = [];
       if (props.config?.ignoreIncompatible) return;
-      const selectedModsFull = mods.value.filter(mod => selectedMods.value.includes(mod.id));
+      const selectedModsFull = mods.value.filter(mod => includesModId(selectedMods.value, mod.id));
       const incompatiblesFromSelected = selectedModsFull.filter(mod =>
-        mod.incompatibles.includes(props.modId),
+        includesModId(mod.incompatibles, props.modId),
       );
 
-      const currentMod = mods.value.find(mod => mod.id === props.modId);
+      const currentMod = mods.value.find(mod => isSameModId(mod.id, props.modId));
       if (!currentMod) return;
-      if (selectedMods.value.find(items => items.includes(currentMod.id))) return; // Don't show incompatible for already selected mod.
+      if (includesModId(selectedMods.value, currentMod.id)) return; // Don't show incompatible for already selected mod.
 
       const incompatiblesWithCurrentMod = currentMod?.incompatibles
-        ? selectedModsFull.filter(mod => currentMod.incompatibles.includes(mod.id))
+        ? selectedModsFull.filter(mod => includesModId(currentMod.incompatibles, mod.id))
         : [];
       const allIncompatibles = Array.from(
         new Set([...incompatiblesFromSelected, ...incompatiblesWithCurrentMod]),
@@ -223,13 +225,13 @@ export default defineComponent({
 
     function getIncompatibles(id: string) {
       if (props.config?.ignoreIncompatible) return [];
-      const selectedModsFull = mods.value.filter(mod => selectedMods.value.includes(mod.id));
+      const selectedModsFull = mods.value.filter(mod => includesModId(selectedMods.value, mod.id));
       const incompatiblesFromSelected = selectedModsFull.filter(mod =>
-        mod.incompatibles.includes(id),
+        includesModId(mod.incompatibles, id),
       );
-      const currentMod = mods.value.find(mod => mod.id === id);
+      const currentMod = mods.value.find(mod => isSameModId(mod.id, id));
       const incompatiblesWithCurrentMod = currentMod?.incompatibles
-        ? selectedModsFull.filter(mod => currentMod.incompatibles.includes(mod.id))
+        ? selectedModsFull.filter(mod => includesModId(currentMod.incompatibles, mod.id))
         : [];
       const allIncompatibles = Array.from(
         new Set([...incompatiblesFromSelected, ...incompatiblesWithCurrentMod]),
@@ -242,8 +244,10 @@ export default defineComponent({
       dependants.value = [];
 
       if (props.config?.ignoreDependencies) return;
-      const selectedModsFull = mods.value.filter(mod => selectedMods.value.includes(mod.id));
-      const dependantsId = selectedModsFull.filter(mod => mod.dependencies?.includes(props.modId));
+      const selectedModsFull = mods.value.filter(mod => includesModId(selectedMods.value, mod.id));
+      const dependantsId = selectedModsFull.filter(mod =>
+        includesModId(mod.dependencies, props.modId),
+      );
 
       dependants.value = dependantsId.map(mod => mod.id);
     }
@@ -264,6 +268,7 @@ export default defineComponent({
       showDependant,
       incompatibles,
       dependants,
+      isSameModId,
     };
   },
 });
