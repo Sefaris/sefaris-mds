@@ -1,4 +1,4 @@
-# (incoming)
+# Wersja 1.1.0
 
 - Podbicie pakietów do najnowszych wersji
 - Dodanie możliwości powiększania okna startera (minimalne rozmiary okna zostają zachowane)
