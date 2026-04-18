@@ -2,14 +2,14 @@
 
 ## Zakres pokrycia
 
-| Obszar | Plik testowy | Status |
-| --- | --- | --- |
-| Helper `toRelative`/`toAbsolute` | `tests/preload/file-service.spec.ts` (nowy) | [x] |
-| `installMods` zapis relatywny | `tests/preload/installation-service.spec.ts` | [x] |
-| `deleteMods` rozwiązywanie | `tests/preload/installation-service.spec.ts` | [x] |
-| `installedFilesExist` | (pośrednio przez loadConfiguration migration) | [x] |
-| Migracja starego configu | `tests/preload/configuration-service.spec.ts` | [x] |
-| `ini-service` lookup | `tests/preload/ini-service.spec.ts` | [x] |
+| Obszar                           | Plik testowy                                  | Status |
+| -------------------------------- | --------------------------------------------- | ------ |
+| Helper `toRelative`/`toAbsolute` | `tests/preload/file-service.spec.ts` (nowy)   | [x]    |
+| `installMods` zapis relatywny    | `tests/preload/installation-service.spec.ts`  | [x]    |
+| `deleteMods` rozwiązywanie       | `tests/preload/installation-service.spec.ts`  | [x]    |
+| `installedFilesExist`            | (pośrednio przez loadConfiguration migration) | [x]    |
+| Migracja starego configu         | `tests/preload/configuration-service.spec.ts` | [x]    |
+| `ini-service` lookup             | `tests/preload/ini-service.spec.ts`           | [x]    |
 
 ## Scenariusze
 
