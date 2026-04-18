@@ -20,6 +20,8 @@ export default {
       searchPlaceholder: 'Search...',
       selectAll: 'Select all mods. (Ignores incompatibles)',
       deselectAll: 'Deselect all mods.',
+      expandAllCategories: 'Expand all categories.',
+      collapseAllCategories: 'Collapse all categories.',
       openGameFolder: 'Open game folder.',
       openModsFolder: 'Open mods folder.',
       openDocumentsFolder: 'Open documents folder.',
@@ -83,11 +85,18 @@ export default {
     ignoreDependencies: 'Ignore dependencies',
     ignoreIncompatibles: 'Ignore incompatibles',
     starter: 'Starter settings',
+    modListMode: {
+      label: 'Mod list mode',
+      flat: 'Flat list',
+      grouped: 'Grouped by category',
+    },
     description: {
       gothicPath: 'Path to folder containing installed Gothic 3.',
       modsPath: 'Path to folder containing mods.',
       ignoreDependencies: 'Disables automatic marking of mods marked as required.',
       ignoreIncompatibles: 'Allows installation of mods defined as incompatible.',
+      modListMode:
+        'Choose how the mod list is displayed: flat (categories in the top bar) or grouped into expandable category sections.',
     },
     nav: {
       back: 'Back',

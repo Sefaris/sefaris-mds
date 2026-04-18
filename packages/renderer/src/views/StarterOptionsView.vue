@@ -150,6 +150,47 @@
           </div>
         </div>
       </div>
+      <div class="mx-20 mt-3 flex items-center justify-between gap-4 select-none">
+        <config-tooltip
+          :name="$t('config.modListMode.label')"
+          :highlight="isDirty('modListMode')"
+        >
+          <span class="max-w-100">
+            {{ $t('config.description.modListMode') }}
+          </span>
+          <span> {{ $t('tooltip.default') }}: {{ $t('config.modListMode.flat') }} </span>
+        </config-tooltip>
+        <div class="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            class="hover:text-menu-hover h-6 w-6 cursor-pointer text-base leading-none"
+            :class="isDirty('modListMode') ? 'visible' : 'invisible'"
+            :title="$t('tooltip.revert')"
+            :aria-hidden="!isDirty('modListMode')"
+            :tabindex="isDirty('modListMode') ? 0 : -1"
+            @click="revert('modListMode')"
+          >
+            <i class="mdi mdi-undo-variant" />
+          </button>
+          <div class="flex items-center gap-3">
+            <button
+              v-for="mode in ['flat', 'grouped'] as const"
+              :key="mode"
+              type="button"
+              class="flex cursor-pointer items-center gap-2"
+              @click="setModListMode(mode)"
+            >
+              <span>{{ $t(`config.modListMode.${mode}`) }}</span>
+              <span
+                class="h-5 w-5 rounded-full border-2"
+                :class="[
+                  currentModListMode === mode ? 'bg-checkbox-active' : 'bg-checkbox-inactive',
+                ]"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <options-nav-buttons :save-method="saveConf" />
@@ -157,9 +198,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, computed, onMounted, ref } from 'vue';
 import OptionsNavButtons from '../components/OptionsNavButtons.vue';
-import type { AppConfiguration } from '@interfaces/AppConfiguration';
+import type { AppConfiguration, ModListMode } from '@interfaces/AppConfiguration';
 import {
   forceReloadConfig,
   loadConfiguration,
@@ -170,7 +211,12 @@ import {
 import OptionBooleanSlider from '../components/OptionSliders/OptionBooleanSlider.vue';
 import ConfigTooltip from '../components/ConfigTooltip.vue';
 
-type TrackedField = 'gothicPath' | 'modsPath' | 'ignoreDependencies' | 'ignoreIncompatible';
+type TrackedField =
+  | 'gothicPath'
+  | 'modsPath'
+  | 'ignoreDependencies'
+  | 'ignoreIncompatible'
+  | 'modListMode';
 
 export default defineComponent({
   components: { OptionsNavButtons, OptionBooleanSlider, ConfigTooltip },
@@ -185,12 +231,39 @@ export default defineComponent({
 
     const isDirty = (field: TrackedField): boolean => {
       if (!configuration.value || !original.value) return false;
+      if (field === 'modListMode') {
+        return getModListMode(configuration.value) !== getModListMode(original.value);
+      }
       return configuration.value[field] !== original.value[field];
     };
 
     const revert = (field: TrackedField) => {
       if (!configuration.value || !original.value) return;
+      if (field === 'modListMode') {
+        setConfigModListMode(configuration.value, getModListMode(original.value));
+        return;
+      }
       (configuration.value as AppConfiguration)[field] = original.value[field] as never;
+    };
+
+    const getModListMode = (config: AppConfiguration): ModListMode =>
+      config.uiPreferences?.modListMode ?? 'flat';
+
+    const setConfigModListMode = (config: AppConfiguration, mode: ModListMode) => {
+      if (!config.uiPreferences) {
+        config.uiPreferences = { modListMode: mode };
+      } else {
+        config.uiPreferences.modListMode = mode;
+      }
+    };
+
+    const currentModListMode = computed<ModListMode>(() =>
+      configuration.value ? getModListMode(configuration.value) : 'flat',
+    );
+
+    const setModListMode = (mode: ModListMode) => {
+      if (!configuration.value) return;
+      setConfigModListMode(configuration.value, mode);
     };
 
     const saveConf = async () => {
@@ -224,6 +297,8 @@ export default defineComponent({
       editModsPath,
       isDirty,
       revert,
+      currentModListMode,
+      setModListMode,
     };
   },
 });

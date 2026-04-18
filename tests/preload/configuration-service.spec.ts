@@ -537,3 +537,77 @@ describe('backupConfiguration', () => {
     expect(fs.existsSync(BACKUP_PATH)).toBeFalsy();
   });
 });
+
+describe('uiPreferences migration', () => {
+  const CONFIG_PATH = path.join('\\user', 'documents', 'gothic3', 'StarterConfig.json');
+
+  const baseConfig = {
+    gothicPath: 'E:\\Games\\Gothic 3',
+    modsPath: 'E:\\Games\\Gothic 3\\mods',
+    language: 'pl',
+    ignoreDependencies: false,
+    ignoreIncompatible: false,
+    installedMods: [],
+    filesCreated: [],
+  };
+
+  test('defaults uiPreferences.modListMode to "flat" when missing', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [CONFIG_PATH]: JSON.stringify(baseConfig),
+    });
+
+    const config = await loadConfiguration();
+    expect(config?.uiPreferences).toEqual({ modListMode: 'flat' });
+  });
+
+  test('preserves a valid uiPreferences value', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [CONFIG_PATH]: JSON.stringify({
+        ...baseConfig,
+        uiPreferences: { modListMode: 'grouped' },
+      }),
+    });
+
+    const config = await loadConfiguration();
+    expect(config?.uiPreferences).toEqual({ modListMode: 'grouped' });
+  });
+
+  test('rejects configs whose uiPreferences.modListMode is invalid', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+      [CONFIG_PATH]: JSON.stringify({
+        ...baseConfig,
+        uiPreferences: { modListMode: 'tree' },
+      }),
+    });
+
+    await expect(loadConfiguration()).rejects.toThrowError(getMessage('INVALID_CONFIGURATION'));
+  });
+
+  test('isValidConfiguration accepts a config with uiPreferences', () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+    });
+    expect(
+      isValidConfiguration({
+        ...baseConfig,
+        uiPreferences: { modListMode: 'grouped' },
+      } as never),
+    ).toBeTruthy();
+  });
+
+  test('saved config round-trips uiPreferences', async () => {
+    vol.fromJSON({
+      'E:\\Games\\Gothic 3\\Gothic3.exe': '',
+    });
+    const config = {
+      ...baseConfig,
+      uiPreferences: { modListMode: 'grouped' as const },
+    };
+    await saveConfiguration(config);
+    const reloaded = await loadConfiguration();
+    expect(reloaded?.uiPreferences).toEqual({ modListMode: 'grouped' });
+  });
+});

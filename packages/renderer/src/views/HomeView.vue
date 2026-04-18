@@ -47,6 +47,7 @@ export default defineComponent({
 
     async function bootstrap(loadedConfig: AppConfiguration | null | undefined) {
       modsStore.setConfigExists(true);
+      modsStore.setModListMode(loadedConfig?.uiPreferences?.modListMode ?? 'flat');
       await modsStore.reloadMods();
       await modsStore.loadInstalledMods();
       modsStore.loadCategories();
@@ -135,6 +136,11 @@ export default defineComponent({
 
     window.addEventListener('message', async event => {
       if (event.data.channel === 'reload-configuration') {
+        const reloaded = await loadConfiguration().catch(error => {
+          console.error(error);
+          return null;
+        });
+        modsStore.setModListMode(reloaded?.uiPreferences?.modListMode ?? 'flat');
         await modsStore.reloadMods();
         await modsStore.loadInstalledMods();
         modsStore.loadCategories();

@@ -1,3 +1,9 @@
+export type ModListMode = 'flat' | 'grouped';
+
+export interface UiPreferences {
+  modListMode: ModListMode;
+}
+
 export interface AppConfiguration {
   gothicPath: string;
   modsPath?: string;
@@ -7,4 +13,5 @@ export interface AppConfiguration {
   ignoreIncompatible: boolean;
   installedMods: string[];
   filesCreated: string[];
+  uiPreferences?: UiPreferences;
 }

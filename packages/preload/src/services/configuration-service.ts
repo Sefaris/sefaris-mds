@@ -74,6 +74,7 @@ export async function loadConfiguration(): Promise<AppConfiguration | null> {
   }
 
   migrateFilesCreated(parsed);
+  migrateUiPreferences(parsed);
   return parsed;
 }
 
@@ -186,7 +187,7 @@ export function isValidConfigurationStructure(config: AppConfiguration) {
     'ignoreDependencies',
     'ignoreIncompatible',
   ];
-  const optionalKeys = ['preset'];
+  const optionalKeys = ['preset', 'uiPreferences'];
   const configKeys = Object.keys(config);
 
   if (!requiredKeys.every(key => configKeys.includes(key))) {
@@ -206,8 +207,32 @@ export function isValidConfigurationStructure(config: AppConfiguration) {
     !!LANGUAGE_SETTINGS.find(item => item.code === config.language) &&
     Array.isArray(config.installedMods) &&
     Array.isArray(config.filesCreated) &&
-    (config.preset === undefined || typeof config.preset === 'string')
+    (config.preset === undefined || typeof config.preset === 'string') &&
+    isValidUiPreferences(config.uiPreferences)
   );
+}
+
+function isValidUiPreferences(value: AppConfiguration['uiPreferences']): boolean {
+  if (value === undefined) return true;
+  if (typeof value !== 'object' || value === null) return false;
+  return value.modListMode === 'flat' || value.modListMode === 'grouped';
+}
+
+/**
+ * Migracja `uiPreferences` — gdy brakuje pola lub `modListMode`, ustawia default `'flat'`.
+ * Mutuje obiekt in-place; zmiany trafią na dysk przy najbliższym `saveConfiguration`.
+ */
+export function migrateUiPreferences(config: AppConfiguration): void {
+  if (!config.uiPreferences) {
+    config.uiPreferences = { modListMode: 'flat' };
+    return;
+  }
+  if (
+    config.uiPreferences.modListMode !== 'flat' &&
+    config.uiPreferences.modListMode !== 'grouped'
+  ) {
+    config.uiPreferences.modListMode = 'flat';
+  }
 }
 export function isGothicPathValid(param: AppConfiguration | string): boolean {
   if (typeof param === 'string') {
