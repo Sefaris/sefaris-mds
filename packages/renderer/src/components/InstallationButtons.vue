@@ -19,7 +19,7 @@
       </span>
     </button>
     <button
-      v-else
+      v-else-if="installedMods.length"
       class="bg-install mr-6 h-15 w-78.75"
       @click="startDeletion()"
     >
@@ -112,6 +112,8 @@ export default defineComponent({
           installedMods.value = modsStore.mods.filter(mod =>
             includesModId(selectedMods.value, mod.id),
           );
+          modsStore.basePreset = undefined;
+          modsStore.activePreset = undefined;
           modsStore.installedPreset = undefined;
           installationState.value = 'ready';
         })
@@ -126,7 +128,14 @@ export default defineComponent({
       modsStore.activePreset = modsStore.installedPreset;
     };
 
-    return { startInstallation, cancelChanges, startDeletion, selectedMods, currentLanguage };
+    return {
+      startInstallation,
+      cancelChanges,
+      startDeletion,
+      selectedMods,
+      installedMods,
+      currentLanguage,
+    };
   },
 });
 </script>
