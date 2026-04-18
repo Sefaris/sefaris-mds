@@ -23,6 +23,7 @@ import { useModsStore } from '../stores/mods-store';
 import type { Mod } from '../../../../interfaces/Mod';
 import type { AppConfiguration } from '@interfaces/AppConfiguration';
 import ModCheckboxTooltip from '/@/components/ModCheckboxTooltip.vue';
+import { isSameModId } from '../../../../utils/mod-id';
 export default defineComponent({
   components: { ModCheckboxTooltip },
   props: {
@@ -45,7 +46,7 @@ export default defineComponent({
         modsStore.setSelectedMod(mod);
       },
     });
-    const isActive = computed(() => selectedMod.value == props.mod.id);
+    const isActive = computed(() => isSameModId(selectedMod.value, props.mod.id));
 
     return {
       selectedMod,

@@ -19,7 +19,7 @@
       </span>
     </button>
     <button
-      v-else
+      v-else-if="installedMods.length"
       class="bg-install mr-6 h-15 w-78.75"
       @click="startDeletion()"
     >
@@ -47,6 +47,7 @@ import { useModsStore } from '../stores/mods-store';
 import { translate, i18n } from '../../../../plugins/i18n';
 import type { InstallationState } from '../../../../types/InstallationState';
 import { getMessage } from '../../../../utils/messages';
+import { includesModId } from '../../../../utils/mod-id';
 
 export default defineComponent({
   setup() {
@@ -91,7 +92,9 @@ export default defineComponent({
             body: `${translate('alert.installed')} ${time}s`,
           });
           loggerInfo(`${getMessage('MODS_INSTALLED')} ${time}s`);
-          installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
+          installedMods.value = modsStore.mods.filter(mod =>
+            includesModId(selectedMods.value, mod.id),
+          );
           modsStore.installedPreset = activePreset.value || basePreset.value;
           installationState.value = 'ready';
         })
@@ -106,7 +109,11 @@ export default defineComponent({
         .then(() => {
           showAlert('modal.success', translate('alert.deleted'), 'success');
           loggerInfo(getMessage('MODS_DELETED'));
-          installedMods.value = modsStore.mods.filter(mod => selectedMods.value.includes(mod.id));
+          installedMods.value = modsStore.mods.filter(mod =>
+            includesModId(selectedMods.value, mod.id),
+          );
+          modsStore.basePreset = undefined;
+          modsStore.activePreset = undefined;
           modsStore.installedPreset = undefined;
           installationState.value = 'ready';
         })
@@ -121,7 +128,14 @@ export default defineComponent({
       modsStore.activePreset = modsStore.installedPreset;
     };
 
-    return { startInstallation, cancelChanges, startDeletion, selectedMods, currentLanguage };
+    return {
+      startInstallation,
+      cancelChanges,
+      startDeletion,
+      selectedMods,
+      installedMods,
+      currentLanguage,
+    };
   },
 });
 </script>

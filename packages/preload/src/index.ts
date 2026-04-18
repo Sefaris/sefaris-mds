@@ -19,6 +19,7 @@ export {
   isGothicPathValid,
   saveConfiguration,
   loadConfiguration,
+  loadConfigurationRaw,
   getAlreadyInstalledFiles,
 } from './services/configuration-service';
 

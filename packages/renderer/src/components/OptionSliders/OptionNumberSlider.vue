@@ -3,15 +3,15 @@
     type="range"
     :min="$props.min"
     :max="$props.max"
-    :value="sliderValue"
+    :value="$props.value"
     :step="$props.step"
     class="slider bg-slider h-0.5 cursor-pointer appearance-none"
-    @change="onSlide"
+    @input="onSlide"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 export default defineComponent({
   props: {
     min: {
@@ -32,15 +32,13 @@ export default defineComponent({
     },
   },
   emits: ['slide'],
-  setup(props, emit) {
-    const sliderValue = ref(props.value);
+  setup(_props, emit) {
     const onSlide = (e: Event) => {
       const target = e.target as HTMLInputElement;
-      sliderValue.value = Number(target.value);
-      emit.emit('slide', sliderValue.value);
+      emit.emit('slide', Number(target.value));
     };
 
-    return { onSlide, sliderValue };
+    return { onSlide };
   },
 });
 </script>

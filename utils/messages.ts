@@ -33,7 +33,12 @@ export const Messages = {
 
   CONFIGURATION_SAVED: 'Configuration successfully saved!',
   INVALID_CONFIGURATION: 'Invalid configuration!',
+  INVALID_GAME_PATH: 'Configuration loaded but Gothic 3 path is invalid.',
   MISSING_CONFIGURATION: 'Missing configuration file!',
+  CONFIG_BACKUP_CREATED: 'Configuration backup created at {{path}}.',
+  CONFIG_BACKUP_FAILED: 'Failed to create configuration backup: {{error}}',
+  CONFIG_FILES_CREATED_DROPPED:
+    'Migrated config: dropped {{count}} filesCreated entries outside gothicPath: {{files}}',
 
   DIRECTORY_DOESNT_EXIST: "Directory {{path}} doesn't exist.",
   FILE_DOESNT_EXIST: "File {{path}} doesn't exist.",

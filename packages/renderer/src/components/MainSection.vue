@@ -49,6 +49,24 @@
             {{ $t('main.mods.deselectAll') }}
           </button-tooltip>
 
+          <template v-if="modListMode === 'grouped'">
+            <button-tooltip
+              class="text-primary"
+              icon="mdi-chevron-double-down"
+              @click="expandAllCategories"
+            >
+              {{ $t('main.mods.expandAllCategories') }}
+            </button-tooltip>
+
+            <button-tooltip
+              class="text-primary"
+              icon="mdi-chevron-double-up"
+              @click="collapseAllCategories"
+            >
+              {{ $t('main.mods.collapseAllCategories') }}
+            </button-tooltip>
+          </template>
+
           <button-tooltip
             class="text-primary"
             icon="mdi-folder-home-outline"
@@ -83,13 +101,18 @@
         </template>
       </div>
       <div class="flex flex-col overflow-y-auto">
-        <no-mods v-if="!mods.length" />
-        <mod-item
-          v-for="(mod, index) in mods"
-          :key="index"
-          :config="config"
-          :mod="mod"
-        />
+        <template v-if="modListMode === 'grouped'">
+          <grouped-mod-list :config="config" />
+        </template>
+        <template v-else>
+          <no-mods v-if="!mods.length" />
+          <mod-item
+            v-for="(mod, index) in mods"
+            :key="index"
+            :config="config"
+            :mod="mod"
+          />
+        </template>
       </div>
     </div>
 
@@ -120,6 +143,7 @@ import ModPreview from './ModPreview.vue';
 import { useModsStore } from '../stores/mods-store';
 import NoMods from './NoMods.vue';
 import ModItem from './ModItem.vue';
+import GroupedModList from './GroupedModList.vue';
 import ButtonTooltip from './ButtonTooltip.vue';
 import {
   openModsFolder,
@@ -135,7 +159,7 @@ const MIN_LEFT_WIDTH = 364;
 const MIN_RIGHT_WIDTH = 364;
 
 export default defineComponent({
-  components: { AppInput, ModPreview, NoMods, ModItem, ButtonTooltip },
+  components: { AppInput, ModPreview, NoMods, ModItem, GroupedModList, ButtonTooltip },
 
   setup() {
     const queryInputRef = ref<InstanceType<typeof AppInput>>();
@@ -209,6 +233,7 @@ export default defineComponent({
       get: modsStore.getQuery,
     });
     const mods = computed(() => modsStore.displayedMods);
+    const modListMode = computed(() => modsStore.modListMode);
     const refreshKey = computed(() => modsStore.refreshKey);
     const config = shallowRef<AppConfiguration | null>(null);
     const selectedMods = computed({
@@ -226,6 +251,14 @@ export default defineComponent({
 
     const deselectAll = () => {
       selectedMods.value = [];
+    };
+
+    const expandAllCategories = () => {
+      modsStore.expandAllCategories();
+    };
+
+    const collapseAllCategories = () => {
+      modsStore.collapseAllCategories();
     };
 
     const startSearch = () => {
@@ -260,6 +293,7 @@ export default defineComponent({
       queryInputRef,
       containerRef,
       mods,
+      modListMode,
       refreshKey,
       config,
       displaySearchBar,
@@ -272,6 +306,8 @@ export default defineComponent({
       openDocumentsFolder,
       selectAll,
       deselectAll,
+      expandAllCategories,
+      collapseAllCategories,
       startSearch,
       stopSearch,
     };
