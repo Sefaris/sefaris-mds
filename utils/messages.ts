@@ -96,7 +96,15 @@ export const Messages = {
   DIRECTORY_CREATE: 'Creating directory {{path}}',
   DIRECTORY_CREATED: 'Directory created.',
 
-  CHECK_LOG_FILE: 'Something went wrong.\nCheck Documents/Gothic3/Starter.log.',
+  CHECK_LOG_FILE: 'Something went wrong.\nCheck logs/Starter-*.log next to the application.',
+
+  BOOTSTRAP_NO_CONFIG_MODAL_SHOWN: 'Configuration missing — showing initial game folder modal.',
+  BOOTSTRAP_NO_CONFIG_MODAL_CONFIRMED: 'User confirmed initial game folder selection modal.',
+  BOOTSTRAP_NO_CONFIG_FOLDER_PICKED: 'User selected initial game folder: {{path}}',
+  BOOTSTRAP_NO_CONFIG_PICKER_CANCELLED:
+    'User cancelled initial game folder picker (modal stays open).',
+  BOOTSTRAP_NO_CONFIG_MODAL_CANCELLED:
+    'User cancelled initial game folder modal — closing application.',
 };
 
 export type MessageKey = keyof typeof Messages;

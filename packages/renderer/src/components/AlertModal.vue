@@ -11,7 +11,7 @@
       <button
         v-if="$props.showLogButton"
         class="border-divider hover:bg-disabled my-2 rounded-lg border-2 px-2 py-1"
-        @click="openDocumentsFolder"
+        @click="openLogsFolder"
       >
         {{ $t('modal.openDocuments') }}
       </button>
@@ -28,7 +28,7 @@
 <script lang="ts">
 import AppModal from './AppModal.vue';
 import { defineComponent } from 'vue';
-import { openDocumentsFolder } from '#preload';
+import { openLogsFolder } from '#preload';
 
 export default defineComponent({
   components: { AppModal },
@@ -58,6 +58,6 @@ export default defineComponent({
   setup() {
     return {};
   },
-  methods: { openDocumentsFolder },
+  methods: { openLogsFolder },
 });
 </script>

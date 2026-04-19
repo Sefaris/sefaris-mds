@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import path from 'path';
 import { loadConfiguration } from './configuration-service';
 import { updateProgressBar } from './progress-service';
-import { loggerError, loggerInfo } from './logger-service';
+import { loggerError, loggerInfo, getLogsDirPath } from './logger-service';
 import { getMessage } from '../../../../utils/messages';
 import Winreg from 'winreg';
 import { InstallationError } from '../../../../Errors/InstallationError';
@@ -105,6 +105,14 @@ export async function openDocumentsFolder() {
   if (!fs.existsSync(res)) {
     showAlert('modal.error', getMessage('DIRECTORY_DOESNT_EXIST', { path: res }), 'error');
     return;
+  }
+  openFolder(res);
+}
+
+export function openLogsFolder() {
+  const res = getLogsDirPath();
+  if (!fs.existsSync(res)) {
+    fs.mkdirSync(res, { recursive: true });
   }
   openFolder(res);
 }
