@@ -7,7 +7,7 @@ import { ipcRenderer } from 'electron';
 import { showAlert } from './alert-service';
 
 let G3PAK_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3Pak.exe');
-let G3PAKDIR_PATH = `"${path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe')}"`;
+let G3PAKDIR_PATH = path.resolve(__dirname, '../../../Tools/G3Pak/G3PakDir.exe');
 
 // check is asar is used to pack app
 async function getIsPackaged() {
@@ -18,16 +18,15 @@ export async function buildPackage(srcPath: string, destPath?: string): Promise<
   // change paths for packed application
   if (await getIsPackaged()) {
     G3PAK_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3Pak.exe');
-    G3PAKDIR_PATH = `"${path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe')}"`;
+    G3PAKDIR_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe');
   }
-  const destinationPath = destPath ?? srcPath + '\\output.pak';
+  const destinationPath = destPath ?? path.join(srcPath, 'output.pak');
   return new Promise((resolve, reject) => {
     execFile(
       G3PAKDIR_PATH,
-      ['--no-comments', '--no-deletion', `"${srcPath}"`, `"${destinationPath}"`],
+      ['--no-comments', '--no-deletion', srcPath, destinationPath],
       {
-        shell: true,
-        windowsHide: false,
+        windowsHide: true,
         maxBuffer: 1024 * 1024 * 1024,
       },
 
@@ -51,14 +50,13 @@ export async function extractAll(file: string, destinationPath: string): Promise
 
   if (await getIsPackaged()) {
     G3PAK_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3Pak.exe');
-    G3PAKDIR_PATH = `"${path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe')}"`;
+    G3PAKDIR_PATH = path.join(process.resourcesPath, 'app', 'Tools', 'G3Pak', 'G3PakDir.exe');
   }
   return new Promise((resolve, reject) => {
     execFile(
       G3PAK_PATH,
       ['--extract-all', file, destinationPath],
       {
-        shell: false,
         windowsHide: true,
       },
 
