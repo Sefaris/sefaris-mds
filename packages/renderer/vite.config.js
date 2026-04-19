@@ -1,4 +1,4 @@
-import { chrome } from '../../.electron-vendors.cache.json';
+import { chrome } from '../../.electron-vendors.cache.json' with { type: 'json' };
 import vue from '@vitejs/plugin-vue';
 import { join, resolve, dirname } from 'node:path';
 import { readFileSync } from 'node:fs';
@@ -6,7 +6,7 @@ import { injectAppVersion } from '../../version/inject-app-version-plugin.mjs';
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import { fileURLToPath } from 'url';
 
-const PACKAGE_ROOT = __dirname;
+const PACKAGE_ROOT = import.meta.dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 
 /**
@@ -20,8 +20,8 @@ const config = {
   resolve: {
     alias: {
       '/@/': join(PACKAGE_ROOT, 'src') + '/',
-      '@assets': resolve(__dirname, 'assets'),
-      '@public': resolve(__dirname, 'public'),
+      '@assets': resolve(PACKAGE_ROOT, 'assets'),
+      '@public': resolve(PACKAGE_ROOT, 'public'),
     },
   },
   base: '',

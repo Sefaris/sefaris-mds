@@ -1,3 +1,7 @@
+# (incoming)
+
+- Przeniesienie pakietu na `type: module`
+
 # Wersja 1.1.0
 
 - Podbicie pakietów do najnowszych wersji
