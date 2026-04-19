@@ -45,6 +45,7 @@ export const Messages = {
   FILE_SKIPPED: "File {{path}} doesn't exist. Skipped.",
   FILE_DELETING: 'Deleting {{path}} file.',
   FILE_DELETED: '{{path}} deleted.',
+  OPEN_FOLDER_FAILED: 'Failed to open folder {{path}}: {{error}}',
 
   PRESET_CREATED: 'Preset {{name}} successfully created.',
   PRESET_LOADED: 'Preset {{name}} loaded.',

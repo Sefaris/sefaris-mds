@@ -64,6 +64,7 @@ export default {
     iniSaved: 'Die Konfiguration wurde erfolgreich gespeichert.',
     resolveIncompatibility: 'Problem mit Abhängigkeiten, Behebung der Inkompatibilität von',
     with: 'mit',
+    savesBackup: 'Eine Sicherung deiner Spielstände und des Shader-Caches wurde erstellt unter:',
   },
   progress: {
     saveConfiguration: 'Speichere Konfiguration',
@@ -127,5 +128,6 @@ export default {
     warning: 'Warnung',
     success: 'Erfolg',
     openDocuments: 'Log-Verzeichnis öffnen',
+    openSavesBackup: 'Sicherungsordner öffnen',
   },
 };

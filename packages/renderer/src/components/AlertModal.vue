@@ -9,6 +9,13 @@
     </div>
     <div class="ml-auto flex gap-2 p-px">
       <button
+        v-if="$props.openFolderPath"
+        class="border-divider hover:bg-disabled my-2 rounded-lg border-2 px-2 py-1"
+        @click="openFolder($props.openFolderPath)"
+      >
+        {{ $t('modal.openSavesBackup') }}
+      </button>
+      <button
         v-if="$props.showLogButton"
         class="border-divider hover:bg-disabled my-2 rounded-lg border-2 px-2 py-1"
         @click="openLogsFolder"
@@ -28,7 +35,7 @@
 <script lang="ts">
 import AppModal from './AppModal.vue';
 import { defineComponent } from 'vue';
-import { openLogsFolder } from '#preload';
+import { openLogsFolder, openFolder } from '#preload';
 
 export default defineComponent({
   components: { AppModal },
@@ -53,11 +60,15 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    openFolderPath: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['close'],
   setup() {
     return {};
   },
-  methods: { openLogsFolder },
+  methods: { openLogsFolder, openFolder },
 });
 </script>

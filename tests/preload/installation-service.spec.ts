@@ -417,7 +417,7 @@ describe('moveSaves', () => {
       },
       path.join(os.homedir(), 'Documents', 'gothic3'),
     );
-    await moveSaves();
+    const result = await moveSaves();
     const previousPaths = [
       path.join(os.homedir(), 'Documents', 'gothic3', 'save1.g3savcpx'),
       path.join(os.homedir(), 'Documents', 'gothic3', 'save2.g3savcpx'),
@@ -438,6 +438,18 @@ describe('moveSaves', () => {
     expectedPaths.forEach(item => {
       expect(fs.existsSync(item)).toBeTruthy();
     });
+    expect(result).toBe(path.join(os.homedir(), 'Documents', 'gothic3', 'Mods1'));
+  });
+
+  test('returns undefined when there is nothing to back up', async () => {
+    vol.fromJSON(
+      {
+        Mods0: '',
+      },
+      path.join(os.homedir(), 'Documents', 'gothic3'),
+    );
+    const result = await moveSaves();
+    expect(result).toBeUndefined();
   });
 });
 
@@ -565,7 +577,40 @@ describe('installMods', () => {
     });
 
     const modsIds = mods.map(item => item.id);
-    expect(installMods(modsIds)).resolves.toBeTypeOf('string');
+    await expect(installMods(modsIds)).resolves.toMatchObject({
+      time: expect.any(String),
+    });
+  });
+
+  test('returns savesBackupPath when saves were backed up', async () => {
+    mockConfig([]);
+    const mods = [
+      {
+        id: 'Mod1',
+        title: 'Mod1',
+        category: 'category',
+        dependencies: [],
+        incompatibles: [],
+        directoryName: 'Mod1',
+        authors: ['Autor'],
+        path: 'E:\\Games\\Gothic 3\\mods\\mod1',
+      },
+    ];
+    vol.fromJSON({
+      [path.join('\\user', 'Documents', 'gothic3', 'save1.g3savcpx')]: '',
+      [path.join('\\user', 'Documents', 'gothic3', 'Shader.Cache')]: '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.m0x': '',
+      'E:\\Games\\Gothic 3\\Static\\Projects_compiled.n0x': '',
+      'E:\\Games\\Gothic 3\\Static\\G3_World_01.wrldatasc': '',
+      'E:\\Games\\Gothic 3\\mods\\mod1\\mod.json': JSON.stringify(mods[0]),
+      'E:\\Games\\Gothic 3\\mods\\mod1\\file1.m0x': '',
+      'E:\\Games\\Gothic 3\\Data\\strings.pak': '',
+      'E:\\Games\\Gothic 3\\Data\\temp\\stringtable.ini': '',
+    });
+
+    const result = await installMods(mods.map(m => m.id));
+
+    expect(result.savesBackupPath).toBe(path.join('\\user', 'Documents', 'gothic3', 'Mods0'));
   });
 
   test('persists relative paths in filesCreated after successful installation', async () => {

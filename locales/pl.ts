@@ -66,6 +66,7 @@ export default {
     resolveIncompatibility:
       'Zaznaczenie zależności zakończone niepowodzeniem z powodu niekompatybilności:',
     with: 'z',
+    savesBackup: 'Utworzono kopię zapasową zapisów i pamięci podręcznej shaderów w:',
   },
   progress: {
     saveConfiguration: 'Zapisywanie konfiguracji',
@@ -128,5 +129,6 @@ export default {
     warning: 'Ostrzeżenie',
     success: 'Sukces',
     openDocuments: 'Otwórz lokaliację logów',
+    openSavesBackup: 'Otwórz folder kopii zapasowej',
   },
 };

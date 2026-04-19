@@ -65,6 +65,7 @@ export default {
     iniSaved: 'Configuration successfully saved.',
     resolveIncompatibility: 'Problem with dependencies, resolve incompatibility of',
     with: 'with',
+    savesBackup: 'A backup of your saves and shader cache was created at:',
   },
   progress: {
     saveConfiguration: 'Saving configuration',
@@ -127,5 +128,6 @@ export default {
     warning: 'Warning',
     success: 'Success',
     openDocuments: 'Open log directory',
+    openSavesBackup: 'Open saves backup',
   },
 };

@@ -5,10 +5,11 @@ export function showAlert(
   message: string,
   type?: AlertType,
   showLogButton?: boolean,
+  openFolderPath?: string,
 ) {
   window.postMessage({
     channel: 'show-alert-modal',
-    alert: { title, message, type, showLogButton },
+    alert: { title, message, type, showLogButton, openFolderPath },
   });
 }
 
