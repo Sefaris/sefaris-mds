@@ -1,5 +1,8 @@
 # (incoming)
 
+- Zmieniono miejsce zapisu logów. Od teraz logi są zapisywane w katalogu `logs` wewnątrz katalogu z aplikacją, a nie w katalogu `Documents`, jak to miało miejsce wcześniej.
+- Od teraz logi są zapisywane w plikach dziennych.
+- Zmieniono modal przy pierwszym uruchomieniu. Od teraz wybieranie folderu nie pojawia się od razu, a po kliknięciu przycisku "Wybierz folder z grą".
 - Przeniesienie pakietu na `type: module`
 
 # Wersja 1.1.0

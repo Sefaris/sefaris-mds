@@ -49,6 +49,8 @@ export default {
     wrongPath: 'Gothic3.exe не найден. Выберите правильную директорию.',
     presetNotFound: 'Пресет не найден: ',
     configNotFound: 'Конфиг не найден или поврежден. Выберите директорию Gothic 3.',
+    configNotFoundTitle: 'Конфигурация отсутствует',
+    selectGameFolder: 'Выбрать папку игры',
     gamePathInvalidTitle: 'Папка игры не найдена',
     gamePathInvalid:
       'Сохранённая папка Gothic 3 больше не содержит Gothic3.exe. Укажите новое расположение игры, чтобы сохранить установленные моды, пресеты и настройки.',
@@ -57,7 +59,7 @@ export default {
     modFilesNotFound:
       'Не удается найти установленные моды. Похоже, что вы удалили моды вручную. Очистите конфигурацию.',
     missingModsFromPreset: 'Отсутствующие моды в пресете: ',
-    checkLog: 'Что-то пошло не так. Проверьте app.log',
+    checkLog: 'Что-то пошло не так. Проверьте logs/Starter-*.log рядом с приложением.',
     dependencyNotFound: 'Зависимости не найдены:',
     presetSaved: 'Пресет успешно сохранен.',
     iniSaved: 'Конфигурация успешно сохранена.',

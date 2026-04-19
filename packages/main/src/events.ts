@@ -9,10 +9,11 @@ export function addEvents() {
   const windows = getWindows();
 
   ipcMain.handle('open-folder-dialog-game', async (): Promise<string> => {
+    const parent = windows['main'];
     while (true) {
-      const result = await dialog.showOpenDialog({
-        properties: ['openDirectory'],
-      });
+      const result = parent
+        ? await dialog.showOpenDialog(parent, { properties: ['openDirectory'] })
+        : await dialog.showOpenDialog({ properties: ['openDirectory'] });
       if (result.canceled) {
         return '';
       }
@@ -22,20 +23,26 @@ export function addEvents() {
       if (fs.existsSync(exeFilePath)) {
         return selectedPath;
       }
-      await dialog.showMessageBox({
-        type: 'error',
+      const messageOptions = {
+        type: 'error' as const,
         title: 'Incorrect path',
         message: `${translate('alert.wrongPath')}`,
         buttons: ['OK'],
-      });
+      };
+      if (parent) {
+        await dialog.showMessageBox(parent, messageOptions);
+      } else {
+        await dialog.showMessageBox(messageOptions);
+      }
     }
   });
 
   ipcMain.handle('open-folder-dialog', async (): Promise<string> => {
+    const parent = windows['main'];
     while (true) {
-      const result = await dialog.showOpenDialog({
-        properties: ['openDirectory'],
-      });
+      const result = parent
+        ? await dialog.showOpenDialog(parent, { properties: ['openDirectory'] })
+        : await dialog.showOpenDialog({ properties: ['openDirectory'] });
       if (result.canceled) {
         return '';
       }

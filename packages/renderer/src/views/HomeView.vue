@@ -12,6 +12,16 @@
     @confirm="onConfirmSelectGameFolder"
     @cancel="showGamePathModal = false"
   />
+  <confirm-modal
+    :is-visible="showNoConfigModal"
+    type="error"
+    :title="'alert.configNotFoundTitle'"
+    :message="$t('alert.configNotFound')"
+    confirm-label="alert.selectGameFolder"
+    cancel-label="modal.close"
+    @confirm="onConfirmInitialSelectGameFolder"
+    @cancel="onCancelInitialSelectGameFolder"
+  />
 </template>
 
 <script lang="ts">
@@ -27,6 +37,7 @@ import {
   closeApplication,
   saveConfiguration,
   loggerError,
+  loggerInfo,
   showAlert,
   getAlreadyInstalledFiles,
 } from '#preload';
@@ -43,6 +54,7 @@ export default defineComponent({
   setup() {
     const modsStore = useModsStore();
     const showGamePathModal = ref(false);
+    const showNoConfigModal = ref(false);
     const pendingRawConfig = ref<AppConfiguration | null>(null);
 
     async function bootstrap(loadedConfig: AppConfiguration | null | undefined) {
@@ -90,6 +102,39 @@ export default defineComponent({
       await bootstrap(reloaded);
     }
 
+    async function onConfirmInitialSelectGameFolder() {
+      loggerInfo(getMessage('BOOTSTRAP_NO_CONFIG_MODAL_CONFIRMED'));
+      const gamePath = await selectGameFolder();
+      loggerInfo(
+        gamePath
+          ? getMessage('BOOTSTRAP_NO_CONFIG_FOLDER_PICKED', { path: gamePath })
+          : getMessage('BOOTSTRAP_NO_CONFIG_PICKER_CANCELLED'),
+      );
+      if (!gamePath) {
+        // Keep the modal open so the user can retry; native dialog may have
+        // been dismissed accidentally or hidden behind the main window on
+        // Windows.
+        return;
+      }
+      const fresh: AppConfiguration = {
+        gothicPath: gamePath,
+        language: DEFAULT_LANGUAGE,
+        ignoreDependencies: false,
+        ignoreIncompatible: false,
+        installedMods: [],
+        filesCreated: [],
+      };
+      await saveConfiguration(fresh);
+      showNoConfigModal.value = false;
+      await bootstrap(fresh);
+    }
+
+    function onCancelInitialSelectGameFolder() {
+      loggerInfo(getMessage('BOOTSTRAP_NO_CONFIG_MODAL_CANCELLED'));
+      showNoConfigModal.value = false;
+      closeApplication();
+    }
+
     onMounted(async () => {
       let config: AppConfiguration | null | undefined;
       let invalidGamePath = false;
@@ -115,20 +160,16 @@ export default defineComponent({
       }
 
       if (!config) {
-        showAlert('modal.error', translate('alert.configNotFound'), 'error');
-        loggerError(getMessage('CONFIG_NOT_FOUND'));
-        const gamePath = await selectGameFolder();
-        if (!gamePath) closeApplication();
-        const fresh: AppConfiguration = {
-          gothicPath: gamePath,
-          language: DEFAULT_LANGUAGE,
-          ignoreDependencies: false,
-          ignoreIncompatible: false,
-          installedMods: [],
-          filesCreated: [],
-        };
-        await saveConfiguration(fresh);
-        config = fresh;
+        // Show the modal FIRST so a logger or i18n failure cannot prevent the
+        // user from recovering by selecting a folder.
+        showNoConfigModal.value = true;
+        try {
+          loggerError(getMessage('CONFIG_NOT_FOUND'));
+          loggerInfo(getMessage('BOOTSTRAP_NO_CONFIG_MODAL_SHOWN'));
+        } catch (logErr) {
+          console.error('Logger failed during bootstrap:', logErr);
+        }
+        return;
       }
 
       await bootstrap(config);
@@ -151,7 +192,13 @@ export default defineComponent({
       }
     });
 
-    return { showGamePathModal, onConfirmSelectGameFolder };
+    return {
+      showGamePathModal,
+      showNoConfigModal,
+      onConfirmSelectGameFolder,
+      onConfirmInitialSelectGameFolder,
+      onCancelInitialSelectGameFolder,
+    };
   },
 });
 </script>

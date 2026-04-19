@@ -8,6 +8,7 @@ export {
   openGameFolder,
   openStarterFolder,
   openDocumentsFolder,
+  openLogsFolder,
   openModsFolder,
   openFolder,
   startGame,

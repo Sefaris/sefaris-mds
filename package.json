@@ -4,6 +4,10 @@
   "version": "1.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24.14.1",
+    "npm": "^10.9.0"
+  },
   "author": {
     "email": "gothicsefaris@gmail.com",
     "name": "Sefaris",
@@ -15,7 +19,7 @@
     "build:main": "cd ./packages/main && vite build",
     "build:preload": "cd ./packages/preload && vite build",
     "build:renderer": "cd ./packages/renderer && vite build",
-    "compile": "cross-env MODE=DEBUG npm run build && electron-builder build --config .electron-builder.config.cjs --dir --config.asar=true",
+    "compile": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.cjs --dir --config.asar=true",
     "test": "npm run test:main && npm run test:preload && npm run test:renderer && npm run test:e2e",
     "test:e2e": "npm run build && vitest run",
     "test:main": "vitest run -r packages/main --passWithNoTests",
@@ -82,6 +86,7 @@
     "vue-i18n": "^11.3.2",
     "vue-router": "^5.0.4",
     "winreg": "^1.2.5",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }
