@@ -1,7 +1,7 @@
 {
   "name": "g3-sefaris-modmanager",
   "description": "Mod manager for Gothic 3 by Sefaris",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "type": "module",
   "engines": {

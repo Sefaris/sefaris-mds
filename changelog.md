@@ -1,4 +1,4 @@
-# (incoming)
+# Wersja 1.1.1
 
 - Od teraz po zbudowaniu modów, w łatwy sposób można przejść do kopii zapasowej zapisów gry, która jest tworzona automatycznie przy każdej integracji.
 - Od teraz logi są zapisywane w plikach dziennych.
