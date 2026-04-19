@@ -1,8 +1,8 @@
-import { node } from '../../.electron-vendors.cache.json';
+import { node } from '../../.electron-vendors.cache.json' with { type: 'json' };
 import { join } from 'node:path';
 import { injectAppVersion } from '../../version/inject-app-version-plugin.mjs';
 
-const PACKAGE_ROOT = __dirname;
+const PACKAGE_ROOT = import.meta.dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 
 /**
