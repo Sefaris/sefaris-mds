@@ -54,7 +54,7 @@ beforeEach(() => {
   preload.showNotification.mockReset();
 
   preload.deleteMods.mockResolvedValue(undefined);
-  preload.installMods.mockResolvedValue(1);
+  preload.installMods.mockResolvedValue({ time: '1.00' });
 });
 
 describe('InstallationButtons', () => {
@@ -102,5 +102,42 @@ describe('InstallationButtons', () => {
     expect(store.basePreset).toBeUndefined();
     expect(store.installedPreset).toBeUndefined();
     expect(store.installationState).toBe('ready');
+  });
+
+  it('forwards saves backup path to alert when installMods returns it', async () => {
+    const store = useModsStore();
+    store.mods = [makeMod('mod-1')];
+    store.selectedMods = ['mod-1'];
+    store.installedMods = [];
+    preload.installMods.mockResolvedValue({
+      time: '2.50',
+      savesBackupPath: 'C:/Documents/gothic3/Mods3',
+    });
+
+    const wrapper = mountComponent();
+    await wrapper.find('button.bg-install').trigger('click');
+    await flushPromises();
+
+    expect(preload.showAlert).toHaveBeenCalledTimes(1);
+    const args = preload.showAlert.mock.calls[0];
+    expect(args[0]).toBe('modal.success');
+    expect(args[1]).toContain('C:/Documents/gothic3/Mods3');
+    expect(args[3]).toBe(false);
+    expect(args[4]).toBe('C:/Documents/gothic3/Mods3');
+  });
+
+  it('omits saves backup path when installMods does not return it', async () => {
+    const store = useModsStore();
+    store.mods = [makeMod('mod-1')];
+    store.selectedMods = ['mod-1'];
+    store.installedMods = [];
+    preload.installMods.mockResolvedValue({ time: '2.50' });
+
+    const wrapper = mountComponent();
+    await wrapper.find('button.bg-install').trigger('click');
+    await flushPromises();
+
+    const args = preload.showAlert.mock.calls[0];
+    expect(args[4]).toBeUndefined();
   });
 });

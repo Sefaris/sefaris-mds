@@ -85,8 +85,13 @@ export default defineComponent({
         JSON.parse(JSON.stringify(selectedMods.value)),
         activePreset.value || basePreset.value,
       )
-        .then(time => {
-          showAlert('modal.success', `${translate('alert.installed')} ${time}s`, 'success');
+        .then(result => {
+          const { time, savesBackupPath } = result;
+          const baseMessage = `${translate('alert.installed')} ${time}s`;
+          const message = savesBackupPath
+            ? `${baseMessage}\n\n${translate('alert.savesBackup')}\n${savesBackupPath}`
+            : baseMessage;
+          showAlert('modal.success', message, 'success', false, savesBackupPath);
           showNotification({
             title: translate('modal.success'),
             body: `${translate('alert.installed')} ${time}s`,

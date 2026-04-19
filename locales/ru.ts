@@ -65,6 +65,7 @@ export default {
     iniSaved: 'Конфигурация успешно сохранена.',
     resolveIncompatibility: 'Проблема с зависимостями, устранение несовместимости',
     with: 'с',
+    savesBackup: 'Создана резервная копия сохранений и кэша шейдеров в:',
   },
   progress: {
     saveConfiguration: 'Сохранение конфигурации',
@@ -127,5 +128,6 @@ export default {
     warning: 'Предупреждение',
     success: 'Успешно',
     openDocuments: 'Откройте каталог журналов',
+    openSavesBackup: 'Открыть папку резервной копии',
   },
 };

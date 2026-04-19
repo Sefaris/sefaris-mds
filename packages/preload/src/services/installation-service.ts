@@ -44,7 +44,12 @@ const WRLDATASC = 'G3_World_01.wrldatasc';
 
 const STRINGTABLE_ENCODING = 'utf16le';
 
-export async function installMods(modIds: string[], preset?: string): Promise<string> {
+export interface InstallationResult {
+  time: string;
+  savesBackupPath?: string;
+}
+
+export async function installMods(modIds: string[], preset?: string): Promise<InstallationResult> {
   return new Promise((resolve, reject) => {
     (async () => {
       const configuration = await loadConfiguration();
@@ -88,7 +93,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
         loggerInfo(getMessage('INSTALLATION_START', { num: modIds.length.toString() }));
         loggerInfo(getMessage('INSTALLATION_MOD_LIST', { mods: modIds.join(', ') }));
         await deleteMods();
-        await moveSaves();
+        const savesBackupPath = await moveSaves();
 
         if (preset) {
           console.log('Preset');
@@ -167,7 +172,7 @@ export async function installMods(modIds: string[], preset?: string): Promise<st
 
         await saveConfiguration(configuration);
         loggerInfo(getMessage('INSTALLATION_COMPLETE', { num: modIds.length.toString() }));
-        resolve(time.toFixed(2));
+        resolve({ time: time.toFixed(2), savesBackupPath });
       } catch (error) {
         if (error instanceof Error) {
           showAlert('modal.error', getMessage('CHECK_LOG_FILE'), 'error', true);
@@ -364,7 +369,7 @@ export async function buildWrldatasc(gothicDataPath: string, mods: Mod[], create
   createdFiles.push(outputFilePath);
 }
 
-export async function moveSaves() {
+export async function moveSaves(): Promise<string | undefined> {
   const newModsFolder = await getNextSaveDirectoryName();
   const G3_DOCUMENTS_PATH = path.join(await getDocumentsPath(), 'gothic3');
 
@@ -373,7 +378,7 @@ export async function moveSaves() {
   loggerInfo(getMessage('MOVE_SAVES_START'));
   if (oldFilesPaths.length === 0) {
     loggerInfo(getMessage('MOVE_SAVES_NOTHING_TO_MOVE'));
-    return;
+    return undefined;
   }
 
   ensureDirectory(newModsFolderPath);
@@ -387,6 +392,7 @@ export async function moveSaves() {
     );
   }
   loggerInfo(getMessage('MOVE_SAVES_COMPLETE'));
+  return newModsFolderPath;
 }
 
 export async function getOldModsFiles() {

@@ -1,4 +1,4 @@
-import { execFile, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import path from 'path';
@@ -131,16 +131,14 @@ export async function openModsFolder() {
   openFolder(configuration.modsPath);
 }
 
-export function openFolder(path?: string) {
-  if (!path) return;
-  if (!fs.existsSync(path)) return;
-  if (process.platform === 'win32') {
-    execFile('explorer.exe', [path], { windowsHide: true });
-  } else if (process.platform === 'darwin') {
-    execFile('open', [path]);
-  } else {
-    execFile('xdg-open', [path]);
-  }
+export function openFolder(folderPath?: string) {
+  if (!folderPath) return;
+  if (!fs.existsSync(folderPath)) return;
+  ipcRenderer.invoke('open-folder', folderPath).then((error: string) => {
+    if (error) {
+      loggerError(getMessage('OPEN_FOLDER_FAILED', { path: folderPath, error }));
+    }
+  });
 }
 
 export function swapFileNames(filePath1: string, filePath2: string) {

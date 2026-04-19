@@ -1,4 +1,4 @@
-import { BrowserWindow, app, dialog, ipcMain, Notification } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain, Notification, shell } from 'electron';
 import { translate } from '../../../plugins/i18n';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -108,5 +108,11 @@ export function addEvents() {
       title: notification.title,
       body: notification.body,
     }).show();
+  });
+
+  ipcMain.handle('open-folder', async (_, folderPath: string): Promise<string> => {
+    if (!folderPath) return 'empty path';
+    if (!fs.existsSync(folderPath)) return `path does not exist: ${folderPath}`;
+    return await shell.openPath(folderPath);
   });
 }

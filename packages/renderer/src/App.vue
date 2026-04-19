@@ -16,6 +16,7 @@
       :title="modalTitle"
       :message="modalMessage"
       :show-log-button="showLogButton"
+      :open-folder-path="openFolderPath"
       @close="isModalVisible = false"
     />
   </div>
@@ -42,6 +43,7 @@ export default defineComponent({
     const modalTitle = ref('');
     const modalMessage = ref('');
     const showLogButton = ref(false);
+    const openFolderPath = ref<string | undefined>(undefined);
 
     const backgrounds = [bg0, bg1, bg2];
     const currentBg = ref(0);
@@ -69,6 +71,7 @@ export default defineComponent({
           modalType.value = event.data.alert.type;
           modalMessage.value = event.data.alert.message;
           showLogButton.value = event.data.alert.showLogButton;
+          openFolderPath.value = event.data.alert.openFolderPath;
           isModalVisible.value = true;
         }
       });
@@ -84,6 +87,7 @@ export default defineComponent({
       modalMessage,
       modalTitle,
       showLogButton,
+      openFolderPath,
       backgrounds,
       currentBg,
     };
