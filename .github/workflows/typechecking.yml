@@ -19,6 +19,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
+      - run: npm i -g npm@10
       - run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
