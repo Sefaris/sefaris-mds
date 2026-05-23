@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
+import { isProxy } from 'vue';
 import type { AppConfiguration } from '../../../interfaces/AppConfiguration';
 import { ConfigurationError } from '../../../Errors/ConfigurationError';
 import { getMessage } from '../../../utils/messages';
@@ -163,6 +164,55 @@ describe('HomeView bootstrap flow', () => {
     await noConfig.find('button.cancel').trigger('click');
 
     expect(preload.closeApplication).toHaveBeenCalledOnce();
+  });
+
+  it('saves a plain configuration object when recovering an invalid game folder', async () => {
+    const rawConfig: AppConfiguration = {
+      gothicPath: 'D:/Old Gothic 3',
+      modsPath: 'D:/Old Gothic 3/mods',
+      language: 'en',
+      ignoreDependencies: false,
+      ignoreIncompatible: false,
+      installedMods: ['QuestPaket'],
+      filesCreated: ['Data/gui.mod'],
+      uiPreferences: { modListMode: 'grouped' },
+    };
+    const reloadedConfig: AppConfiguration = {
+      ...rawConfig,
+      gothicPath: 'C:/Games/Gothic 3',
+      modsPath: 'C:/Games/Gothic 3/mods',
+    };
+    preload.loadConfiguration
+      .mockRejectedValueOnce(new ConfigurationError(getMessage('INVALID_GAME_PATH')))
+      .mockResolvedValueOnce(reloadedConfig);
+    preload.loadConfigurationRaw.mockResolvedValue(rawConfig);
+    preload.selectGameFolder.mockResolvedValue('C:/Games/Gothic 3');
+    preload.getAlreadyInstalledFiles.mockResolvedValue(['Data/gui.mod']);
+
+    const wrapper = mountHome();
+    await flushPromises();
+
+    const gamePathModal = wrapper
+      .findAllComponents({ name: 'ConfirmModal' })
+      .find(m => m.props('title') === 'alert.gamePathInvalidTitle')!;
+    expect(gamePathModal.props('isVisible')).toBe(true);
+
+    await gamePathModal.find('button.confirm').trigger('click');
+    await flushPromises();
+
+    expect(preload.saveConfiguration).toHaveBeenCalledOnce();
+    const saved = preload.saveConfiguration.mock.calls[0][0] as AppConfiguration;
+    expect(isProxy(saved)).toBe(false);
+    expect(isProxy(saved.installedMods)).toBe(false);
+    expect(isProxy(saved.filesCreated)).toBe(false);
+    expect(saved).toMatchObject({
+      gothicPath: 'C:/Games/Gothic 3',
+      modsPath: '',
+      installedMods: ['QuestPaket'],
+      filesCreated: ['Data/gui.mod'],
+      uiPreferences: { modListMode: 'grouped' },
+    });
+    expect(gamePathModal.props('isVisible')).toBe(false);
   });
 
   it('still shows the missing-config modal when the logger throws', async () => {

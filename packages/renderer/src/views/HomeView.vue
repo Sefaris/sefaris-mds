@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, shallowRef } from 'vue';
 import NavBar from '../components/NavBar.vue';
 import MainSection from '../components/MainSection.vue';
 import FooterSection from '../components/FooterSection.vue';
@@ -55,7 +55,7 @@ export default defineComponent({
     const modsStore = useModsStore();
     const showGamePathModal = ref(false);
     const showNoConfigModal = ref(false);
-    const pendingRawConfig = ref<AppConfiguration | null>(null);
+    const pendingRawConfig = shallowRef<AppConfiguration | null>(null);
 
     async function bootstrap(loadedConfig: AppConfiguration | null | undefined) {
       modsStore.setConfigExists(true);
@@ -87,12 +87,15 @@ export default defineComponent({
       }
       const raw = pendingRawConfig.value;
       if (!raw) return;
-      raw.gothicPath = gamePath;
-      // Clear modsPath so `saveConfiguration` recomputes it via `path.join`
-      // in the preload (avoids string concatenation in the renderer and
-      // platform-specific separators).
-      raw.modsPath = '';
-      await saveConfiguration(raw);
+      const updatedConfig: AppConfiguration = {
+        ...raw,
+        gothicPath: gamePath,
+        // Clear modsPath so `saveConfiguration` recomputes it via `path.join`
+        // in the preload (avoids string concatenation in the renderer and
+        // platform-specific separators).
+        modsPath: '',
+      };
+      await saveConfiguration(updatedConfig);
       showGamePathModal.value = false;
       pendingRawConfig.value = null;
       const reloaded = await loadConfiguration().catch(error => {
