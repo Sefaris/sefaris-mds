@@ -1,3 +1,7 @@
+# Wersja 1.1.2
+
+- Poprawiono błąd, który występował podczas zmiany lokalizacji, gdy aplikacja wykryje, że pod aktualną lokalizacją gry ona już się nie znajduje.
+
 # Wersja 1.1.1
 
 - Od teraz po zbudowaniu modów, w łatwy sposób można przejść do kopii zapasowej zapisów gry, która jest tworzona automatycznie przy każdej integracji.
